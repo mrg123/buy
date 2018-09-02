@@ -268,3 +268,6 @@ admin\controller\design\banner.php
 admin\language\english\design\banner.php
 admin\view\template\design\banner_list.tpl
 admin\view\template\design\banner_form.tpl
+admin\controller\module\product_toggle.php
+admin\model\module\product_toggle.php
+admin\view\template\module\product_toggle.tpl

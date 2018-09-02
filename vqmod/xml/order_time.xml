@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>change order time</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+
+    <file name="catalog/model/d_quickcheckout/order.php">
+		
+		<operation>
+			<search position="replace"><![CDATA[NOW()]]></search>
+			<add><![CDATA[date_add(NOW(),interval 8 hour)]]></add>
+		</operation>
+    </file>
+	
+
+</modification>

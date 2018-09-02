@@ -1,0 +1,12 @@
+<modification>
+	<id>Remover index.php?route=common/home da Página Principal da loja</id>
+	<version>1.0</version>
+	<vqmver required="false">1.0</vqmver>
+	<author>Guilherme de Lima Campos</author>
+	<file name="catalog/view/theme/*/template/common/header.tpl">
+		<operation>
+			<search position="replace"><![CDATA[href="<?php echo $home; ?>"]]></search>
+			<add><![CDATA[href="<?php echo HTTP_SERVER; ?>"]]></add>
+		</operation>
+	</file>
+</modification>

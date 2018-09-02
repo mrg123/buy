@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>add additional image</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+
+	<file name="catalog/controller/product/product.php">
+		<operation>
+			<search position="after"><![CDATA[$this->load->model('tool/image');]]></search>
+			<add><![CDATA[
+			
+			if ($product_info['image']) {
+				$data['popup1'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));
+			} else {
+				$data['popup1'] = '';
+			}
+
+			if ($product_info['image']) {
+				$data['thumb1'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_additional_width'), $this->config->get('config_image_additional_height'));
+			} else {
+				$data['thumb1'] = '';
+			}
+			
+			if ($product_info['image']) {
+				$data['big_thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
+			} else {
+				$data['big_thumb'] = '';
+			}
+
+			
+			]]></add>
+		</operation>
+    </file>
+	
+	<file name="catalog/view/theme/default/template/product/product.tpl">
+		<operation>
+			<search position="after"><![CDATA[<li><a class="thumbnail pop" href="<?php echo $popup; ?>" title="<?php echo $heading_title; ?>"><img class="zoom" src="<?php echo $thumb; ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a></li>]]></search>
+			<add trim="true"><![CDATA[
+			
+			<li class="image-additional"><img id="gallery" val="<?php echo $popup1; ?>" name="<?php echo $big_thumb; ?>" src="<?php echo $thumb1; ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></li>
+            <li style="display: none;" class="image-additional"><a class="thumbnail" href="<?php echo $popup1; ?>" title="<?php echo $heading_title; ?>"> <img src="<?php echo $thumb1; ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a></li>
+			
+			]]></add>
+		</operation>
+		
+	</file>
+
+</modification>

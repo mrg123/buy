@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>Order_Info_Image</id>
+    <version>1.0</version>
+    <vqmver>2.4.1</vqmver>
+    <author>Wang</author>
+
+    <file name="admin/controller/sale/order.php">
+		<operation>
+			<search position="after" index="1"><![CDATA[$this->load->model('tool/upload');]]></search>
+			<add trim="true"><![CDATA[
+			$this->load->model('catalog/product');
+			$this->load->model('tool/image');
+			]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[$data['products'][] = array(]]></search>
+			<add trim="true"><![CDATA[
+			$product_info = $this->model_catalog_product->getProduct($product['product_id']);
+				if (!empty($product_info) && is_file(DIR_IMAGE . $product_info['image'])) {
+					$image= $this->model_tool_image->resize($product_info['image'], 40, 40);
+				} else {
+					$image = $this->model_tool_image->resize('no_image.png', 40, 40);
+				}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$data['products'][] = array(]]></search>
+			<add trim="true"><![CDATA[
+			'image' => $image,
+			]]></add>
+		</operation>
+    </file>
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation>
+			<search position="before"><![CDATA[<td class="text-left"><?php echo $column_model; ?></td>]]></search>
+			<add><![CDATA[<td class="text-left">Image</td>]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[<td class="text-left"><?php echo $product['model']; ?></td>]]></search>
+			<add><![CDATA[<td class="text-left"><img src="<?php echo $product['image']; ?>"/></td>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[colspan="4"]]></search>
+			<add><![CDATA[colspan="5"]]></add>
+		</operation>
+    </file>
+	
+</modification>

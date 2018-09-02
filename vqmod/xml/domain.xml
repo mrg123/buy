@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>domain</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>Wang</author>
+
+    <file name="catalog/controller/common/header.php">
+		<operation>
+			<search position="replace"><![CDATA[$server = $this->config->get('config_ssl');]]></search>
+			<add trim="true"><![CDATA[
+if(isset($_SERVER['SERVER_NAME'])){
+			$server = 'https://' . $_SERVER['SERVER_NAME'].'/';
+		}else{
+			$server = $this->config->get('config_ssl');
+		}
+			]]></add>
+		</operation>
+        <operation>
+            <search position="replace"><![CDATA[$server = $this->config->get('config_url');]]></search>
+            <add trim="true"><![CDATA[
+if(isset($_SERVER['SERVER_NAME'])){
+			$server = 'http://' . $_SERVER['SERVER_NAME'].'/';
+		}else{
+			$server = $this->config->get('config_url');
+		}
+			]]></add>
+        </operation>
+    </file>
+
+</modification>

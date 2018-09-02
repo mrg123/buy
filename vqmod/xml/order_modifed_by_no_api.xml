@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>order modifed by no api</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+
+	<file name="admin/model/user/api.php">
+		<operation>
+			<search position="before"><![CDATA[public function addApiIp($api_id, $ip) {]]></search>
+			<add trim="true"><![CDATA[
+public function getIp($api_id, $ip) {
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "api_ip` WHERE api_id = '" . (int)$api_id . "' AND ip = '" . $this->db->escape($ip) . "'");
+
+		return $query->row['total'];
+	}
+			]]></add>
+		</operation>
+	</file>
+	<file name="admin/controller/sale/order.php">
+        <operation>
+            <search position="after"><![CDATA[$data['api_ip'] = $this->request->server['REMOTE_ADDR'];]]></search>
+            <add trim="true"><![CDATA[
+			if(!$this->model_user_api->getIp($api_info['api_id'], $this->request->server['REMOTE_ADDR'])){
+			$this->model_user_api->addApiIp($api_info['api_id'], $this->request->server['REMOTE_ADDR']);}]]></add>
+        </operation>
+		
+		<operation>
+			<search position="replace"><![CDATA[$this->url->link('catalog/product/edit', 'token=' . $this->session->data['token'] . '&product_id=' . $product['product_id'], 'SSL')]]></search>
+			<add trim="true"><![CDATA[HTTPS_CATALOG . 'index.php?route=product/product&product_id=' . $product['product_id']]]></add>
+		</operation>
+    </file>
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<a href="<?php echo $product['href']; ?>">]]></search>
+			<add trim="true"><![CDATA[<a href="<?php echo $product['href']; ?>" target="_blank">]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<?php echo $store_url; ?>]]></search>
+			<add trim="true"><![CDATA[<?php echo HTTPS_CATALOG; ?>]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/sale/order_list.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<?php echo $store; ?>]]></search>
+			<add trim="true"><![CDATA[<?php echo HTTPS_CATALOG; ?>]]></add>
+		</operation>
+	</file>
+</modification>

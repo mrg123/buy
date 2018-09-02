@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>add_safe_img_to_product</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+
+
+	
+	<file name="catalog/view/theme/default/template/product/product.tpl">
+		<operation>
+			<search position="before" index="3"><![CDATA[<?php if ($review_status) { ?>]]></search>
+			<add><![CDATA[<img src="image/safe.png" width="100%"/>]]></add>
+		</operation>
+
+	</file>
+
+</modification>
+

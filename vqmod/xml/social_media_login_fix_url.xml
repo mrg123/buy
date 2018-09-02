@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>social media login fix url</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+
+    <file name="admin/controller/module/social_media_login.php">
+		<operation>
+			<search position="after"><![CDATA[$this->load->model('setting/setting');]]></search>
+			<add trim="true"><![CDATA[
+				$this->vars['social_media_login_catalog_url'] = HTTPS_CATALOG;
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/module/social_media_login.tpl">
+		<operation>
+			<search position="before"><![CDATA[<h4>Module Status <hr /></h4>]]></search>
+			<add trim="true"><![CDATA[
+			<div class="form-group">
+            <label class="col-sm-2 control-label">Catalog Url</label>
+            <div class="col-sm-10">
+              <input type="text" name="social_media_login_catalog_url" value="<?php echo $social_media_login_catalog_url; ?>" class="form-control" readonly/>
+            </div>
+			</div>
+			]]></add>
+		</operation>
+    </file>
+	
+	<file name="catalog/controller/module/social_media_login.php">
+		<operation info="change url">
+			<search position="replace"><![CDATA[$this->vars['sml_adapter_url'] = $url->link('account/social_media_login/login');]]></search>
+			<add trim="true"><![CDATA[
+			$this->vars['sml_adapter_url'] = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/login';
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="replace"><![CDATA[$this->vars['fb_adapter_url'] = $url->link('account/social_media_login/login', 'with=facebook');]]></search>
+			<add trim="true"><![CDATA[
+			$this->vars['fb_adapter_url'] = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/login&with=facebook';
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$this->vars['twt_adapter_url'] = $url->link('account/social_media_login/login', 'with=twitter');]]></search>
+			<add trim="true"><![CDATA[
+			$this->vars['twt_adapter_url'] = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/login&with=twitter';
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$this->vars['ggl_adapter_url'] = $url->link('account/social_media_login/login', 'with=google');]]></search>
+			<add trim="true"><![CDATA[$this->vars['ggl_adapter_url'] = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/login&with=google';]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$this->vars['yao_adapter_url'] = $url->link('account/social_media_login/login', 'with=yahoo');]]></search>
+			<add trim="true"><![CDATA[$this->vars['yao_adapter_url'] = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/login&with=yahoo';]]></add>
+		</operation>
+		
+		
+	</file>
+	
+	<file name="catalog/controller/account/social_media_login.php">
+		<operation>
+			<search position="replace"><![CDATA[$url = $this->url->link('account/social_media_login/oauth2') . '&' . http_build_query($params);]]></search>
+			<add trim="true"><![CDATA[$url = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/oauth2'. '&' . http_build_query($params);]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$oauth_callback = $this->url->link('account/social_media_login/oauth', 'oa2_adapter=twitter');]]></search>
+			<add trim="true"><![CDATA[
+			$oauth_callback = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/oauth' . '&' . 'oa2_adapter=twitter';
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="replace"><![CDATA[$this->vars['redirect'] = isset($this->session->data['redirect']) ? $this->session->data['redirect'] : $this->url->link('account/account');]]></search>
+			<add trim="true"><![CDATA[$this->vars['redirect'] = isset($this->session->data['redirect']) ? $this->session->data['redirect'] : $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/account';]]></add>
+		</operation>
+
+		
+		<operation>
+			<search position="replace"><![CDATA[OAuth2::init($this->url->link(urlencode('account/social_media_login/oauth2')), 'oc_sml_oauth2');]]></search>
+			<add trim="true"><![CDATA[OAuth2::init($this->config->get('social_media_login_catalog_url') . 'index.php?route=account/social_media_login/oauth2', 'oc_sml_oauth2');]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[$this->vars['redirect'] = $this->url->link('account/account', '', 'SSL');]]></search>
+			<add trim="true"><![CDATA[$this->vars['redirect'] = $this->config->get('social_media_login_catalog_url') . 'index.php?route=account/account';]]></add>
+		</operation>
+	</file>
+	
+
+</modification>

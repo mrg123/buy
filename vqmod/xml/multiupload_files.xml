@@ -1,0 +1,169 @@
+<modification>
+    <id>C2 Multiupload files light</id>
+    <version>1.0.0</version>
+    <vqmver>2.5.1</vqmver>
+    <author>Chumachkin Mikhail Aleksandrovich chumachkin.m@gmail.com</author>
+    <file name="/admin/view/template/common/filemanager.tpl">
+        <operation error="skip"  info="Add multiple attr to input field">
+            <search position="replace"><![CDATA[
+                $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" value="" /></form>');
+            ]]></search>
+            <add trim="false"><![CDATA[
+                $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input id="multiple_upload_file" type="file" multiple name="file[]" value="" /></form>');
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Change button trigger">
+            <search position="replace"><![CDATA[
+                $('#form-upload input[name=\'file\']').trigger('click');
+            ]]></search>
+            <add trim="false"><![CDATA[
+                $('#form-upload input#multiple_upload_file').trigger('click');
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Change on timer check value">
+            <search position="replace"><![CDATA[
+                if ($('#form-upload input[name=\'file\']').val() != '') {
+            ]]></search>
+            <add trim="false"><![CDATA[
+                if ($('#form-upload input#multiple_upload_file').val() != '') {
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Change button trigger">
+            <search position="after"><![CDATA[
+                <button type="button" data-toggle="tooltip" title="<?php echo $button_delete; ?>" id="button-delete" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
+            ]]></search>
+            <add trim="false"><![CDATA[
+                <button type="button" data-toggle="tooltip" title="<?php echo 'Add to image tab'; ?>" id="button-moveimage" class="btn btn-default"><i class="fa fa-file-image-o"></i></button>
+            ]]></add>
+        </operation>
+        <operation error="skip"  info="Add code for move image to image tab">
+            <search position="before"><![CDATA[
+$('a.thumbnail').on('click', function(e) {
+            ]]></search>
+            <add trim="false"><![CDATA[
+// Move image to Imagw folder
+$('#button-moveimage').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+//    debugger;
+    var cnt = 0 ;
+
+    $.each($('#modal-image .modal-body input[type="checkbox"]'), function(){
+        if ( $(this).prop('checked') === true ) {
+            var img_el = $(this).parent().parent().find('img').first();
+        
+            var image_id = parent.image_row; // row index
+            parent.addImage(); // add row in image Tab
+            var cur_block = $('#image-row'.concat(image_id)); // Added block
+    
+            parent.$('#thumb-image' + image_id + ' > img ').attr('src', $(img_el).attr('src'));
+            parent.$('#input-image' + image_id ).val( $(this).attr('value') );
+            cnt++;
+        }
+    });
+
+    if ( cnt > 0) {
+        $('#modal-image').modal('hide');
+        parent.$('a[href="#tab-image"]').trigger('click');
+    } else {
+        alert('Select image files to add it.');
+    }
+});
+
+            ]]></add>
+        </operation>
+    </file>
+    <file name="/admin/controller/common/filemanager.php">
+        <operation error="skip" info="Add variables">
+            <search position="after"><![CDATA[
+        $data['pagination'] = $pagination->render();
+            ]]></search>
+            <add trim="false"><![CDATA[
+            ]]></add>
+        </operation>
+        <operation error="skip" info="Change standart upload function">
+            <search position="replace" offset="54"><![CDATA[
+            if (!empty($this->request->files['file']['name']) && is_file($this->request->files['file']['tmp_name'])) {
+            ]]></search>
+            <add trim="false"><![CDATA[
+            $file_ary = array();
+
+            if (!empty($this->request->files['file']) ) {
+                $file_count = count($this->request->files['file']['name']);
+                $file_keys = array_keys($this->request->files['file']);
+        
+                for ($i=0; $i<$file_count; $i++) {
+                    foreach ($file_keys as $key) {
+                        $file_ary[$i][$key] = $this->request->files['file'][$key][$i];
+                    }
+                }
+            }
+
+            if (!empty($file_ary) ) {
+                foreach($file_ary as $cur_file) {
+                    if (!empty($cur_file['name']) && is_file($cur_file['tmp_name'])) {
+                        // Sanitize the filename
+                        $filename = basename(html_entity_decode($cur_file['name'], ENT_QUOTES, 'UTF-8'));
+                
+                        // Validate the filename length
+                        if ((utf8_strlen($filename) < 3) || (utf8_strlen($filename) > 255)) {
+                            $json['error'] = $this->language->get('error_filename');
+                        }
+                
+                        // Allowed file extension types
+                        $allowed = array(
+                            'jpg',
+                            'jpeg',
+                            'gif',
+                            'png'
+                        );
+                
+                        if (!in_array(utf8_strtolower(utf8_substr(strrchr($filename, '.'), 1)), $allowed)) {
+                            $json['error'] = $this->language->get('error_filetype');
+                        }
+                
+                        // Allowed file mime types
+                        $allowed = array(
+                            'image/jpeg',
+                            'image/pjpeg',
+                            'image/png',
+                            'image/x-png',
+                            'image/gif'
+                        );
+                
+                        if (!in_array($cur_file['type'], $allowed)) {
+                            $json['error'] = $this->language->get('error_filetype');
+                        }
+                
+                        // Check to see if any PHP files are trying to be uploaded
+                        $content = file_get_contents($cur_file['tmp_name']);
+                
+                        if (preg_match('/\<\?php/i', $content)) {
+                            $json['error'] = $this->language->get('error_filetype');
+                        }
+                
+                        // Return any upload error
+                        if ($cur_file['error'] != UPLOAD_ERR_OK) {
+                            $json['error'] = $this->language->get('error_upload_' . $this->request->files['file']['error']);
+                        }
+                    } else {
+                        $json['error'] = $this->language->get('error_upload');
+                    }
+                }
+            }
+        }
+
+        if (!$json) {
+            if ( !empty($file_ary) ) {
+                foreach($file_ary as $cur_file) {
+                    $filename = basename(html_entity_decode($cur_file['name'], ENT_QUOTES, 'UTF-8'));
+                    move_uploaded_file($cur_file['tmp_name'], $directory . '/' . $filename);
+                }
+            }
+            $json['success'] = $this->language->get('text_uploaded');
+        } 
+            ]]></add>
+        </operation>
+    </file>
+</modification>

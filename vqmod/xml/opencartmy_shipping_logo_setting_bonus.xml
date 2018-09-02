@@ -1,0 +1,127 @@
+<modification>
+
+<id>OpencartMy - Shipping Method Logo Setting (Bonus for Flat Rate, Free Shipping, Pickup From Store)</id>
+<version>2.0</version>
+<vqmver>2.4.1</vqmver>
+<author>opencartmy@gmail.com</author>
+
+<file name="catalog/model/shipping/pickup.php">
+<operation error="skip">
+<search position="after"><![CDATA[
+$quote_data['pickup'] = array(
+]]></search>
+<add><![CDATA[
+'keycode'       => '1',
+'icon_shipping' => $this->language->get('icon_shipping'),
+]]>
+</add>
+</operation>
+
+<operation error="skip">
+<search position="replace"><![CDATA[
+=> $this->language->get('text_title'),
+]]></search>
+<add><![CDATA[
+=> '',
+]]>
+</add>
+</operation>
+</file>
+
+<file name="catalog/language/english/shipping/pickup.php">
+<operation>
+<search position="before">
+<![CDATA[
+?>
+]]>
+</search>
+<add>
+<![CDATA[
+$_['icon_shipping'] = '<img style="vertical-align:middle" src="image/data/shipping/self-pickup.png"/> &nbsp; Pickup From Store';
+]]>
+</add>
+</operation>
+</file>
+
+
+<file name="catalog/model/shipping/flat.php">
+<operation error="skip">
+<search position="after"><![CDATA[
+$quote_data['flat'] = array(
+]]></search>
+<add><![CDATA[
+'keycode'       => '1',
+'icon_shipping' => $this->language->get('icon_shipping'),
+]]>
+</add>
+</operation>
+
+<operation error="skip">
+<search position="replace"><![CDATA[
+=> $this->language->get('text_title'),
+]]></search>
+<add><![CDATA[
+=> '',
+]]>
+</add>
+</operation>
+</file>
+
+<file name="catalog/language/english/shipping/flat.php">
+<operation>
+<search position="before">
+<![CDATA[
+?>
+]]>
+</search>
+<add>
+<![CDATA[
+$_['icon_shipping'] = '<img style="vertical-align:middle" src="image/data/shipping/flat-rate.png"/> &nbsp; Flat Rate Shipping';
+]]>
+</add>
+</operation>
+</file>
+
+
+
+<file name="catalog/model/shipping/free.php">
+<operation error="skip">
+<search position="after"><![CDATA[
+$quote_data['free'] = array(
+]]></search>
+<add><![CDATA[
+'keycode'       => '1',
+'icon_shipping' => $this->language->get('icon_shipping'),
+]]>
+</add>
+</operation>
+
+<operation error="skip">
+<search position="replace"><![CDATA[
+=> $this->language->get('text_title'),
+]]></search>
+<add><![CDATA[
+=> '',
+]]>
+</add>
+</operation>
+</file>
+
+<file name="catalog/language/english/shipping/free.php">
+<operation>
+<search position="before">
+<![CDATA[
+?>
+]]>
+</search>
+<add>
+<![CDATA[
+$_['icon_shipping'] = '<img style="vertical-align:middle" src="image/data/shipping/free-shipping.png"/> &nbsp; Free Shipping';
+]]>
+</add>
+</operation>
+</file>
+
+
+
+</modification>

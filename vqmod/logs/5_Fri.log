@@ -1,0 +1,15 @@
+---------- Date: 2018-07-06 05:33:33 ~ IP : 2607:fb90:284c:bed8:9dc2:bba8:37d7:f634 ----------
+REQUEST URI : /index.php?route=checkout/checkout
+MOD DETAILS:
+   modFile   : /home/buyindiscount/public_html/vqmod/xml/opencartmy_shipping_logo_setting_bonus.xml
+   id        : OpencartMy - Shipping Method Logo Setting (Bonus for Flat Rate, Free Shipping, Pickup From Store)
+   version   : 2.0
+   vqmver    : 2.4.1
+   author    : opencartmy@gmail.com
+
+File Name    : catalog/language/english/shipping/free.php(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): ?>
+
+----------------------------------------------------------------------
+
+

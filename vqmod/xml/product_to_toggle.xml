@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>product to toggle</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+
+    <file name="catalog/controller/product/product.php">
+        <operation info="product to toggle and customer to toggle and language to toggle">
+            <search position="before" index="1"><![CDATA[$this->load->model('catalog/product');]]></search>
+            <add trim="true"><![CDATA[
+
+			if($this->config->get('product_toggle_status') && $product_id){
+
+			
+			
+			$vip = 0;
+		if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$customer_toggle = $this->model_module_customer_toggle->getToggleByCustomerId($customer_id);
+				if($customer_toggle){
+					if($customer_toggle['toggle']){
+						/* 有参数正确,仿品可见*/
+						$vip = 1;
+					}else{
+						/* 为 0*/
+						$vip = 0;
+					}
+				}else{
+					/* NULL */
+					$vip = 0;
+				}
+		}
+			$this->load->model('module/product_toggle');
+		if (!isset($this->request->cookie['toggle']) && !$vip) {
+			$product_toggle = $this->model_module_product_toggle->getToggleByProductId($product_id);
+			if($product_toggle){
+				if($product_toggle['toggle']){
+					
+					if(isset($this->request->get[strtolower($this->config->get('product_toggle_parameter'))]) || isset($this->request->get[strtoupper($this->config->get('product_toggle_parameter'))])){
+						/* 有参数正确,仿品可见,设置session */
+						
+						if($this->config->get('product_toggle_expire')){
+							$expire = $this->config->get('product_toggle_expire');
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * $expire, '/' ,$this->request->server['HTTP_HOST']);
+						}else{
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * 30 * 12 * 10, '/' ,$this->request->server['HTTP_HOST']);
+						}
+						
+					}else{
+						/* 无参数 仿品转正品*/
+						$product_id = $product_toggle['related_id'];
+						
+					}
+					
+				}else{
+					/* toggle 值为 0 正品 */
+					
+				}
+				
+			}else{
+				/* toggle 值为 NULL 正品*/
+				
+			}
+		}	
+			
+
+			
+			/* change product_id */
+			$this->request->get['product_id'] = $product_id;
+
+			}
+			
+			]]></add>
+        </operation>
+    </file>
+	
+	<file name="catalog/model/checkout/order.php">
+		<operation>
+			<search position="after"><![CDATA[public function addOrderHistory($order_id, $order_status_id, $comment = '', $notify = false, $override = false) {]]></search>
+			<add trim="true"><![CDATA[
+			if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$this->model_module_customer_toggle->updateToggle($customer_id);
+			}	
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/common/header.php">
+		<operation>
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add trim="true"><![CDATA[
+			if($this->config->get('product_toggle_chinese_and_robots_status')){
+			
+			/* 浏览器语言判断 */
+			if (isset($this->request->server['HTTP_ACCEPT_LANGUAGE']) && $this->request->server['HTTP_ACCEPT_LANGUAGE']) {
+				$lang = substr($this->request->server['HTTP_ACCEPT_LANGUAGE'],0,2); 
+				if($lang == 'zh'){
+					/* 中文,显示提示页面 */
+					if($this->config->get('product_toggle_warning_zh')){
+						echo $this->config->get('product_toggle_warning_zh');exit;
+					}else{
+						echo "We do not support Chinese ,any help contact email: " . $this->config->get('config_email');exit;
+					}
+					
+				}else{
+					/* 不是中文 */
+				}
+			}else{
+				/* HTTP_ACCEPT_LANGUAGE 缺少*/
+				
+			}
+			
+			/* robots */
+			if (isset($this->request->server['HTTP_USER_AGENT'])) {
+			$robots = explode("\n", str_replace(array("\r\n", "\r"), "\n", trim($this->config->get('config_robots'))));
+
+			foreach ($robots as $robot) {
+				if ($robot && strpos($this->request->server['HTTP_USER_AGENT'], trim($robot)) !== false) {
+					/* robots */
+					if($this->config->get('product_toggle_warning_robot')){
+						echo $this->config->get('product_toggle_warning_robot');exit;
+					}else{
+						echo "SYSTEM to determine you are robots ,any help contact email: " . $this->config->get('config_email');exit;
+					}
+					break;
+				}
+			}
+			}
+			
+			}
+			
+			
+			/* 判断是否开启toggle 更换logo */
+			if($this->config->get('product_toggle_status')){
+			$vip = 0;
+		if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$customer_toggle = $this->model_module_customer_toggle->getToggleByCustomerId($customer_id);
+				if($customer_toggle){
+					if($customer_toggle['toggle']){
+						/* 有参数正确,仿品可见*/
+						$vip = 1;
+					}else{
+						/* 为 0*/
+						$vip = 0;
+					}
+				}else{
+					/* NULL */
+					$vip = 0;
+				}
+		}
+			
+		if (!isset($this->request->cookie['toggle']) && !$vip) {
+		
+			if(isset($this->request->get[strtolower($this->config->get('product_toggle_parameter'))]) || isset($this->request->get[strtoupper($this->config->get('product_toggle_parameter'))])){
+						/* 有参数正确,仿品可见,设置session */
+						
+						if($this->config->get('product_toggle_expire')){
+							$expire = $this->config->get('product_toggle_expire');
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * $expire, '/' ,$this->request->server['HTTP_HOST']);
+						}else{
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * 30 * 12 * 10, '/' ,$this->request->server['HTTP_HOST']);
+						}
+						$show_logo = 1;
+						
+					}else{
+						/* 无参数 */
+					}
+			
+		}else{
+			$show_logo = 1;	
+		}	
+		
+		
+		
+			}
+			
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="before"><![CDATA[$this->load->language('common/header');]]></search>
+			<add trim="true"><![CDATA[
+				if(isset($show_logo)){
+					$data['logo'] = $server . 'image/' . $this->config->get('product_toggle_logo');
+				}
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="before"><![CDATA[foreach ($categories as $category) {]]></search>
+			<add trim="ture"><![CDATA[
+			
+			
+			
+			$vip = 0;
+		if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$customer_toggle = $this->model_module_customer_toggle->getToggleByCustomerId($customer_id);
+				if($customer_toggle){
+					if($customer_toggle['toggle']){
+						/* 有参数正确,仿品可见*/
+						$vip = 1;
+					}else{
+						/* 为 0*/
+						$vip = 0;
+					}
+				}else{
+					/* NULL */
+					$vip = 0;
+				}
+		}
+			$toggle = 0;
+		if (!isset($this->request->cookie['toggle']) && !$vip) {
+			
+					
+					if(isset($this->request->get[strtolower($this->config->get('product_toggle_parameter'))]) || isset($this->request->get[strtoupper($this->config->get('product_toggle_parameter'))])){
+						/* 有参数正确,仿品可见,设置session */
+						
+						
+						if($this->config->get('product_toggle_expire')){
+							$expire = $this->config->get('product_toggle_expire');
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * $expire, '/' ,$this->request->server['HTTP_HOST']);
+						}else{
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * 30 * 12 * 10, '/' ,$this->request->server['HTTP_HOST']);
+						}
+						$toggle = 1;
+						
+					}else{
+						/* 无参数 */
+						
+						
+					}
+
+		}else{
+			$toggle = 1;
+		}
+			
+			
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="replace"><![CDATA[if ($category['top']) {]]></search>
+			<add trim="true"><![CDATA[
+			
+			$fake = 0;
+			if($this->config->get('category_toggle_status')){
+				$this->load->model('module/category_toggle');
+				$category_toggle = $this->model_module_category_toggle->getToggleByCategoryId($category['category_id']);
+				
+				if($category_toggle && $category_toggle['toggle']){
+					$fake = 1;
+				}else{
+					$fake = 0;
+				}
+			}
+			
+			if($toggle){
+				if($fake){
+					
+				}else{
+					continue;
+				}
+			}else{
+				if($fake){
+					continue;
+				}
+			}
+			
+			
+			if ($category['top']) {
+			]]></add>
+		</operation>
+	</file>	
+	
+	<file name="catalog/controller/module/category.php">
+		<operation>
+			<search position="before"><![CDATA[if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/module/category.tpl')) {]]></search>
+			<add trim="true"><![CDATA[
+
+		
+			
+			$vip = 0;
+		if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$customer_toggle = $this->model_module_customer_toggle->getToggleByCustomerId($customer_id);
+				if($customer_toggle){
+					if($customer_toggle['toggle']){
+						/* 有参数正确,仿品可见*/
+						$vip = 1;
+					}else{
+						/* 为 0*/
+						$vip = 0;
+					}
+				}else{
+					/* NULL */
+					$vip = 0;
+				}
+		}
+			$toggle = 0;
+		if (!isset($this->request->cookie['toggle']) && !$vip) {
+			
+					
+					if(isset($this->request->get[strtolower($this->config->get('product_toggle_parameter'))]) || isset($this->request->get[strtoupper($this->config->get('product_toggle_parameter'))])){
+						/* 有参数正确,仿品可见,设置session */
+						
+						
+						if($this->config->get('product_toggle_expire')){
+							$expire = $this->config->get('product_toggle_expire');
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * $expire, '/' ,$this->request->server['HTTP_HOST']);
+						}else{
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * 30 * 12 * 10, '/' ,$this->request->server['HTTP_HOST']);
+						}
+						$toggle = 1;
+						
+					}else{
+						/* 无参数 */
+						
+						
+					}
+
+		}else{
+			$toggle = 1;
+		}
+		
+			
+		if($this->config->get('category_toggle_status')){
+			$this->load->model('module/category_toggle');
+			foreach($data['categories'] as $key => $cate){
+				$category_toggle = $this->model_module_category_toggle->getToggleByCategoryId($cate['category_id']);
+				
+				if($toggle){
+				
+					if($category_toggle && $category_toggle['toggle']){
+						
+					}else{
+						unset($data['categories'][$key]);
+					}
+				
+				}else{
+				
+					if($category_toggle && $category_toggle['toggle']){
+						unset($data['categories'][$key]);
+					}else{
+						
+					}
+					
+				}
+				
+			}
+		}
+			
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/product/category.php">
+		<operation>
+			<search position="replace" index="2"><![CDATA[if ($category_info) {]]></search>
+			<add trim="ture"><![CDATA[
+			
+			$vip = 0;
+		if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$customer_toggle = $this->model_module_customer_toggle->getToggleByCustomerId($customer_id);
+				if($customer_toggle){
+					if($customer_toggle['toggle']){
+						/* 有参数正确,仿品可见*/
+						$vip = 1;
+					}else{
+						/* 为 0*/
+						$vip = 0;
+					}
+				}else{
+					/* NULL */
+					$vip = 0;
+				}
+		}
+			$toggle = 0;
+		if (!isset($this->request->cookie['toggle']) && !$vip) {
+			
+					
+					if(isset($this->request->get[strtolower($this->config->get('product_toggle_parameter'))]) || isset($this->request->get[strtoupper($this->config->get('product_toggle_parameter'))])){
+						/* 有参数正确,仿品可见,设置session */
+						
+						
+						if($this->config->get('product_toggle_expire')){
+							$expire = $this->config->get('product_toggle_expire');
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * $expire, '/' ,$this->request->server['HTTP_HOST']);
+						}else{
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * 30 * 12 * 10, '/' ,$this->request->server['HTTP_HOST']);
+						}
+						$toggle = 1;
+						
+					}else{
+						/* 无参数 */
+						
+						
+					}
+
+		}else{
+			$toggle = 1;
+		}
+		
+		if (isset($this->request->get['path'])) {
+
+			$path = '';
+
+			$parts = explode('_', (string)$this->request->get['path']);
+
+			$show_category_id = $parts[0];
+		} else {
+			$show_category_id = 0;
+		}
+		
+			$category_show = 1;
+		if($this->config->get('category_toggle_status') && $category_show){
+			$this->load->model('module/category_toggle');
+			
+				$category_toggle = $this->model_module_category_toggle->getToggleByCategoryId($show_category_id);
+				
+				if($toggle){
+				
+					if($category_toggle && $category_toggle['toggle']){
+						/* 仿品分类 带参数 */
+						$category_show = 1;
+					}else{
+						
+						$category_show = 0;
+					}
+				
+				}else{
+				
+					if($category_toggle && $category_toggle['toggle']){
+						$category_show = 0;
+					}else{
+						$category_show = 1;
+					}
+					
+				}
+				
+			
+		}
+	
+			
+			if ($category_info && $category_show) {
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/product/search.php">
+		<operation>
+			<search position="before" index="2"><![CDATA[$url = '';]]></search>
+			<add trim="true"><![CDATA[
+
+			$vip = 0;
+		if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$customer_toggle = $this->model_module_customer_toggle->getToggleByCustomerId($customer_id);
+				if($customer_toggle){
+					if($customer_toggle['toggle']){
+						/* 有参数正确,仿品可见*/
+						$vip = 1;
+					}else{
+						/* 为 0*/
+						$vip = 0;
+					}
+				}else{
+					/* NULL */
+					$vip = 0;
+				}
+		}
+			$toggle = 0;
+			
+		if (!isset($this->request->cookie['toggle']) && !$vip) {
+				if(isset($this->request->get[strtolower($this->config->get('product_toggle_parameter'))]) || isset($this->request->get[strtoupper($this->config->get('product_toggle_parameter'))])){
+						/* 有参数正确,仿品可见,设置session */
+						
+						
+						if($this->config->get('product_toggle_expire')){
+							$expire = $this->config->get('product_toggle_expire');
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * $expire, '/' ,$this->request->server['HTTP_HOST']);
+						}else{
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * 30 * 12 * 10, '/' ,$this->request->server['HTTP_HOST']);
+						}
+						$toggle = 1;
+						
+					}else{
+						/* 无参数 */
+						
+						
+					}
+
+		}else{
+			$toggle = 1;
+		}
+			
+		$sum_toggle = 0;	
+		if($this->config->get('product_toggle_status')){
+		
+			$this->load->model('module/product_toggle');
+			foreach($data['products'] as $key => $pro){
+				$product_toggle = $this->model_module_product_toggle->getToggleByProductId($pro['product_id']);
+				
+				if($toggle){
+				
+					if($product_toggle && $product_toggle['toggle']){
+						
+					}else{
+						unset($data['products'][$key]);
+						$sum_toggle++;
+					}
+				
+				}else{
+				
+					if($product_toggle && $product_toggle['toggle']){
+						unset($data['products'][$key]);
+						$sum_toggle++;
+					}else{
+						
+					}
+					
+				}
+				
+			}
+		}
+		
+		$product_total = $product_total - $sum_toggle;
+		
+		
+			
+			
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/information/sitemap.php">
+		<operation>
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add trim="true"><![CDATA[
+			$this->response->redirect($this->url->link('common/home', '', 'SSL'));
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/product/manufacturer.php">
+		<operation>
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add trim="true"><![CDATA[
+			$this->response->redirect($this->url->link('common/home', '', 'SSL'));
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[public function info() {]]></search>
+			<add trim="true"><![CDATA[
+			$this->response->redirect($this->url->link('common/home', '', 'SSL'));
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/product/special.php">
+		<operation>
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add trim="true"><![CDATA[
+			$this->response->redirect($this->url->link('common/home', '', 'SSL'));
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/default/template/common/footer.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<li><a href="<?php echo $sitemap; ?>"><?php echo $text_sitemap; ?></a></li>]]></search>
+			<add trim="true"><![CDATA[]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<li><a href="<?php echo $special; ?>"><?php echo $text_special; ?></a></li>]]></search>
+			<add trim="true"><![CDATA[]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<li><a href="<?php echo $manufacturer; ?>"><?php echo $text_manufacturer; ?></a></li>]]></search>
+			<add trim="true"><![CDATA[]]></add>
+		</operation>
+	</file>
+	
+</modification>

@@ -1,14 +1,28 @@
----------- Date: 2018-07-02 16:59:33 ~ IP : 93.109.63.126 ----------
-REQUEST URI : /index.php?route=checkout/checkout
+---------- Date: 2018-09-03 20:22:06 ~ IP : 127.0.0.1 ----------
+REQUEST URI : http://buy.localweb.com/
 MOD DETAILS:
-   modFile   : /home/buyindiscount/public_html/vqmod/xml/opencartmy_shipping_logo_setting_bonus.xml
-   id        : OpencartMy - Shipping Method Logo Setting (Bonus for Flat Rate, Free Shipping, Pickup From Store)
-   version   : 2.0
+   modFile   : D:\git\buy\vqmod/xml/a_vqmod_d_quickcheckout.xml
+   id        : AJAX QUICK CHECKOUT V6 BY DREAMVENTION
+   version   : 2.0.0.0
+   vqmver    : 2.2.1
+   author    : dreamvention.com
+VQModObject::parseMods - Could not resolve path for [system/library/cart/tax.php] (SKIPPED)
+MOD DETAILS:
+   modFile   : D:\git\buy\vqmod/xml/vqmod_admin_filter_products_by_category_2_0_7.xml
+   id        : Admin Filter Products By Category
+   version   : 2.0.6
+   vqmver    : 1.0.8
+   author    : Modification: dobv@seznam.cz
+VQModObject::parseMods - Could not resolve path for [admin/language/czech/catalog/product.php] (SKIPPED)
+MOD DETAILS:
+   modFile   : D:\git\buy\vqmod/xml/socl_login.xml
+   id        : Social Login
+   version   : 2.4
    vqmver    : 2.4.1
-   author    : opencartmy@gmail.com
+   author    : Sandklock
 
-File Name    : catalog/language/english/shipping/free.php(0)
-VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): ?>
+File Name    : system/startup.php(0)
+VQModObject::applyMod - SEARCH NOT FOUND (SKIPPED): // Common
 
 ----------------------------------------------------------------------
 

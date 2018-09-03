@@ -58,8 +58,11 @@
     <span class="mh-text">
 	
 		<a href="<?php echo $home; ?>">
-		
+		<?php if($show_logo){ ?>
+		<img src="catalog/view/theme/wap/logo2.png" alt="<?php echo $name; ?>"/>
+		<?php }else{ ?>
 		<img src="catalog/view/theme/wap/logo.png" alt="<?php echo $name; ?>"/>
+		<?php } ?>
 		</a>
 	
 	</span>

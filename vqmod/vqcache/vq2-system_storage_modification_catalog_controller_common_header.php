@@ -391,7 +391,13 @@ if(isset($show_logo)){
                 
             
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/header.tpl')) {
-if(IS_MOBILE){
+if(isset($show_logo) && $show_logo==1){
+				$data['show_logo'] = 1;
+			}else{
+				$data['show_logo'] = 0;
+			}
+			
+            if(IS_MOBILE){
                 return $this->load->view('wap/header.tpl', $data);
             }
 			return $this->load->view($this->config->get('config_template') . '/template/common/header.tpl', $data);

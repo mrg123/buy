@@ -25,6 +25,7 @@ $(function() {
 	// 加载新产品
 	var start = 0;
 	var validate = true;
+	
 	$(document).scroll(function(){  
 		var bottom_val = $(document).height() - $(document).scrollTop() - window.innerHeight;
 		

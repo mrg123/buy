@@ -94,11 +94,8 @@
 		<li><span><?php echo $category['name']; ?></span>
 			<ul>
 			<?php foreach ($category['children'] as $child) { ?>
-				<?php if($child['thumb']) { ?>
-			<li><a href="<?php echo $child['href']; ?>"><img src="<?php echo $child['thumb']; ?>" alt="<?php echo $child['name']; ?>" title="<?php echo $child['name']; ?>" /></a></li>
-				<?php }else{ ?>
+				
 			<li><a href="<?php echo $child['href']; ?>"><?php echo $child['name']; ?></a></li>	
-				<?php } ?>
 			
 			<?php } ?>
 			</ul>

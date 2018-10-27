@@ -630,7 +630,7 @@ class ControllerSaleOrder extends Controller {
 		$data['stores'][] = array(
 			'store_id' => 0,
 			'name'     => $this->language->get('text_default'),
-			'href'     => HTTP_CATALOG
+			'href'     => HTTPS_CATALOG
 		);
 
 		$results = $this->model_setting_store->getStores();

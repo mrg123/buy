@@ -324,12 +324,12 @@ class ControllerModuleCustomerToggle extends Controller {
 			$url .= '&page=' . $this->request->get['page'];
 		}
 
-		$data['sort_name'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=name' . $url, 'SSL');
-		$data['sort_email'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.email' . $url, 'SSL');
-		$data['sort_customer_group'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, 'SSL');
-		$data['sort_status'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.status' . $url, 'SSL');
-		$data['sort_ip'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.ip' . $url, 'SSL');
-		$data['sort_date_added'] = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . '&sort=c.date_added' . $url, 'SSL');
+		$data['sort_name'] = $this->url->link('module/customer_toggle', 'token=' . $this->session->data['token'] . '&sort=name' . $url, 'SSL');
+		$data['sort_email'] = $this->url->link('module/customer_toggle', 'token=' . $this->session->data['token'] . '&sort=c.email' . $url, 'SSL');
+		$data['sort_customer_group'] = $this->url->link('module/customer_toggle', 'token=' . $this->session->data['token'] . '&sort=customer_group' . $url, 'SSL');
+		$data['sort_status'] = $this->url->link('module/customer_toggle', 'token=' . $this->session->data['token'] . '&sort=c.status' . $url, 'SSL');
+		$data['sort_ip'] = $this->url->link('module/customer_toggle', 'token=' . $this->session->data['token'] . '&sort=c.ip' . $url, 'SSL');
+		$data['sort_date_added'] = $this->url->link('module/customer_toggle', 'token=' . $this->session->data['token'] . '&sort=c.date_added' . $url, 'SSL');
 
 		$url = '';
 
@@ -373,7 +373,7 @@ class ControllerModuleCustomerToggle extends Controller {
 		$pagination->total = $customer_total;
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
-		$pagination->url = $this->url->link('customer/customer', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
+		$pagination->url = $this->url->link('module/customer_toggle', 'token=' . $this->session->data['token'] . $url . '&page={page}', 'SSL');
 
 		$data['pagination'] = $pagination->render();
 

@@ -71,13 +71,13 @@ $.each(json.products,function(k,v){
     _html += '<div class="del" cart-id="'+v.cart_id+'" product-id="'+v.product_id+'"><i class="icon iconfont icon-lajitong"></i></div><div class="price">';
     _html += '<p>'+v.name+'</p>';
     _html += '<span class="price-new">'+v.price+'</span>';
-    _html += '</div><div class="info"><span class="numless">&nbsp; </span><span class="numqty"><input name="quantity" value="'+v.quantity+'" size="2" class="input-quantity" type="text" readonly ></span><span class="numadd"> &nbsp; </span></div></li>';
+    _html += '</div><div class="info"><span class="numless"> - </span><span class="numqty"><input name="quantity" value="'+v.quantity+'" size="2" class="input-quantity" type="text" readonly ></span><span class="numadd"> + </span></div></li>';
 });
 						_html += '<div class="col-xs-12" id="cart-checkout"><div class="col-xs-7">Total <span class="total">'+json.total+'</span></div><div class="col-xs-5"><a href="'+js_url.attr('checkout')+'" >Checkout</a></div></div>';
 						_html += '</ul></div>';
 
 					}else{
-						_html = '<div class="col-xs-12 empty"></div><a href="'+js_url.attr('home')+'" class="go-shopping">Go Shopping</a>';
+						_html = '<div class="col-xs-12 empty">Empty</div><a href="'+js_url.attr('home')+'" class="go-shopping">Continue Shopping</a>';
 
 					}
                     $('#bag-content').html(_html);
@@ -91,13 +91,6 @@ $.each(json.products,function(k,v){
             var quantity = qt.val();
             quantity++;
             qt.val(quantity);
-
-            /* var price = $(this).parent().parent().find('.price-new').html().substr(1);
-			var total = $('#cart-checkout').find('.total').html().substr(1);
-			var currency = $('#cart-checkout').find('.total').html().substr(0,1);
-			var new_total = currency + ((parseFloat(total)*100 + parseFloat(price)*100)/100).toFixed(2);
-            $('#cart-checkout').find('.total').html(new_total);*/
-
             var product_id = $(this).parent().parent().find('.del').attr('product-id');
 
             if(validate1) {
@@ -127,7 +120,7 @@ $.each(json.products,function(k,v){
                             setTimeout(function () {
                                 $('#cart-checkout').find('.total').html(json['total']);
                             }, 100);
-							getTotal();
+							$('#count-cart').html(json['count']);
                         }
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -146,13 +139,6 @@ $.each(json.products,function(k,v){
             if(oldValue<1){
                 oldValue = 1;
             }else{
-                /* var price = $(this).parent().parent().find('.price-new').html().substr(1);
-                var total = $('#cart-checkout').find('.total').html().substr(1);
-                var currency = $('#cart-checkout').find('.total').html().substr(0,1);
-                var new_total = currency + ((parseFloat(total)*100 - parseFloat(price)*100)/100).toFixed(2);
-                $('#cart-checkout').find('.total').html(new_total); */
-
-
                 var cart_id = $(this).parent().parent().find('.del').attr('cart-id');
 
                 if(validate2) {
@@ -172,7 +158,7 @@ $.each(json.products,function(k,v){
                         },
                         success: function (json) {
                            $('#cart-checkout').find('.total').html(json['total']);
-						   getTotal();
+						   $('#count-cart').html(json['count']);
                         },
                         error: function (xhr, ajaxOptions, thrownError) {
                             alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -188,13 +174,7 @@ $.each(json.products,function(k,v){
 		var validate3 = true;
         $('body').on('click','#cart .del',function(){
             var price = $(this).parent().find('.price-new').html().substr(1);
-			
-            /* var total = $('#cart-checkout').find('.total').html().substr(1);
-            var currency = $('#cart-checkout').find('.total').html().substr(0,1);
-            var quantity = $(this).parent().find('.input-quantity').val();
-            var new_total = currency + ((parseFloat(total)*100 - parseFloat(price)*100*quantity)/100).toFixed(2);
-            $('#cart-checkout').find('.total').html(new_total);*/
-			var total = '';
+			var count = 1;
 			$(this).parent().remove();
 
                 $.ajax({
@@ -212,19 +192,19 @@ $.each(json.products,function(k,v){
                         $('.cart-bg').hide();
                     },
                     success: function(json) {
-						total = $json['total'];
-                        $('#cart-checkout').find('.total').html($json['total']);
+                        $('#cart-checkout').find('.total').html(json['total']);
+						$('#count-cart').html(json['count']);
+						if(json['count']==0){
+							var _html = '<div class="col-xs-12 empty">The selected item was removed from your shopping cart.</div><a href="'+js_url.attr('home')+'" class="go-shopping">Continue Shopping</a>';
+                $('#bag-content').html(_html);
+						}
                     },
                     error: function(xhr, ajaxOptions, thrownError) {
                         alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
                     }
                 });
-
-            if(total.substr(1)==0){
-                var _html = '<div class="col-xs-12 empty"></div><a href="'+js_url.attr('home')+'" class="go-shopping">Go Shopping</a>';
-                $('#bag-content').html(_html);
-            }
-			getTotal();
+		
+			
 		});
 
     });

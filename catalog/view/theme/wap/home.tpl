@@ -44,7 +44,7 @@ $(function() {
 					validate = false;
 				},
                 success: function (json) {
-                    start += 20;
+                    start += 5;
 					
 					if(json.state){
 					var _html = '';

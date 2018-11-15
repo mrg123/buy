@@ -44,8 +44,8 @@
 <?php echo $analytic; ?>
 <?php } ?>
 
-<link rel="stylesheet" type="text/css" href="catalog/view/theme/wap/css/overload.css">
-<script src="catalog/view/theme/wap/js/common.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="catalog/view/theme/wap/css/overload.css?20181115">
+<script src="catalog/view/theme/wap/js/common.js?20181115" type="text/javascript"></script>
 </head>
 <body class="<?php echo $class; ?>">
 

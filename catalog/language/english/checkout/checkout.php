@@ -21,7 +21,7 @@ $_['text_guest']                     = 'Guest Checkout';
 $_['text_register_account']          = 'By creating an account you will be able to shop faster, be up to date on an order\'s status, and keep track of the orders you have previously made.';
 $_['text_forgotten']                 = 'Forgotten Password';
 $_['text_your_details']              = 'Your Personal Details';
-$_['text_your_address']              = 'Your Address';
+$_['text_your_address']              = 'Shipping Address';
 $_['text_your_password']             = 'Your Password';
 $_['text_agree']                     = 'I have read and agree to the <a href="%s" class="agree"><b>%s</b></a>';
 $_['text_address_new']               = 'I want to use a new address';

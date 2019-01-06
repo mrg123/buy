@@ -1,5 +1,5 @@
 <?php if (count($currencies) > 1) { ?>
-<div class="pull-left">
+<div class="pull-right">
 <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="currency">
   <div class="btn-group">
     <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">

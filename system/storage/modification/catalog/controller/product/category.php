@@ -94,7 +94,7 @@ class ControllerProductCategory extends Controller {
 			$this->document->setDescription($category_info['meta_description']);
 			$this->document->setKeywords($category_info['meta_keyword']);
 
-			$data['heading_title'] = $category_info['name'];
+			
 
 			$data['text_refine'] = $this->language->get('text_refine');
 			$data['text_empty'] = $this->language->get('text_empty');
@@ -168,9 +168,7 @@ class ControllerProductCategory extends Controller {
 
 			$filter_data = array(
 				'filter_category_id' => $category_id,
-
 				'filter_sub_category' => true,
-            
 				'filter_filter'      => $filter,
 				'sort'               => $sort,
 				'order'              => $order,
@@ -181,6 +179,11 @@ class ControllerProductCategory extends Controller {
 			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
+			
+			$data['heading_title'] = $category_info['name'];
+			$data['heading_title_tip'] = ' (' . $product_total . ')';
+			
+			
 
 			foreach ($results as $result) {
 				if ($result['image']) {
@@ -268,7 +271,7 @@ class ControllerProductCategory extends Controller {
 				'value' => 'p.price-DESC',
 				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order=DESC' . $url)
 			);
-
+			/*
 			if ($this->config->get('config_review_status')) {
 				$data['sorts'][] = array(
 					'text'  => $this->language->get('text_rating_desc'),
@@ -294,6 +297,7 @@ class ControllerProductCategory extends Controller {
 				'value' => 'p.model-DESC',
 				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.model&order=DESC' . $url)
 			);
+			*/
 
 			$url = '';
 

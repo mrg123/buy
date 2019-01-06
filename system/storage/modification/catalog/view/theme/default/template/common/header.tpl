@@ -21,7 +21,7 @@
 <link href="catalog/view/javascript/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen" />
 <script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 <link href="catalog/view/javascript/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-<link href="catalog/view/theme/default/stylesheet/stylesheet.css" rel="stylesheet">
+<link href="catalog/view/theme/default/stylesheet/stylesheet.css?20190106" rel="stylesheet">
 <?php foreach ($styles as $style) { ?>
 <link href="<?php echo $style['href']; ?>" type="text/css" rel="<?php echo $style['rel']; ?>" media="<?php echo $style['media']; ?>" />
 <?php } ?>
@@ -106,18 +106,52 @@
                         .removeClass('open')
                 }
               });
+			  
+			  $(document).scroll(function () {
+					
+					if($(this).scrollTop()==0){
+						$('.fixed_cover').hide();
+						$('#top').css({
+							'position':'relative'
+						});
+						$('header').css({
+							'position':'relative'
+						});
+						$('.jumbotron').css({
+							'position':'relative'
+						});
+					}else{
+						$('.fixed_cover').show();
+						$('#top').css({
+							'position':'fixed',
+							'z-index':'999',
+							'width':'100%'
+						});
+						$('header').css({
+							'position':'fixed',
+							'z-index':'999',
+							'width':'100%',
+							'background-color':'#fff'
+						});
+						$('.jumbotron').css({
+							'position':'fixed',
+							'z-index':'999',
+							'width':'100%'
+						});
+					}
+			  });
             });
           </script>
         
 </head>
 <body class="<?php echo $class; ?>">
-<nav id="top">
+<nav id="top" style="margin:0;">
   <div class="container">
-    <?php echo $currency; ?>
+   
     <?php echo $language; ?>
     <div id="top-links" class="nav pull-right">
       <ul class="list-inline">
-        <li><a href="<?php echo $contact; ?>"><i class="fa fa-phone"></i></a> <span class="hidden-xs hidden-sm hidden-md"><?php echo $telephone; ?></span></li>
+       
         <li class="dropdown"><a href="<?php echo $account; ?>" title="<?php echo $text_account; ?>" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <span class="hidden-xs hidden-sm hidden-md"><?php echo $text_account; ?></span> <span class="caret"></span></a>
           <ul class="dropdown-menu dropdown-menu-right">
             <?php if ($logged) { ?>
@@ -142,16 +176,20 @@
 				
       </ul>
     </div>
+  
+   <?php echo $currency; ?>
   </div>
-	
-            </div> 
+  	
+</div> 
 	       
 </nav>
+<div class="fixed_cover" style="width:100%;height:44px;margin:0;padding:0;display:none;"></div>
 <header>
-  <div class="container">
+<div style="width:100%;height:20px;margin:0;padding:0;"></div>
+  <div class="container" style="padding-top:10px">
     <div class="row">
       <div class="col-sm-4">
-        <div id="logo">
+        <div id="logo" style="margin: -10px 0 0 0;">
           <?php if ($logo) { ?>
           <a href="<?php echo $home; ?>"><img src="<?php echo $logo; ?>" title="<?php echo $name; ?>" alt="<?php echo $name; ?>" class="img-responsive" /></a>
           <?php } else { ?>
@@ -159,17 +197,17 @@
           <?php } ?>
         </div>
       </div>
-      <div class="col-sm-5"><?php echo $search; ?>
+      <div class="col-sm-6"><?php echo $search; ?>
       </div>
-      <div class="col-sm-3"><?php echo $cart; ?></div>
+      <div class="col-sm-2"><?php echo $cart; ?></div>
     </div>
   </div>
 </header>
+<div class="fixed_cover" style="width:100%;height:70px;margin:0;padding:0;display:none;"></div>
 <?php if ($categories) { ?>
-	
-           <div class="jumbotron" style="margin:0;padding:0;">		  
-	       
-  <nav id="menu" class="navbar">
+<div class="jumbotron" style="margin-bottom:10px;padding:0;">		  
+	<div style="width:100%;height:20px;margin:0;padding:0;background-color:#fff"></div>       
+  <nav id="menu" class="navbar" style="margin:0">
 	
             <div class="container"> 
 	       
@@ -216,4 +254,5 @@
 	       
   </nav>
 </div>
+<div class="fixed_cover" style="width:100%;height:40px;margin:0;padding:0;display:none;"></div>
 <?php } ?>

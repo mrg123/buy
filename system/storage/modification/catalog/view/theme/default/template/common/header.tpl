@@ -129,13 +129,13 @@
 						});
 						$('header').css({
 							'position':'fixed',
-							'z-index':'999',
+							'z-index':'998',
 							'width':'100%',
 							'background-color':'#fff'
 						});
 						$('.jumbotron').css({
 							'position':'fixed',
-							'z-index':'999',
+							'z-index':'997',
 							'width':'100%'
 						});
 					}

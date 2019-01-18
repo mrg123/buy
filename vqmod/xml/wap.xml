@@ -424,6 +424,11 @@ public function down(){
 					$rating = false;
 				}
 
+
+				if($data['show_logo']==0 && $result['toggle']==1){
+					continue;
+				}
+
 				$products[] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,

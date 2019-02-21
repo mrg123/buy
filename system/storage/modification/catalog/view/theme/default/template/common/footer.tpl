@@ -89,7 +89,7 @@ footer .share42init, footer .col-sm-4 + .col-sm-4, footer .col-sm-4 + .col-sm-4 
 			
     
 <div class="col-sm-4">
-<div class="share42init"></div><script type="text/javascript" src="<?php echo $config_url; ?>image/share42en/share42.js"></script>
+<div class="share42init"></div>
 </div>
 <div class="col-sm-4">
 <?php echo $powered; ?>

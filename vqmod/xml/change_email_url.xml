@@ -24,7 +24,7 @@
 		}
 		}
 		
-		$message .= $server . $this->url->link('account/login', '', 'SSL') . "\n\n";
+		$message .= $this->url->link('account/login', '', 'SSL') . "\n\n";
 			]]></add>
 		</operation>
     </file>

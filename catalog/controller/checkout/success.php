@@ -64,7 +64,7 @@ class ControllerCheckoutSuccess extends Controller {
 			'href' => $this->url->link('checkout/success')
 		);
 
-		$data['heading_title'] = $this->language->get('heading_title');
+		$data['heading_title'] = $this->language->get('heading_title') . $this->session->data['order_id'];
 
 		if ($this->customer->isLogged()) {
 			$data['text_message'] = sprintf($this->language->get('text_customer'), $this->url->link('account/account', '', 'SSL'), $this->url->link('account/order', '', 'SSL'), $this->url->link('account/download', '', 'SSL'), $this->url->link('information/contact'));

@@ -252,7 +252,7 @@ $('input[name=\'quantity\']').val(oldValue);
 });
 //--></script>
               <input type="hidden" name="product_id" value="<?php echo $product_id; ?>" />
-&nbsp;<a target="_blank" href="https://www.mcafeesecure.com/verify?host=<?php echo HTTP_SERVER; ?>"><img class="mfes-trustmark" border="0" src="image/102.gif.png" width="90" height="37" title="McAfee SECURE sites help keep you safe from identity theft, credit card fraud, spyware, spam, viruses and online scams" alt="McAfee SECURE sites help keep you safe from identity theft, credit card fraud, spyware, spam, viruses and online scams" oncontextmenu="window.open('https://www.mcafeesecure.com/verify?host=<?php echo HTTP_SERVER; ?>'); return false;"></a>
+
               <br />
 
 <?php if ($products){ ?>	

@@ -1,4 +1,5 @@
 .idea/
+.vscode/
 system/storage/cache/
 system/storage/logs/
 vqmod/checked.cache

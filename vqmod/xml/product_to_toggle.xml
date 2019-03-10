@@ -100,6 +100,11 @@
 				$lang = substr($this->request->server['HTTP_ACCEPT_LANGUAGE'],0,2); 
 				if($lang == 'zh'){
 					/* 中文,显示提示页面 */
+					if($this->config->get('ban_chinese_status')){
+						$this->response->redirect($this->url->link('information/toggle_ban', '', 'SSL'));
+					}
+
+
 					if($this->config->get('product_toggle_warning_zh')){
 						echo $this->config->get('product_toggle_warning_zh');exit;
 					}else{

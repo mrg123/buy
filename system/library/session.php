@@ -15,6 +15,10 @@ class Session {
 
 			if ($session_id) {
 				session_id($session_id);
+			}else{
+				if(isset($_COOKIE['cart_session'])){
+					session_id($_COOKIE['cart_session']);
+				}
 			}
 
 			session_set_cookie_params(0, '/');
@@ -29,6 +33,9 @@ class Session {
 	}
 
 	public function getId() {
+		if(!isset($_COOKIE['cart_session'])){
+			setcookie('cart_session', session_id(), time() + 31536000, '/');
+		}
 		return session_id();
 	}
 

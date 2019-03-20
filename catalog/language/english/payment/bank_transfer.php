@@ -1,6 +1,6 @@
 <?php
 // Text
-$_['text_title']				= 'Bank Transfer';
-$_['text_instruction']			= 'Bank Transfer Instructions';
-$_['text_description']			= 'Please transfer the total amount to the following bank account.';
-$_['text_payment']				= 'Your order will not ship until we receive payment.';
+$_['text_title']				= 'PayPal';
+$_['text_instruction']			= '***********************Regrading the processing of this order read the following content if you please.***********************';
+$_['text_description']			= 'Sample text.';
+$_['text_payment']				= 'Thank you again for shopping with us!';

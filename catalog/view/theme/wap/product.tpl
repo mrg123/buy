@@ -31,7 +31,7 @@
             <?php } ?>
           </ul>
           <?php } ?>
-            <h1 style="font-size:2.5rem;clear:both;padding-top: 10px;"><?php echo $heading_title; ?></h1>
+            <h1 style="font-size:1.2rem;clear:both;padding-top: 10px;"><?php echo $heading_title; ?></h1>
         </div>
         <?php if ($column_left || $column_right) { ?>
         <?php $class = 'col-sm-6'; ?>
@@ -58,7 +58,7 @@
             <?php } else { ?>
             <li><span style="text-decoration: line-through;color:#222;"><?php echo $price; ?></span></li>
             <li>
-              <h2 style="color:#222;margin-top: 10px;font-size:2rem;"><?php echo $special; ?><?php if($price_saved) { ?>&nbsp;<span style="color:red;font-size:1.5rem;"><?php echo $price_saved; ?> Saved</span><?php } ?></h2>
+              <h2 style="color:#222;margin-top: 10px;font-size:1.4rem;"><?php echo $special; ?><?php if($price_saved) { ?>&nbsp;<span style="color:red;font-size:1.4rem;"><?php echo $price_saved; ?> Saved</span><?php } ?></h2>
             </li>
             <?php } ?>
             <?php if ($tax) { ?>

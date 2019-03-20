@@ -73,7 +73,7 @@ $.each(json.products,function(k,v){
     _html += '<span class="price-new">'+v.price+'</span>';
     _html += '</div><div class="info"><span class="numless"> - </span><span class="numqty"><input name="quantity" value="'+v.quantity+'" size="2" class="input-quantity" type="text" readonly ></span><span class="numadd"> + </span></div></li>';
 });
-						_html += '<div class="col-xs-12" id="cart-checkout"><div class="col-xs-7">Total <span class="total">'+json.total+'</span></div><div class="col-xs-5"><a href="'+js_url.attr('checkout')+'" >Checkout</a></div></div>';
+						_html += '<div class="col-xs-12" id="cart-checkout"><div class="col-xs-7">TOTAL <span class="total">'+json.total+'</span></div><div class="col-xs-5"><a href="'+js_url.attr('checkout')+'" >CHECKOUT</a></div></div>';
 						_html += '</ul></div>';
 
 					}else{

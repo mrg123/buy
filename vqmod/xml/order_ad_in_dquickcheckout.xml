@@ -56,7 +56,7 @@
 			<add trim="true"><![CDATA[
 
 $('#modal-order_ad').modal('show');
-$('#modal-order_ad .modal-dialog').css({'margin': 300 + 'px auto'});  
+$('#modal-order_ad .modal-dialog').css({'margin': 800 + 'px auto'});  
 
 
 			]]></add>

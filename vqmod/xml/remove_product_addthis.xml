@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>remove product addThis</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+	
+	<file name="catalog/controller/product/product.php">
+		<operation>
+			<search position="before"><![CDATA[$data['products'][] = array(]]></search>
+			<add><![CDATA[
+			$product_options = $this->model_catalog_product->getProductOptions($result['product_id']);
+			$op_required = 0;
+			foreach ($product_options as $product_option) {
+				if ($product_option['required'] && empty($option[$product_option['product_option_id']])) {
+					$op_required = 1;
+				}
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[$data['products'][] = array(]]></search>
+			<add><![CDATA['required'=>$op_required,]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[public function write() {]]></search>
+			<add><![CDATA[
+			public function addOptionProductToCart(){
+				$product_id = $this->request->post['product_id'];
+				$quantity = $this->request->post['quantity'];
+				$options = $this->request->post['options'];
+				$recurring_id = 0;
+				
+				
+				// 123_1232,1232_333
+				$arr = explode(',',substr($options,1));
+				$option = array();
+				foreach($arr as $arr2){
+					// 123_1232
+					$arr3 = explode('_',$arr2);
+					$option[$arr3[0]] = $arr3[1];
+				}
+				
+			
+				$this->cart->add($this->request->post['product_id'], $quantity, $option, $recurring_id);
+				
+				$json = true;
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($json));
+			}
+			
+			public function getOptionProduct(){
+		
+		$this->load->language('product/product');
+
+		if (isset($this->request->get['product_id'])) {
+			$product_id = (int)$this->request->get['product_id'];
+		} else {
+			$product_id = 0;
+		}
+
+if($this->config->get('product_toggle_status') && $product_id){
+
+			
+			
+			$vip = 0;
+		if ($this->config->get('customer_toggle_status') && $this->customer->isLogged()) {
+				$customer_id = $this->customer->getId();
+				$this->load->model('module/customer_toggle');
+				$customer_toggle = $this->model_module_customer_toggle->getToggleByCustomerId($customer_id);
+				if($customer_toggle){
+					if($customer_toggle['toggle']){
+						/* 有参数正确,仿品可见*/
+						$vip = 1;
+					}else{
+						/* 为 0*/
+						$vip = 0;
+					}
+				}else{
+					/* NULL */
+					$vip = 0;
+				}
+		}
+			$this->load->model('module/product_toggle');
+		if (!isset($this->request->cookie['toggle']) && !$vip) {
+			$product_toggle = $this->model_module_product_toggle->getToggleByProductId($product_id);
+			if($product_toggle){
+				if($product_toggle['toggle']){
+					
+					if(isset($this->request->get[strtolower($this->config->get('product_toggle_parameter'))]) || isset($this->request->get[strtoupper($this->config->get('product_toggle_parameter'))])){
+						/* 有参数正确,仿品可见,设置session */
+						
+						if($this->config->get('product_toggle_expire')){
+							$expire = $this->config->get('product_toggle_expire');
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * $expire, '/' ,$this->request->server['HTTP_HOST']);
+						}else{
+							setcookie('toggle', '1' , time() + 60 * 60 * 24 * 30 * 12 * 10, '/' ,$this->request->server['HTTP_HOST']);
+						}
+						
+					}else{
+						/* 无参数 仿品转正品*/
+						$product_id = $product_toggle['related_id'];
+						
+					}
+					
+				}else{
+					/* toggle 值为 0 正品 */
+					
+				}
+				
+			}else{
+				/* toggle 值为 NULL 正品*/
+				
+			}
+		}	
+			
+
+			
+			/* change product_id */
+			$this->request->get['product_id'] = $product_id;
+
+			}
+		
+		$this->load->model('catalog/product');
+
+		$product_info = $this->model_catalog_product->getProduct($product_id);
+
+		if ($product_info) {
+
+			$data['heading_title'] = $product_info['name'];
+
+			$data['text_select'] = $this->language->get('text_select');
+			$data['text_manufacturer'] = $this->language->get('text_manufacturer');
+			$data['text_model'] = $this->language->get('text_model');
+			$data['text_reward'] = $this->language->get('text_reward');
+			$data['text_points'] = $this->language->get('text_points');
+			$data['text_stock'] = $this->language->get('text_stock');
+			$data['text_discount'] = $this->language->get('text_discount');
+			$data['text_tax'] = $this->language->get('text_tax');
+			$data['text_option'] = $this->language->get('text_option');
+			$data['text_minimum'] = sprintf($this->language->get('text_minimum'), $product_info['minimum']);
+			$data['text_write'] = $this->language->get('text_write');
+			$data['text_login'] = sprintf($this->language->get('text_login'), $this->url->link('account/login', '', 'SSL'), $this->url->link('account/register', '', 'SSL'));
+			$data['text_note'] = $this->language->get('text_note');
+			$data['text_tags'] = $this->language->get('text_tags');
+			$data['text_related'] = $this->language->get('text_related');
+			$data['text_payment_recurring'] = $this->language->get('text_payment_recurring');
+			$data['text_loading'] = $this->language->get('text_loading');
+
+			$data['entry_qty'] = $this->language->get('entry_qty');
+			$data['entry_name'] = $this->language->get('entry_name');
+			$data['entry_review'] = $this->language->get('entry_review');
+			$data['entry_rating'] = $this->language->get('entry_rating');
+			$data['entry_good'] = $this->language->get('entry_good');
+			$data['entry_bad'] = $this->language->get('entry_bad');
+
+			$data['button_cart'] = $this->language->get('button_cart');
+			$data['button_wishlist'] = $this->language->get('button_wishlist');
+			$data['button_compare'] = $this->language->get('button_compare');
+			$data['button_upload'] = $this->language->get('button_upload');
+			$data['button_continue'] = $this->language->get('button_continue');
+
+			$this->load->model('catalog/review');
+
+			$data['tab_description'] = $this->language->get('tab_description');
+			$data['tab_attribute'] = $this->language->get('tab_attribute');
+			$data['tab_review'] = sprintf($this->language->get('tab_review'), $product_info['reviews']);
+
+			$data['product_id'] = (int)$this->request->get['product_id'];
+			$data['manufacturer'] = $product_info['manufacturer'];
+			$data['manufacturers'] = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $product_info['manufacturer_id']);
+			$data['model'] = $product_info['model'];
+			$data['reward'] = $product_info['reward'];
+			$data['points'] = $product_info['points'];
+			$data['description'] = utf8_substr(strip_tags(html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get('config_product_description_length')) . '..';
+
+			if ($product_info['quantity'] <= 0) {
+				$data['stock'] = $product_info['stock_status'];
+			} elseif ($this->config->get('config_stock_display')) {
+				$data['stock'] = $product_info['quantity'];
+			} else {
+				$data['stock'] = $this->language->get('text_instock');
+			}
+
+			$this->load->model('tool/image');
+
+			
+			if ($product_info['image']) {
+				$data['popup1'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));
+			} else {
+				$data['popup1'] = '';
+			}
+
+			if ($product_info['image']) {
+				$data['thumb1'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_additional_width'), $this->config->get('config_image_additional_height'));
+			} else {
+				$data['thumb1'] = '';
+			}
+			
+			if ($product_info['image']) {
+				$data['big_thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
+			} else {
+				$data['big_thumb'] = '';
+			}
+
+			
+			
+
+			if ($product_info['image']) {
+				$data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height'));
+			} else {
+				$data['popup'] = '';
+			}
+
+			if ($product_info['image']) {
+				$data['thumb'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height'));
+			} else {
+				$data['thumb'] = '';
+			}
+
+			$data['images'] = array();
+
+			$results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
+
+			foreach ($results as $result) {
+				$data['images'][] = array(
+                                     'big_thumb'                  => $this->model_tool_image->resize($result['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height')), 
+					'popup' => $this->model_tool_image->resize($result['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height')),
+					'thumb' => $this->model_tool_image->resize($result['image'], $this->config->get('config_image_additional_width'), $this->config->get('config_image_additional_height'))
+				);
+			}
+
+			if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
+				$data['price'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')));
+			} else {
+				$data['price'] = false;
+			}
+
+			if ((float)$product_info['special']) {
+				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')));
+$data['price_saved'] = $this->currency->format($this->tax->calculate($product_info['price'] - $product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')));
+			} else {
+				$data['special'] = false;
+$data['price_saved'] = false;
+			}
+
+			if ($this->config->get('config_tax')) {
+				$data['tax'] = $this->currency->format((float)$product_info['special'] ? $product_info['special'] : $product_info['price']);
+			} else {
+				$data['tax'] = false;
+			}
+
+			$discounts = $this->model_catalog_product->getProductDiscounts($this->request->get['product_id']);
+
+			$data['discounts'] = array();
+
+			foreach ($discounts as $discount) {
+				$data['discounts'][] = array(
+'price_saved'    => $this->currency->format($this->tax->calculate($product_info['price']-$discount['price'], $product_info['tax_class_id'], $this->config->get('config_tax'))),
+'price_saved'    => $this->currency->format($this->tax->calculate($product_info['price']-$discount['price'], $product_info['tax_class_id'], $this->config->get('config_tax'))),
+					'quantity' => $discount['quantity'],
+					'price'    => $this->currency->format($this->tax->calculate($discount['price'], $product_info['tax_class_id'], $this->config->get('config_tax')))
+				);
+			}
+
+			$data['options'] = array();
+			
+			$op_required = array();
+
+			foreach ($this->model_catalog_product->getProductOptions($this->request->get['product_id']) as $option) {
+				$product_option_value_data = array();
+
+				foreach ($option['product_option_value'] as $option_value) {
+					if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
+						if ((($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) && (float)$option_value['price']) {
+							$price = $this->currency->format($this->tax->calculate($option_value['price'], $product_info['tax_class_id'], $this->config->get('config_tax') ? 'P' : false));
+						} else {
+							$price = false;
+						}
+
+						$product_option_value_data[] = array(
+   'imagel'                  => $this->model_tool_image->resize($option_value['image'], $this->config->get('config_image_thumb_width'), $this->config->get('config_image_thumb_height')),
+'imagexl'                  => $this->model_tool_image->resize($option_value['image'], $this->config->get('config_image_popup_width'), $this->config->get('config_image_popup_height')),
+							'product_option_value_id' => $option_value['product_option_value_id'],
+							'option_value_id'         => $option_value['option_value_id'],
+							'name'                    => $option_value['name'],
+							'image'                   => $this->model_tool_image->resize($option_value['image'], 50, 50),
+							'price'                   => $price,
+							'price_prefix'            => $option_value['price_prefix']
+						);
+					}
+				}
+
+				$data['options'][] = array(
+					'product_option_id'    => $option['product_option_id'],
+					'product_option_value' => $product_option_value_data,
+					'option_id'            => $option['option_id'],
+					'name'                 => $option['name'],
+					'type'                 => $option['type'],
+					'value'                => $option['value'],
+					'required'             => $option['required']
+				);
+				
+				if($option['required']){
+					$op_required[] = $option['product_option_id'];
+				}
+			}
+			
+			$data['op_required'] = $op_required;
+
+			if ($product_info['minimum']) {
+				$data['minimum'] = $product_info['minimum'];
+			} else {
+				$data['minimum'] = 1;
+			}
+
+			$data['review_status'] = $this->config->get('config_review_status');
+$data['shipping_information_status'] = $this->config->get('shipping_information_status');
+			if($this->config->get('shipping_information_status')){
+				$shipping_information_description = $this->config->get('shipping_information_description');
+				$language_id = $this->config->get('config_language_id');
+				$data['shipping_information_title'] = $shipping_information_description[$language_id]['title'];
+				$data['shipping_information_description'] = html_entity_decode($shipping_information_description[$language_id]['description'], ENT_QUOTES, 'UTF-8');
+			}
+
+			if ($this->config->get('config_review_guest') || $this->customer->isLogged()) {
+				$data['review_guest'] = true;
+			} else {
+				$data['review_guest'] = false;
+			}
+
+			if ($this->customer->isLogged()) {
+				$data['customer_name'] = $this->customer->getFirstName() . '&nbsp;' . $this->customer->getLastName();
+			} else {
+				$data['customer_name'] = '';
+			}
+
+			$data['reviews'] = sprintf($this->language->get('text_reviews'), (int)$product_info['reviews']);
+			$data['rating'] = (int)$product_info['rating'];
+
+
+			$data['attribute_groups'] = $this->model_catalog_product->getProductAttributes($this->request->get['product_id']);
+
+			$data['recurrings'] = $this->model_catalog_product->getProfiles($this->request->get['product_id']);
+
+			$this->model_catalog_product->updateViewed($this->request->get['product_id']);
+
+			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/product/product.tpl')) {
+				$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/product/option_product.tpl', $data));
+			} else {
+				$this->response->setOutput($this->load->view('default/template/product/option_product.tpl', $data));
+			}
+
+		} else {
+			$url = '';
+
+			if (isset($this->request->get['path'])) {
+				$url .= '&path=' . $this->request->get['path'];
+			}
+
+			if (isset($this->request->get['filter'])) {
+				$url .= '&filter=' . $this->request->get['filter'];
+			}
+
+			if (isset($this->request->get['manufacturer_id'])) {
+				$url .= '&manufacturer_id=' . $this->request->get['manufacturer_id'];
+			}
+
+			if (isset($this->request->get['search'])) {
+				$url .= '&search=' . $this->request->get['search'];
+			}
+
+			if (isset($this->request->get['tag'])) {
+				$url .= '&tag=' . $this->request->get['tag'];
+			}
+
+			if (isset($this->request->get['description'])) {
+				$url .= '&description=' . $this->request->get['description'];
+			}
+
+			if (isset($this->request->get['category_id'])) {
+				$url .= '&category_id=' . $this->request->get['category_id'];
+			}
+
+			if (isset($this->request->get['sub_category'])) {
+				$url .= '&sub_category=' . $this->request->get['sub_category'];
+			}
+
+			if (isset($this->request->get['sort'])) {
+				$url .= '&sort=' . $this->request->get['sort'];
+			}
+
+			if (isset($this->request->get['order'])) {
+				$url .= '&order=' . $this->request->get['order'];
+			}
+
+			if (isset($this->request->get['page'])) {
+				$url .= '&page=' . $this->request->get['page'];
+			}
+
+			if (isset($this->request->get['limit'])) {
+				$url .= '&limit=' . $this->request->get['limit'];
+			}
+
+			$data['breadcrumbs'][] = array(
+				'text' => $this->language->get('text_error'),
+				'href' => $this->url->link('product/product', $url . '&product_id=' . $product_id)
+			);
+
+			$this->document->setTitle($this->language->get('text_error'));
+
+			$data['heading_title'] = $this->language->get('text_error');
+
+			$data['text_error'] = $this->language->get('text_error');
+
+			$data['button_continue'] = $this->language->get('button_continue');
+
+			$data['continue'] = $this->url->link('common/home');
+
+			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
+
+			$data['column_left'] = $this->load->controller('common/column_left');
+			$data['column_right'] = $this->load->controller('common/column_right');
+			$data['content_top'] = $this->load->controller('common/content_top');
+			$data['content_bottom'] = $this->load->controller('common/content_bottom');
+			$data['footer'] = $this->load->controller('common/footer');
+			$data['header'] = $this->load->controller('common/header');
+
+			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/error/not_found.tpl')) {
+				$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/error/not_found.tpl', $data));
+			} else {
+				$this->response->setOutput($this->load->view('default/template/error/not_found.tpl', $data));
+			}
+		}
+		
+		
+		
+		
+		
+	}
+	
+			]]></add>
+		</operation>
+	</file>
+	
+	
+	
+    <file name="catalog/view/theme/default/template/product/product.tpl">
+		<operation info="remove product addthis">
+			<search position="replace"><![CDATA[<div class="addthis_toolbox addthis_default_style"><a class="addthis_button_facebook_like" fb:like:layout="button_count"></a> <a class="addthis_button_tweet"></a> <a class="addthis_button_pinterest_pinit"></a> <a class="addthis_counter addthis_pill_style"></a></div>]]></search>
+			<add><![CDATA[]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-515eeaf54693130e"></script>]]></search>
+			<add><![CDATA[]]></add>
+		</operation>
+		
+		<operation info="change product quantity css">
+			<search position="replace"><![CDATA[<?php echo $entry_qty; ?>]]></search>
+			<add trim="true"><![CDATA[<b><?php echo $entry_qty; ?></b>]]></add>
+		</operation>
+		
+		<operation>
+			<search position="replace"><![CDATA[<input type="text" name="quantity" value="<?php echo $minimum; ?>" size="2" id="input-quantity" class="thumb form-control" />]]></search>
+			<add trim="true"><![CDATA[
+<style type="text/css">
+
+
+.numadd , .numless{width:23px;height:22px;display:inline-block;color:#666;cursor:pointer;background-image:url(catalog/view/theme/default/image/add_less.png);}
+.numadd{background-position:0px -22px;    margin-bottom: 20px;}
+.numless{background-position:0px 0px;}
+.numqty{width:40px;height:22px;display:inline-block;position: relative;height:22px;line-height:22px;}
+#input-quantity{color:#666;text-align:center;border:0px solid #f2f2f0;padding:0;position: absolute;top:8px;}
+
+
+.op_numadd , .op_numless{width:23px;height:22px;display:inline-block;color:#666;cursor:pointer;background-image:url(catalog/view/theme/default/image/add_less.png);background-color:#f2f2f0;}
+.op_numadd{background-position:0px -22px;    margin-bottom: 20px;}
+.op_numless{background-position:0px 0px;}
+.op_numqty{width:40px;height:22px;display:inline-block;position: relative;height:22px;line-height:22px;}
+#input-op_quantity{color:#666;text-align:center;border:0px solid #f2f2f0;padding:0;position: absolute;top:8px;}
+
+
+</style>
+&nbsp;&nbsp;
+			<span class="numless">&nbsp;</span>
+				<span class="numqty">
+				<input type="text" name="quantity" value="<?php echo $minimum; ?>" size="2" id="input-quantity"/>
+				</span>
+			<span class="numadd">&nbsp;</span>
+<script> 	
+$('.numadd').on('click',function(){
+var oldValue = $('input[name=\'quantity\']').val();
+oldValue++;
+$('input[name=\'quantity\']').val(oldValue);
+});
+$('.numless').on('click',function(){
+var oldValue = $('input[name=\'quantity\']').val();
+oldValue--;
+if(oldValue<=1){
+oldValue = 1;
+}
+$('input[name=\'quantity\']').val(oldValue);
+});
+//--></script> 
+			]]></add>
+		</operation>
+		
+		<operation info="remove related product">
+			<search position="replace"><![CDATA[<?php if ($products) { ?>]]></search>
+			<add><![CDATA[<?php if (0) { ?> ]]></add>
+		</operation>
+		
+		<operation info="add new related product">
+			<search position="after"><![CDATA[<br />]]></search>
+			<add><![CDATA[
+<?php if ($products){ ?>	
+	  
+<div class="block block-related">
+    <div class="block-title" style="color:#969696;font-weight:600;line-height:20px;text-transform:uppercase;font-size:12px;margin-bottom:5px;">
+	<?php echo $text_related; ?>
+	</div>
+	<?php foreach ($products as $product) { ?>	
+    <div class="block-content related-product-list" style="line-height:15px;align-items:center;display:flex;margin-bottom:10px;cursor:pointer;">
+                        
+                    <div class="related-product-image" style="display:block;width:50px;height:50px;line-height:100%;box-sizing:border-box;">
+                        <img src="<?php echo $product['thumb']; ?>" alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>" width="50"/>
+                    </div>
+                    <div class="related-product-selected" style="padding:0 8px;line-height:100%;box-sizing:border-box;width:40px;">
+                        <label>
+							<input type="checkbox" value="<?php echo $product['product_id']; ?>" data-min="<?php echo $product['minimum']; ?>" name="related[]" style="width:18px;height:18px;" data-quantity='<?php echo $product['minimum']; ?>' data-option='' data-required='<?php echo $product['required']; ?>' />
+						</label>
+                    </div>
+					<div class="related-product-name" style="text-transform:uppercase;font-size:13px;color:#1e1e1e;font-weight:600;">
+					add &nbsp; 
+					<a href="index.php?route=product/product/getOptionProduct&product_id=<?php echo $product['product_id']; ?>" class="toshow">
+					<?php echo $product['name']; ?>
+					</a>
+					
+					<?php if ($product['price']) { ?>
+                &nbsp; <span style="color:#1eaf4d">
+                <?php if (!$product['special']) { ?>
+                <?php echo $product['price']; ?>
+                <?php } else { ?>
+                <?php echo $product['special']; ?>
+                <?php } ?>
+                </span>
+              <?php } ?>
+					
+					</div>
+			
+    </div>
+	<?php } ?>	
+</div>
+
+<?php } ?>
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="after"><![CDATA[$('#button-cart').on('click', function() {]]></search>
+			<add><![CDATA[
+			var err = 0;
+			if($('input[name="related[]"]').length > 0){
+		$('input[name="related[]"]:checked').each(function(){
+			if($(this).data('required')){
+			console.log($(this).attr('data-option'));
+				if($(this).attr('data-option')==''){
+				console.log($(this).attr('data-option'));
+				$(this).prop('checked',false);
+				$('.toshow').trigger('click');
+				err = 1;
+				return false;
+				}else{
+				
+			var product_id = $(this).val();	
+			var quantity = $(this).data('quantity');	
+			var options = $(this).data('option');	
+				
+			$.ajax({
+			url: 'index.php?route=product/product/addOptionProductToCart',
+			type: 'post',
+			data: 'product_id=' + product_id + '&quantity=' + quantity + '&options='+options,
+			dataType: 'json',
+			beforeSend: function() {
+				
+			},
+			complete: function() {
+				$('#cart > button').button('reset');
+			},
+			success: function(json) {
+				
+			},
+	        error: function(xhr, ajaxOptions, thrownError) {
+	            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+	        }
+		});
+				
+				}
+			}else{
+				cart.add($(this).val(), $(this).data('quantity'));
+			}
+		});
+	}
+	if(err){
+	return false;
+	}
+	
+	
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="before"><![CDATA[$('#button-cart').on('click', function() {]]></search>
+			<add><![CDATA[
+	
+$(document).ready(function() {
+	$('.related-product-image').click(function(){
+		if($(this).parent().find('input[type="checkbox"]').is(':checked') == true){
+			$(this).parent().find('input[type="checkbox"]').prop("checked",false);
+			
+		}else{
+			$(this).parent().find('input[type="checkbox"]').prop("checked",true);
+			
+		}
+	});
+});	
+
+$(document).delegate('.toshow', 'click', function(e) {
+	e.preventDefault();
+
+	$('#modal-toshow').remove();
+
+	var element = this;
+
+	$.ajax({
+		url: $(element).attr('href'),
+		type: 'get',
+		dataType: 'html',
+		success: function(data) {
+			html  = '<div id="modal-toshow" class="modal" style="padding:30px;">';
+			
+			html += '  <div class="toshow-dialog" style="max-width:1100px;position:relative;width:100%;margin:0 auto;background-color:#FAFAFA;display:table;">';
+			html += '<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin:10px 20px;font-size:30px;">&times;</button>';
+			html += data ;
+			html += '</div>';
+			html += '</div>';
+
+			$('body').append(html);
+
+			$('#modal-toshow').modal('show');
+		}
+	});
+});
+
+$(document).on("click", ".ch_img", function()  {
+    var srcimg = $(this).attr('name');
+    var srcim = $(this).attr('val');
+    $(this).parents('.thumbnails').find('.zoom').attr('src', srcimg);
+    $(this).parents('.thumbnails').find('.zoom').attr('href', srcim);
+ event.preventDefault();
+    }); 
+	
+$(document).on("click", ".op_numadd", function()  {
+var oldValue = $('#input-op_quantity').val();
+oldValue++;
+$('#input-op_quantity').val(oldValue);
+});
+
+$(document).on("click", ".op_numless", function()  {
+var oldValue = $('#input-op_quantity').val();
+oldValue--;
+if(oldValue<=1){
+oldValue = 1;
+}
+$('#input-op_quantity').val(oldValue);
+});
+
+$(document).on("click", "#add_op", function()  {
+	var op_quantity = $('#input-op_quantity').val();
+	var op_id = $('#input-op_quantity').data('product_id');
+	// $('#modal-toshow').modal('hide');
+	var op_required = $('#input-op_quantity').data('required');
+	if($.trim(op_required)!=0){
+		$('.alert, .text-danger').remove();
+        op_required = (op_required.substr(1)).split("_");
+		var err = 0;
+		var op_op = '';
+		$.each(op_required,function(index,value){	
+			if($('#input-option'+value).val()==''){
+			$('#input-option'+value).after('<div class="text-danger">MISSING FIELD REQUIRED</div>');
+			err++;
+			}else{
+			op_op += ',' + value + '_' + $('#input-option'+value).val();
+			}
+		});
+		
+		$('.text-danger').parent().addClass('has-error');
+		
+		if(err==0){
+			$('#modal-toshow').modal('hide');
+			_that = $('.related-product-list input[value='+op_id+']');
+			
+			_that.attr("data-quantity",op_quantity);
+			_that.attr("data-option",op_op);
+			_that.prop("checked",true);
+			
+			console.log(op_quantity);
+			console.log(_that.attr("data-quantity"));
+			console.log(_that.attr("data-option"));
+			console.log(_that);
+			
+		}
+		
+	}
+	
+});
+
+	
+			]]></add>
+		</operation>
+    </file>
+	
+	<file name="catalog/view/theme/default/template/information/contact.tpl">
+		<operation info="remove location">
+			<search position="replace" index="1"><![CDATA[<h3>]]></search>
+			<add trim="true"><![CDATA[<h3 class="hidden">]]></add>
+		</operation>
+		<operation info="remove location">
+			<search position="replace" index="1"><![CDATA[<legend><?php echo $text_contact; ?></legend>]]></search>
+			<add trim="true"><![CDATA[<legend></legend>]]></add>
+		</operation>
+		<operation>
+			<search position="replace" index="1"><![CDATA[<div class="panel panel-default">]]></search>
+			<add trim="true"><![CDATA[<div class="panel panel-default hidden">]]></add>
+		</operation>
+		
+	</file>
+	
+	<file name="catalog/view/theme/default/template/common/footer.tpl">
+		<operation error="skip" info="remove footer banner in mobile">
+			<search position="replace" index="1"><![CDATA[<div class="col-sm-2">]]></search>
+			<add trim="true"><![CDATA[<div class="col-md-3 col-xs-6">]]></add>
+		</operation>
+		<operation error="skip">
+			<search position="replace" index="1"><![CDATA[<div class="col-sm-2">]]></search>
+			<add trim="true"><![CDATA[<div class="col-md-3 col-xs-6">]]></add>
+		</operation>
+		<operation error="skip">
+			<search position="replace" index="1"><![CDATA[<div class="col-sm-2">]]></search>
+			<add trim="true"><![CDATA[<div class="col-md-3 hidden-xs hidden-sm">]]></add>
+		</operation>
+		<operation error="skip">
+			<search position="replace" index="1"><![CDATA[<div class="col-sm-2">]]></search>
+			<add trim="true"><![CDATA[<div class="col-sm-12 col-md-3 col-xs-12">]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="replace" index="1"><![CDATA[<div class="col-sm-4">]]></search>
+			<add trim="true"><![CDATA[<div class="hidden">]]></add>
+		</operation>
+		<operation error="skip">
+			<search position="replace" index="2"><![CDATA[<div class="col-sm-6">]]></search>
+			<add trim="true"><![CDATA[<div class="col-md-6 hidden-xs hidden-sm">]]></add>
+		</operation>
+		<operation error="skip">
+			<search position="replace" index="1"><![CDATA[<div class="col-sm-4">]]></search>
+			<add trim="true"><![CDATA[<div class="col-md-4 hidden-xs hidden-sm">]]></add>
+		</operation>
+		
+		<operation error="skip">
+			<search position="replace" index="1"><![CDATA[<?php echo $powered; ?>]]></search>
+			<add trim="true"><![CDATA[<center><?php echo $powered; ?></center>]]></add>
+		</operation>
+	</file>
+	
+
+</modification>

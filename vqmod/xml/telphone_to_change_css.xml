@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>to change telphone css</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+	<file name="catalog/controller/common/header.php">
+		<operation>
+			<search position="after"><![CDATA[$data['text_home'] = $this->language->get('text_home');]]></search>
+			<add><![CDATA[
+			
+		
+		if(IS_MOBILE){
+			$data['is_mobile'] = true;
+		}else{
+			$data['is_mobile'] = false;
+		}
+			]]></add>
+		</operation>
+	</file>
+    
+	
+	<file name="catalog/view/theme/default/template/common/header.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<i class="fa fa-phone"></i>]]></search>
+			<add><![CDATA[<i class="fa fa-phone hidden-sm hidden-xs"></i>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<i class="fa fa-heart"></i>]]></search>
+			<add><![CDATA[<i class="fa fa-heart hidden-sm hidden-xs"></i>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<i class="fa fa-share"></i>]]></search>
+			<add><![CDATA[<i class="fa fa-share hidden-sm hidden-xs"></i>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<i class="fa fa-shopping-cart"></i>]]></search>
+			<add><![CDATA[<i class="fa fa-shopping-cart" style="font-size:20px;color:#DC7405;"></i>]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>]]></search>
+			<add><![CDATA[<button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse" style="background-color:#C7C6CC;background-image: linear-gradient(to bottom, #4A4A4A, #4A4A4A);background-repeat: repeat-x;border-color: #C7C6CC #C7C6CC #C7C6CC;"><i class="fa fa-bars"></i></button>]]></add>
+		</operation>
+		
+		
+		
+		<operation>
+			<search position="after"><![CDATA[$(document).ready(function () {]]></search>
+			<add><![CDATA[
+			
+			
+			$(".ochow-close").click(function(){
+				$(this).parent().children(".dropdown-menu").toggle();
+				$(this).parent().children(".dropdown-menu").css("overflow","auto");
+				$(this).children('.fa-plus').toggle();
+				$(this).children('.fa-minus').toggle();
+				
+			});
+			$(".fa-plus").click(function(){
+				console.log(1);
+				$('header').css("position","absolute");
+				$(window).scrollTop(0);
+			});
+			$(".fa-minus").click(function(){
+				console.log(2);
+				$('header').css("position","fixed");
+			});
+		
+			
+			$(window).scroll(function() {
+				if($(window).scrollTop()<40){
+					$("header").animate({top:"40px"},"fast");
+				}else{
+					$("header").animate({top:"0"},"fast");
+				}
+				 
+			});
+			
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="replace"><![CDATA[<header>]]></search>
+			<add><![CDATA[
+			<?php if($is_mobile){ ?>
+			<div class="col-sm-12" style="height:80px;">&nbsp;</div>
+			<header style="position:fixed;width:100%;background-color:#fff;top:45px;z-index:999;">
+			<?php }else{ ?>
+			<header>
+			<?php } ?>
+			]]></add>
+		</operation>
+		
+		
+		<operation>
+			<search position="replace"><![CDATA[<div id="logo">]]></search>
+			<add><![CDATA[
+			<div class="col-sm-12" style="height:5px;margin:0;padding:0;">&nbsp;</div>
+			<div id="logo" class="hidden-sm hidden-xs">]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/controller/common/currency.php">
+		<operation>
+			<search position="after"><![CDATA[public function index() {]]></search>
+			<add><![CDATA[
+
+		if(IS_MOBILE){
+			$data['is_mobile'] = true;
+		}else{
+			$data['is_mobile'] = false;
+		}
+			
+			]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/default/template/common/currency.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<div class="pull-left">]]></search>
+			<add><![CDATA[
+			<?php if($is_mobile){ ?>
+			<div class="pull-right">
+			<?php }else{ ?>
+			<div class="pull-left">
+			<?php } ?>
+			
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/view/theme/default/template/product/product.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<ul class="breadcrumb">]]></search>
+			<add><![CDATA[<ul class="breadcrumb hidden-sm hidden-xs">]]></add>
+		</operation>
+	</file>
+	
+	
+</modification>

@@ -1,0 +1,155 @@
+html, body
+{
+	padding: 0;
+	margin: 0;
+}
+body
+{
+	background-color: #fff;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 14px;
+	line-height: 22px;
+	color: #666;
+	position: relative;
+	-webkit-text-size-adjust: none;
+}
+body *
+{
+	text-shadow: none;
+}
+h1, h2, h3, h4, h5, h6
+{
+	line-height: 1;
+	font-weight: bold;
+	margin: 20px 0 10px 0;
+}
+h1, h2, h3
+{
+	font-size: 18px;
+}
+h4, h5, h6
+{
+	font-size: 16px;
+}
+p
+{
+	margin: 0 0 10px 0;
+}
+ul{
+    padding:0;
+    list-style-type:none;
+}
+.hidden-xs,.hidden-sm,.hidden-md,.hide{
+	display:none;
+}
+.loaders{
+	text-align:center;
+}
+.ball-pulse > div {
+  background-color: #000 !important;
+}
+.powered{
+	text-align: center;
+
+font-size: 12px;
+
+padding: 10px;
+}
+.container{
+    padding-top:20px;
+}
+.common-home .container{
+    padding-top:0;
+}
+
+/* lastest */
+#get-lastest{
+	clear:both;
+	display:block;
+}
+#get-lastest .new-price{
+	color:#222;
+	font-weight:bold;
+	font-size:18px;
+	float:left;
+}
+#get-lastest .old-price{
+	text-decoration: line-through;	
+	font-size:14px;
+	float:left;
+	margin-left: 5px;
+}
+#get-lastest .product-name{
+	font-size:16px;
+	display:inline-block;
+	clear:left;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	overflow: hidden;
+	width:100%;
+}
+#get-lastest .product .info{
+	padding:0 15px;
+}
+#get-lastest .product{
+	margin-bottom:20px;
+}
+#get-lastest .product img{
+	max-width:100%;
+	padding: 20px;
+}
+/* end lastest */
+
+/* css3 loading */	
+@-webkit-keyframes scale {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1; }
+  45% {
+    -webkit-transform: scale(0.1);
+            transform: scale(0.1);
+    opacity: 0.7; }
+  80% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1; } }
+@keyframes scale {
+  0% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1; }
+  45% {
+    -webkit-transform: scale(0.1);
+            transform: scale(0.1);
+    opacity: 0.7; }
+  80% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    opacity: 1; } }
+
+.ball-pulse > div:nth-child(1) {
+  -webkit-animation: scale 0.75s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+          animation: scale 0.75s -0.24s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08); }
+
+.ball-pulse > div:nth-child(2) {
+  -webkit-animation: scale 0.75s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+          animation: scale 0.75s -0.12s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08); }
+
+.ball-pulse > div:nth-child(3) {
+  -webkit-animation: scale 0.75s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08);
+          animation: scale 0.75s 0s infinite cubic-bezier(0.2, 0.68, 0.18, 1.08); }
+
+.ball-pulse > div {
+  background-color: #fff;
+  width: 15px;
+  height: 15px;
+  border-radius: 100%;
+  margin: 2px;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+  display: inline-block; }
+/* end loading */	
+
+	
+

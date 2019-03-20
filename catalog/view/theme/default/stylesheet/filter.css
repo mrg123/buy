@@ -1,0 +1,35 @@
+/*====Adv Ajax Filter====*/
+#adv_ajaxfilter_box{margin-bottom:20px;}
+form#adv_ajaxfilter { display:block; }
+#adv_ajaxfilter .option_box {display: inline-block; margin:0 0 10px; padding-bottom:10px; min-width: 100%; vertical-align: top; border-bottom: solid 1px #ddd;}
+#adv_ajaxfilter .price_limit { border: 0; color: #666; font-weight: bold; width: 100%; text-align:center; background:#f8f8f8;}
+#adv_ajaxfilter .ui-widget-header { background: none repeat scroll 0 0 #ccc; border: 0 none; color: #FFFFFF; font-weight: bold; }
+#adv_ajaxfilter select { width: 100%; }
+#adv_ajaxfilter .ui-state-hover, #adv_ajaxfilter .ui-state-focus, #adv_ajaxfilter .ui-state-active { border: 1px solid #0088CC; background: none repeat scroll 0 0 #d9f2fc; }
+#adv_ajaxfilter .price_slider { padding: 5px; }
+#adv_ajaxfilter .price_slider input { width: 30% !important; }
+#adv_ajaxfilter .price_slider label { display: inline !important; }
+#adv_ajaxfilter .option_values { padding-top: 5px; }
+#adv_ajaxfilter .option_name, #adv_ajaxfilter .attribute_group_name {color: #000; cursor: pointer; font-size:16px; padding:5px 0; vertical-align: middle; position:relative;}
+#adv_ajaxfilter .option_name:after, #adv_ajaxfilter .attribute_group_name:after{border-color: #a1a1a1 transparent transparent; border-style: solid; border-width: 4px 5px 0; clear: both; content: " "; display: inline-block height: 0; margin: 0 0 1px; width: 0; right:6px; top:12px; position:absolute;}
+#adv_ajaxfilter .attribute_group_name { padding-left: 0; }
+#adv_ajaxfilter .option_name.hided:after, #adv_ajaxfilter .attribute_group_name.hided:after{border-color:transparent transparent #a1a1a1; border-width:0 4px 5px;}
+#adv_ajaxfilter_box .clear_filter {float:right;}
+#adv_ajaxfilter_box .clear_filter a {width:20px; height:22px; display:block; line-height:22px; text-align:center; font-size:20px; color:#555555;}
+#adv_ajaxfilter_box .clear_filter a:hover{color:#222;}
+#adv_ajaxfilter .collapsible { max-height:118px; margin:10px 0; overflow-x: hidden; overflow-y: auto; }
+#adv_ajaxfilter .collapsible.brand{max-height:144px;}
+#adv_ajaxfilter .brand img{width:18%;}
+#adv_ajaxfilter img { cursor: pointer; margin:0 1% 2%; width:14%; height:auto; float:left; border:1px solid #eee;}
+#adv_ajaxfilter img.selected { border:2px solid;}
+#column-left + #column-right + #content .product-grid > div.loadmask { width: 100%; }
+#adv_ajaxfilter input { margin:5px 3px; }
+#adv_ajaxfilter table { margin-bottom: 5px; }
+#adv_ajaxfilter label {margin-bottom:0; display: block; cursor:pointer;}
+#adv_ajaxfilter label:hover {background:#f7f7f7;}
+#adv_ajaxfilter .ui-slider {margin: 15px 5px 5px 5px;}
+
+#adv_ajaxfilter .ui-slider .ui-slider-handle{height:24px; border:none; border-radius:0px; top:-8px; width:11px; cursor:pointer; background:#777 url("../image/handle-line.png") center center no-repeat;}
+#adv_ajaxfilter .ui-slider-horizontal{border-radius:0px;}
+
+#adv_ajaxfilter ul { margin: 0; padding: 0;}

@@ -1,0 +1,71 @@
+<modification>
+
+<id>OpencartMy - Shipping Method Logo Setting</id>
+<version>2.0</version>
+<vqmver>2.4.1</vqmver>
+<author>opencartmy@gmail.com</author>
+
+<!--replace (*) with your theme name-->
+<file name="catalog/view/theme/*/template/checkout/shipping_method.tpl">
+<operation info="compatible with default template" error="skip">
+<search position="replace">
+<![CDATA[
+<label for="<?php echo $quote['code']; ?>"><?php echo $quote['title']; ?></label>
+]]>
+</search>
+<add>
+<![CDATA[
+<label for="<?php echo $quote['code']; ?>">
+<?php if (array_key_exists("keycode",$quote)&&($quote['keycode']=="1")) { ?>
+<?php echo $quote['icon_shipping']; ?>
+<?php } else { ?>
+<?php echo $quote['title'];?>
+<?php } ?>
+</label>
+]]>
+</add>
+</operation>       
+</file>
+
+
+<file name="admin/view/template/extension/shipping.tpl">
+<operation info="add icon at admin shipping lists" error="skip">
+<search position="after"><![CDATA[
+<td class="left"><?php echo $extension['name']; ?></td>
+]]>
+</search>
+<add>
+<![CDATA[
+<td class="left">
+
+<?php if ($extension['name']=='<span style="color: #0000FF; font-weight: bold;">DHL Express (Weight Based)</span>') echo '<img src="view/image/shipping/dhl.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - PosLaju (Weight Based)</span>') echo '<img src="view/image/shipping/poslaju.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - Pos Parcel (Weight Based)</span>') echo '<img src="view/image/shipping/pos-parcel.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - Flexipack Domestic (Weight Based)</span>') echo '<img src="view/image/shipping/flexipackd.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - Flexipack International (Weight Based)</span>') echo '<img src="view/image/shipping/flexipacki.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - PosLaju (Rate Per Item)</span>') echo '<img src="view/image/shipping/poslaju.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - Pos Parcel (Rate Per Item)</span>') echo '<img src="view/image/shipping/pos-parcel.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - Pos Ekspress (Rate Per Item)</span>') echo '<img src="view/image/shipping/pos-ekspress.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - Flexipack Domestic (Rate Per Item)</span>') echo '<img src="view/image/shipping/flexipackd.png"/> &nbsp;';?>
+<?php if ($extension['name']=='<span style="color: #FF0000; font-weight: bold;">Pos Malaysia - Flexipack International (Rate Per Item)</span>') echo '<img src="view/image/shipping/flexipacki.png"/> &nbsp;';?>
+<?php if ($extension['name']=="Pickup From Store") echo '<img src="view/image/shipping/self-pickup.png"/> &nbsp;';?>
+<?php if ($extension['name']=="Flat Rate") echo '<img src="view/image/shipping/flat-rate.png"/> &nbsp;';?>
+<?php if ($extension['name']=="Free Shipping") echo '<img src="view/image/shipping/free-shipping.png"/> &nbsp;';?>
+</td>				
+]]>
+</add>
+</operation> 
+
+<operation error="skip">
+<search position="replace"><![CDATA[
+<td class="left"><?php echo $column_name; ?></td>
+]]></search>
+<add><![CDATA[
+<td class="left"><?php echo $column_name; ?></td>
+<td class="left"><?php echo "Shipping Icon"; ?></td>
+]]>
+</add>
+</operation>      
+</file>
+
+</modification>

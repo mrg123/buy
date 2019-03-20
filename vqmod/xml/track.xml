@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>track visitor</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+
+    <file name="catalog/controller/common/footer.php">
+        <operation>
+            <search position="before"><![CDATA[$this->load->model('catalog/information');]]></search>
+            <add><![CDATA[
+			if($this->config->get('track_status')){
+				$this->addTrack();
+			}
+			]]></add>
+        </operation>
+		<operation>
+            <search position="before"><![CDATA[public function index() {]]></search>
+            <add><![CDATA[
+public function addTrack(){
+	
+	/*
+	是否记录访客的会话
+	*/	
+	$add = 0;
+	$sign = $this->config->get('track_sign');
+	if (isset($this->session->data['track_id'])) {
+		$track_id = $this->session->data['track_id'];
+	} elseif (isset($this->request->cookie['track_id'])) {
+		$track_id = $this->request->cookie['track_id'];	
+		$this->session->data['track_id'] = $track_id;
+	} elseif (isset($this->request->get[$sign])) {
+		$track_id = 1;	
+		$add = 1;
+		$visitor = $this->request->get[$sign];
+	} else {
+		$track_id = 0;	
+	}
+	
+	/* 开始记录访客的会话信息 */
+		if($add){
+		
+		/* 新增访客信息,或者是*/
+		if (isset($this->request->server['REMOTE_ADDR'])) {
+			$ip = $this->request->server['REMOTE_ADDR'];
+		} else {
+			$ip = '';
+		}
+
+		if (isset($this->request->server['HTTP_HOST']) && isset($this->request->server['REQUEST_URI'])) {
+			$url = 'http://' . $this->request->server['HTTP_HOST'] . $this->request->server['REQUEST_URI'];
+		} else {
+			$url = '';
+		}
+
+		if (isset($this->request->server['HTTP_REFERER'])) {
+			$referer = $this->request->server['HTTP_REFERER'];
+		} else {
+			$referer = '';
+		}
+			
+		$session_id = $this->session->getId();
+		
+		
+		
+		$nation = '';
+		
+		$tracks = array(
+			'session_id' => $session_id,
+			'visitor' => $visitor,
+			'ip' => $ip,
+			'nation' => $nation,
+			'referer' => $referer,
+			'landing_url' => $url
+		);
+		
+		/* add track */
+		$this->db->query("INSERT INTO " . DB_PREFIX . "track SET session_id = '" . $this->db->escape($tracks['session_id']) . "', visitor = '" . $this->db->escape($tracks['visitor']) . "', ip = '" . $this->db->escape($tracks['ip']) . "', nation = '" . $this->db->escape($tracks['nation']) . "', referer = '" . $this->db->escape($tracks['referer']) . "', landing_url = '" . $this->db->escape($tracks['landing_url']) . "', date_added = date_add(NOW(),interval 8 hour)");
+	
+		$track_id = $this->db->getLastId();
+		
+		/* add track url*/
+		$this->db->query("INSERT INTO " . DB_PREFIX . "track_url SET track_id = '" . (int)$track_id . "', url = '" . $this->db->escape($tracks['landing_url']) . "', date = date_add(NOW(),interval 8 hour)");
+	
+		$this->session->data['track_id'] = $track_id;
+		setcookie('track_id', $track_id, time() + 60 * 60 * 24 * 30, '/', $this->request->server['HTTP_HOST']);
+		
+		}elseif($track_id){
+			/*记录访问的页面*/
+			if (isset($this->request->server['HTTP_HOST']) && isset($this->request->server['REQUEST_URI'])) {
+			$url = 'http://' . $this->request->server['HTTP_HOST'] . $this->request->server['REQUEST_URI'];
+			} else {
+				$url = '';
+			}
+			/* add track url*/
+		$this->db->query("INSERT INTO " . DB_PREFIX . "track_url SET track_id = '" . (int)$track_id . "', url = '" . $this->db->escape($url) . "', date = date_add(NOW(),interval 8 hour)");
+		}
+	
+	
+	
+	}
+			]]></add>
+        </operation>
+    </file>
+	
+	<file name="system/library/cart.php">
+		<operation>
+		<search position="after"><![CDATA[$this->db->query("INSERT " . DB_PREFIX . "cart SET customer_id = '" . (int)$this->customer->getId() . "', session_id = '" . $this->db->escape($this->session->getId()) . "', product_id = '" . (int)$product_id . "', recurring_id = '" . (int)$recurring_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', date_added = NOW()");]]></search>
+		<add><![CDATA[
+		
+		if (isset($this->session->data['track_id'])) {
+			$cart_id = $this->db->getLastId();
+		
+			$this->db->query("INSERT " . DB_PREFIX . "track_cart SET cart_id = '" . (int)$cart_id . "', track_id = '" . (int)$this->session->data['track_id'] . "', product_id = '" . (int)$product_id . "', `option` = '" . $this->db->escape(json_encode($option)) . "', quantity = '" . (int)$quantity . "', date_added = date_add(NOW(),interval 8 hour)");
+		}
+		
+		
+		]]></add>
+		</operation>
+		
+		<operation>
+			<search position="after"><![CDATA[$this->db->query("UPDATE " . DB_PREFIX . "cart SET quantity = (quantity + " . (int)$quantity . ") WHERE customer_id = '" . (int)$this->customer->getId() . "' AND session_id = '" . $this->db->escape($this->session->getId()) . "' AND product_id = '" . (int)$product_id . "' AND recurring_id = '" . (int)$recurring_id . "' AND `option` = '" . $this->db->escape(json_encode($option)) . "'");]]></search>
+			<add><![CDATA[
+			if (isset($this->session->data['track_id'])) {
+		
+			$this->db->query("UPDATE " . DB_PREFIX . "track_cart SET quantity = (quantity + " . (int)$quantity . ") WHERE track_id = '" . (int)$this->session->data['track_id'] . "' AND product_id = '" . (int)$product_id . "' AND `option` = '" . $this->db->escape(json_encode($option)) . "'");
+			}
+			]]></add>
+		</operation>
+		
+		<operation>
+		<search position="after"><![CDATA[public function update($cart_id, $quantity) {]]></search>
+		<add><![CDATA[
+		if (isset($this->session->data['track_id'])) {
+			$this->db->query("UPDATE " . DB_PREFIX . "track_cart SET quantity = '" . (int)$quantity . "' WHERE cart_id = '" . (int)$cart_id . "'");	
+		}
+		]]></add>
+		</operation>
+	</file>
+	
+	<file name="catalog/model/d_quickcheckout/order.php">
+		<operation>
+			<search position="after"><![CDATA[$order_id = $this->db->getLastId();]]></search>
+			<add><![CDATA[
+			if (isset($this->session->data['track_id'])) {
+				
+			$track_query = $this->db->query("SELECT order_id FROM " . DB_PREFIX . "track WHERE track_id = '" . (int)$this->session->data['track_id'] . "'");	
+		$track_order_id = $track_query->row['order_id'];
+		if($track_order_id == 0 ){
+			$track_order_ids = $order_id;	
+		}elseif ($track_order_id != $order_id){
+			$track_order_ids = $order_id . ',' . $track_order_id;	
+		}else{
+			$track_order_ids = 0;
+		}
+		if(!empty($track_order_ids)){
+		$this->db->query("UPDATE " . DB_PREFIX . "track SET order_id = '" . $this->db->escape($track_order_ids) . "' WHERE track_id = '" . (int)$this->session->data['track_id'] . "'");	
+		}
+			}
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/sale/order_info.tpl">
+		<operation>
+		<search position="after"><![CDATA[<li><a href="#tab-additional" data-toggle="tab"><?php echo $tab_additional; ?></a></li>]]></search>
+		<add><![CDATA[
+		<?php if($track){ ?>
+		<li><a href="#tab-track" data-toggle="tab">Track</a></li>
+		<?php } ?>
+		]]></add>
+		</operation>
+		
+		<operation>
+		<search position="before"><![CDATA[<div class="tab-pane" id="tab-additional">]]></search>
+		<add><![CDATA[
+ <?php if($track){ ?>
+		  <div class="tab-pane" id="tab-track">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+					<td class="text-left">Track_id</td>
+					<td class="text-left">Visitor</td>
+					<td class="text-left">Referer</td>
+					<td class="text-left">Landing Url</td>
+					<td class="text-left">IP</td>
+					<td class="text-left">Date Added</td>
+					<td class="text-left">Country</td>
+					</tr>
+				</thead>
+				<tbody>
+				<?php if($track){ ?>
+				<tr>
+				  <td class="text-left"><?php echo $track['track_id']; ?></td>
+                  <td class="text-left"><?php echo $track['visitor']; ?></td>
+                  <td class="text-left"><?php echo $track['referer']; ?></td>
+                  <td class="text-left"><?php echo $track['landing_url']; ?></td>
+                  <td class="text-left"><?php echo $track['ip']; ?></td>
+                  <td class="text-left"><?php echo $track['date_added']; ?></td>
+                  <td class="text-left"><?php echo $track['nation']; ?></td>
+				</tr>
+				<?php } ?>	
+				<?php if($track_urls) { ?>
+				<tr style="background-color: #f5f5f5;"><td colspan="7">
+				<?php foreach ($track_urls as $key => $arr) { ?>
+				<p><?php echo $key; ?> &nbsp;&nbsp;&nbsp;&nbsp; <?php echo $arr['date']; ?> &nbsp;&nbsp;&nbsp;&nbsp; <?php echo $arr['url']; ?></p>	
+				<?php } ?>
+				</td></tr>
+				<?php } ?>
+				</tbody>
+			</table>
+		  </div>
+		  <?php } ?>
+		]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/controller/sale/order.php">
+		<operation>
+		<search position="after"><![CDATA[$order_info = $this->model_sale_order->getOrder($order_id);]]></search>
+		<add><![CDATA[
+		if($this->config->get('track_status')){
+		$this->load->model('module/track');
+		$track = $this->model_module_track->getOrderTrack($order_id);
+		if($track){
+		$track_urls = $this->model_module_track->getTrack($track['track_id']);	
+		}else{
+		$track_urls = '';
+		}
+		$data['track'] = $track;
+		$data['track_urls'] = $track_urls;
+		$data['track_status'] = 1;
+		}else{
+		$data['track'] = '';
+		$data['track_urls'] = '';	
+		$data['track_status'] = 0;
+		}
+		]]></add>
+		</operation>
+	</file>
+
+
+</modification>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>xls export</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>wang</author>
+	
+	<file name="admin/controller/sale/order.php">
+		<operation>
+			<search position="before" index="1"><![CDATA[$data['breadcrumbs'] = array();]]></search>
+			<add trim="true"><![CDATA[
+		$xls_url = 'token='.$this->session->data['token'];
+		if($filter_order_status){
+            $xls_url .= '&status='.$filter_order_status;
+        }
+        if($filter_date_added){
+		    $xls_url .= '&start='.$filter_date_added;
+        }
+		$data['xls'] = $this->url->link('sale/order/xls',$xls_url,true);
+		
+		if($this->user->getGroupId()==1){
+			$data['xls_status'] = 1;
+		}else{
+			$data['xls_status'] = 0;
+		}
+			]]></add>
+		</operation>
+		
+		<operation>
+			<search position="before" index="1"><![CDATA[protected function getList() {]]></search>
+			<add trim="true"><![CDATA[
+public function xls()
+    {
+    	$sql = "SELECT `oc_order`.order_id,`oc_order_product`.name AS product_name,`oc_order_product`.model AS model,`oc_order_product`.quantity AS quantity,`oc_order_product`.price AS price,`oc_order_product`.total AS product_total,`oc_order`.email,concat(`oc_order`.shipping_lastname,' ',`oc_order`.shipping_firstname) AS name,`oc_order`.shipping_address_1,`oc_order`.shipping_city,`oc_order`.shipping_zone AS shipping_zone,`oc_order`.shipping_postcode,`oc_order`.shipping_country,`oc_order`.telephone,`oc_order`.comment AS remark,`oc_order_status`.name AS status_name FROM `oc_order` LEFT JOIN oc_order_product ON `oc_order`.order_id = `oc_order_product`.order_id LEFT JOIN oc_order_status ON `oc_order`.order_status_id = `oc_order_status`.order_status_id LEFT JOIN oc_order_option ON `oc_order_product`.order_product_id = oc_order_option.order_product_id";
+
+
+    	if(isset($this->request->get['status'])){
+    		$sql .= " WHERE `oc_order_status`.order_status_id = '".$status."'";
+    	}else{
+    		$sql .= " WHERE `oc_order_status`.order_status_id > 0";
+    	}
+
+    	if(isset($this->request->get['start'])){
+    		$sql .= " AND `oc_order`.date_added > '".$start."'";
+    	}
+
+    	if(isset($this->request->get['ids'])){
+    		$ids = str_replace('_',',',$this->request->get['ids']);
+    		$sql .= " AND `oc_order`.order_id IN (" . $ids .")";
+    	}
+
+    	$sql .= " ORDER BY `oc_order`.order_id,`oc_order_product`.product_id,`oc_order_option`.product_option_id ASC";
+
+
+
+
+
+        //Connect to the database and fetch the data
+        $link = mysqli_connect(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, DB_DATABASE) or die("DB: Couldn't make connection. Please check the database configurations.");
+        $link->set_charset("utf8");
+        $setRec = mysqli_query($link, $sql);
+
+        //Fetch the column names
+        $columns = mysqli_fetch_fields($setRec);
+        $setMainHeader = '';
+        foreach ($columns as $column) {
+            $setMainHeader .= $column->name . "\t";
+        }
+        $setData = '';
+        while ($rec = mysqli_fetch_row($setRec)) {
+            $rowLine = '';
+            foreach ($rec as $value) {
+                if (!isset($value) || $value == "") {
+                    $value = "\t";
+                } else {
+                    //Escape all the special characters
+                    $value = strip_tags(str_replace('"', '""', $value));
+                    $value = '"' . $value . '"' . "\t";
+                }
+                $rowLine .= $value;
+            }
+            $setData .= trim($rowLine) . "\n";
+        }
+        $setData = str_replace("\r", "", $setData);
+        if ($setData == "") {
+            $setData = "\nNo matching records found\n";
+        }
+
+        /* Download headers
+        header("Content-type: application/octet-stream");
+        header("Content-Disposition: attachment; filename=order_data-" . date("Y_m_d-Hi_s") . ".xls");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        */
+
+
+        header('Content-Type: application/octet-stream; charset=utf-8');
+        header("Content-Disposition: attachment; filename=order_data-".date("Y_m_d-Hi_s").".xls");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+
+
+        
+        echo ucwords($setMainHeader) . "\n" . $setData . "\n";
+       
+    }
+			]]></add>
+		</operation>
+	</file>
+	
+	<file name="admin/view/template/sale/order_list.tpl">
+		<operation>
+			<search position="after"><![CDATA[<div class="pull-right">]]></search>
+			<add trim="true"><![CDATA[
+			<?php if($xls_status) { ?>
+			<a target="_blank" data-url="<?php echo $xls; ?>" data-toggle="tooltip" title="export" class="btn btn-primary" id="toxls"><i class="fa fa-download"></i></a>
+			<?php } ?>
+
+			<script type="text/javascript">
+
+				$(document).ready(function() {
+					$('#toxls').click(function(){
+						var url = $(this).data('url');
+
+						var id_array='';
+						$('input[name="selected[]"]').each(function(){
+							if($(this).is(':checked') == true){
+								id_array += '_' + $(this).val();
+							}
+
+						});
+						if(id_array !== ''){
+							url += '&ids='+id_array.substr(1);
+
+						}
+
+						window.location.href = url;
+
+					});
+				});
+			</script>
+			]]></add>
+		</operation>
+	</file>
+</modification>

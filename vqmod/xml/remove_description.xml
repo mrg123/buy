@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>For hide prodcut description from listing</id>
+	<version>2.1.x</version>
+	<vqmver required="true">2.4.0</vqmver>
+	<author>Mangesh Bulkar</author>
+	
+	<file name="catalog/view/theme/*/template/module/bestseller.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+        <file name="catalog/view/theme/*/template/module/featured.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+        <file name="catalog/view/theme/*/template/module/latest.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+        <file name="catalog/view/theme/*/template/module/special.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+        <file name="catalog/view/theme/*/template/product/category.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+        <file name="catalog/view/theme/*/template/product/search.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+        <file name="catalog/view/theme/*/template/product/special.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+        <file name="catalog/view/theme/*/template/product/manufacturer_info.tpl">
+            <operation>
+                <search position="replace"><![CDATA[<p><?php echo $product['description']; ?></p>]]></search>
+                <add>
+                <![CDATA[ ]]>
+                </add>
+            </operation>
+        </file>
+        
+     
+</modification>

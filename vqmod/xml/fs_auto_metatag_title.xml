@@ -1,0 +1,23 @@
+<modification>
+	<id>Admin Product Tag Title</id>
+	<version>1.1</version>
+	<vqmver>2.5.1</vqmver>
+	<author>www.fabiom7.com</author>
+
+<file name="admin/view/template/catalog/product_form.tpl">
+	<operation>
+		<search position="before"><![CDATA[
+			//--></script></div>
+		]]></search>
+		<add><![CDATA[
+			<?php foreach ($languages as $language) { ?>
+			<?php if (!isset($product_description[$language['language_id']]['meta_title'])) { ?>
+			$('#input-name<?php echo $language['language_id']; ?>').on('keyup', function() {
+				$('#input-meta-title<?php echo $language['language_id']; ?>').val($(this).val());
+			});
+			<?php } ?>
+			<?php } ?>
+		]]></add>
+	</operation>
+</file>
+</modification>

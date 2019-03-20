@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+        <id>Add all information pages not in footer into the header as top categories - OC v2</id>
+        <version>1.0</version>
+        <vqmver>2.x</vqmver>
+        <author>agatha65.com</author>
+        
+        <file name="catalog/controller/common/header.php">
+                   <operation info="Add all information pages to the category menu">
+                        <search position="before"><![CDATA[
+                        $data['language'] = $this->load->controller('common/language');
+                        ]]></search>
+                        <add><![CDATA[
+						$this->load->model('catalog/information');
+						$children_data = array();
+						//information pages top
+						foreach ($this->model_catalog_information->getInformations() as $result) {
+						  if (!$result['bottom']) {
+							$data['categories'][] = array(
+								  'name'     => $result['title'],
+								  'children' => '',
+								  'column'   =>  1,
+								  'href'     => $this->url->link('information/information', 'information_id=' . $result['information_id'])
+							  );
+							}
+						}
+                        ]]></add>
+                </operation>
+        </file>		
+</modification>

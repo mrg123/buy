@@ -26,7 +26,7 @@ define('DB_DRIVER', 'mysqli');
 define('DB_HOSTNAME', 'localhost');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', 'root');
-define('DB_DATABASE', 'xiong');
+define('DB_DATABASE', 'buy_online');
 define('DB_PORT', '3306');
 define('DB_PREFIX', 'oc_');
 

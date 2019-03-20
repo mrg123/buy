@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+    <id>admin_setting</id>
+    <version>1</version>
+    <vqmver>2.4.1</vqmver>
+    <author>Wang</author>
+
+    <file path="admin/controller/setting/setting.php">
+        <operation>
+            <search position="replace"><![CDATA[if ((utf8_strlen($this->request->post['config_telephone']) < 3) || (utf8_strlen($this->request->post['config_telephone']) > 32)) {]]></search>
+            <add trim="true"><![CDATA[
+if ((utf8_strlen($this->request->post['config_telephone']) < 3) || (utf8_strlen($this->request->post['config_telephone']) > 9999)) {
+			]]></add>
+        </operation>
+    </file>
+
+</modification>

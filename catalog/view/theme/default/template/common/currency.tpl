@@ -2,7 +2,7 @@
 <div class="pull-right">
 <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="currency">
   <div class="btn-group">
-    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+    <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" style="margin-top:2px">
     <?php foreach ($currencies as $currency) { ?>
     <?php if ($currency['symbol_left'] && $currency['code'] == $code) { ?>
     <strong><?php echo $currency['symbol_left']; ?></strong>

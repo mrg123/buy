@@ -4,8 +4,8 @@ define('HTTP_SERVER', 'http://buy.localweb.com/admin/');
 define('HTTP_CATALOG', 'http://buy.localweb.com/');
 
 // HTTPS
-define('HTTPS_SERVER', 'https://buy.localweb.com/admin/');
-define('HTTPS_CATALOG', 'https://buy.localweb.com/');
+define('HTTPS_SERVER', 'http://buy.localweb.com/admin/');
+define('HTTPS_CATALOG', 'http://buy.localweb.com/');
 
 // DIR
 define('DIR_APPLICATION', 'D:/git/buy/admin/');

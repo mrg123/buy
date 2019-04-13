@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']    = 'ban';
+$_['heading_title']    = 'site browsing passwd';
 
 $_['text_module']      = 'Modules';
 $_['text_success']     = 'Success: You have modified ban module!';

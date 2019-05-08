@@ -35,13 +35,13 @@ public function xls()
 
 
     	if(isset($this->request->get['status'])){
-    		$sql .= " WHERE `oc_order_status`.order_status_id = '".$status."'";
+    		$sql .= " WHERE `oc_order_status`.order_status_id = '".$this->request->get['status']."'";
     	}else{
     		$sql .= " WHERE `oc_order_status`.order_status_id > 0";
     	}
 
     	if(isset($this->request->get['start'])){
-    		$sql .= " AND `oc_order`.date_added > '".$start."'";
+    		$sql .= " AND `oc_order`.date_added > '".$this->request->get['start']."'";
     	}
 
     	if(isset($this->request->get['ids'])){

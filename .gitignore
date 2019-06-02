@@ -9,4 +9,6 @@ vqmod/vqcache/
 vqmod/logs/
 vqmod/checked.cache
 image/cache/
+image/order_upload/
+image/order_upload_tmp/
 BAK/

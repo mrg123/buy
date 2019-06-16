@@ -736,7 +736,13 @@ class ControllerApiOrder extends Controller {
 
 		$json = array();
 
-		if (!isset($this->session->data['api_id'])) {
+		if(isset($this->request->post['qc_photo'])){
+			$qc_photo = 1;
+		}else{
+			$qc_photo = 0;
+		}
+
+		if (!isset($this->session->data['api_id']) && ($qc_photo==0)) {
 			$json['error'] = $this->language->get('error_permission');
 		} else {
 			// Add keys for missing post vars

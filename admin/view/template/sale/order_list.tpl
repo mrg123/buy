@@ -132,7 +132,19 @@
                   <td class="text-right"><?php echo $order['total']; ?></td>
                   <td class="text-left"><?php echo $order['date_added']; ?></td>
                   <td class="text-left"><?php echo $order['date_modified']; ?></td>
-                  <td class="text-right"><a href="<?php echo $order['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info"><i class="fa fa-eye"></i></a> <a href="<?php echo $order['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                  <td class="text-right">
+                  
+                  <?php if($order['img_count']) { ?>
+                  <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $preview_url; ?>&order_id=<?php echo $order['order_id']; ?>" target="_blank" >
+                  <i class="fa fa-image"></i> * <?php echo $order['img_count']; ?> &nbsp;
+                  </a>
+                  <?php }else{ ?>
+                  <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $preview_url; ?>&order_id=<?php echo $order['order_id']; ?>" target="_blank"></span>
+                  <?php } ?>
+
+                  <a target="_blank" data-toggle="tooltip" title="upload image" class="btn btn-info layui-btn" data-method="setTop" order-id="<?php echo $order['order_id']; ?>" done="<?php echo $order['done']; ?>" id="btn_<?php echo $order['order_id']; ?>" ><i class="fa fa-upload"></i></a>
+
+                  <a href="<?php echo $order['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info"><i class="fa fa-eye"></i></a> <a href="<?php echo $order['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                     <button type="button" value="<?php echo $order['order_id']; ?>" id="button-delete<?php echo $order['order_id']; ?>" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></button></td>
                 </tr>
                 <?php } ?>
@@ -336,4 +348,97 @@ $('.date').datetimepicker({
 	pickTime: false
 });
 //--></script></div>
+
+<script src="view/javascript/layui/layer.js" type="text/javascript"></script>
+ <script type="text/javascript">
+        var move = 10;
+        //触发事件
+        var active = {
+          setTop: function(order_id){
+            var that = this; 
+            var order_id = $(that).attr('order-id');
+            
+            //多窗口模式，层叠置顶
+            layer.open({
+              type: 2 //此处以iframe举例
+              ,title: '当你选择该窗体时，即会在最顶端'
+              ,area: ['700px', '550px']
+              ,shade: 0
+              ,maxmin: true
+              ,offset: [ //为了演示，随机坐标
+                (100 + move)
+                ,(200 + move)
+              ] 
+              ,content: ['<?php echo $webupload_url; ?>&order_id='+order_id,'yes']
+              ,yes: function(){
+                $(that).click(); 
+              }
+              ,btn2: function(){
+                layer.closeAll();
+              }
+              ,closeBtn:1
+              ,zIndex: layer.zIndex //重点1
+              ,success: function(layero){
+                layer.setTop(layero); //重点2
+              }
+            });
+          }
+        
+        };
+        
+        $('.layui-btn').on('click', function(){
+          var done = $(this).attr('done');
+          var order_id = $(this).attr('order-id');
+          var othis = $(this), method = othis.data('method');
+         
+          if(done=='1'){
+              layer.confirm('重新上传图片?',{
+                btn:['确定','取消']
+              },function(index){
+                layer.close(index);
+
+                $.ajax({
+                                    url:'index.php?route=tool/webupload/restart&token=<?php echo $token; ?>&order_id='+order_id,
+                                    type:"post",
+                                    data:{'order_id': order_id},
+                                    dataType:"json",
+                                    cache: false,
+                                    success:function(data){
+                othis.attr('done',0);
+                $('#img_'+order_id).html('');
+                open(order_id);
+                                    },
+                                    error:function(){
+                                        alert('操作失败,请重试!');
+                                    }
+                                });
+
+                
+
+
+              },function(){
+
+              });
+
+          }else{
+          
+          active[method] ? active[method].call(this, othis) : '';
+          move += 30;
+          }
+
+        
+        });
+        
+        function open(order_id){
+          var othis = $('#btn_'+order_id), method = othis.data('method');
+          active[method] ? active[method].call(othis, othis) : '';
+          move += 30; 
+        }
+
+       
+
+        
+     
+      </script>
+
 <?php echo $footer; ?>

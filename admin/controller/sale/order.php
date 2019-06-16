@@ -137,6 +137,15 @@ class ControllerSaleOrder extends Controller {
 			'href' => $this->url->link('sale/order', 'token=' . $this->session->data['token'] . $url, 'SSL')
 		);
 
+		/* 上传订单的图片 */
+		$data['webupload_url'] = $this->url->link('tool/webupload', 'token=' . $this->session->data['token'], 'SSL');
+		$data['token'] = $this->session->data['token'];
+		$this->load->model('tool/order_img');
+		
+		$sign = md5(md5('9876'));
+		$data['preview_url'] = HTTPS_CATALOG . 'index.php?route=information/qc_photo&sign='.$sign;
+
+
 		$data['invoice'] = $this->url->link('sale/order/invoice', 'token=' . $this->session->data['token'], 'SSL');
 		$data['shipping'] = $this->url->link('sale/order/shipping', 'token=' . $this->session->data['token'], 'SSL');
 		$data['add'] = $this->url->link('sale/order/add', 'token=' . $this->session->data['token'], 'SSL');
@@ -161,6 +170,12 @@ class ControllerSaleOrder extends Controller {
 		$results = $this->model_sale_order->getOrders($filter_data);
 
 		foreach ($results as $result) {
+			$img_count = $this->model_tool_order_img->count($result['order_id']);	
+			if($img_count){
+				$done = 1;
+			}else{
+				$done = 0;
+			}	
 			$data['orders'][] = array(
 				'order_id'      => $result['order_id'],
 				'customer'      => $result['customer'],
@@ -171,6 +186,9 @@ class ControllerSaleOrder extends Controller {
 				'shipping_code' => $result['shipping_code'],
 				'view'          => $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, 'SSL'),
 				'edit'          => $this->url->link('sale/order/edit', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, 'SSL'),
+				'img_count' => $img_count,
+				'done' => $done,	
+
 			);
 		}
 

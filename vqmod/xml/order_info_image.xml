@@ -18,7 +18,7 @@
 			<add trim="true"><![CDATA[
 			$product_info = $this->model_catalog_product->getProduct($product['product_id']);
 				if (!empty($product_info) && is_file(DIR_IMAGE . $product_info['image'])) {
-					$image= $this->model_tool_image->resize($product_info['image'], 40, 40);
+					$image= $this->model_tool_image->resize($product_info['image'], 200, 200);
 				} else {
 					$image = $this->model_tool_image->resize('no_image.png', 40, 40);
 				}

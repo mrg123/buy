@@ -97,9 +97,7 @@ footer .share42init, footer .col-sm-4 + .col-sm-4, footer .col-sm-4 + .col-sm-4 
 <div class="col-sm-4">
 <p><?php echo htmlspecialchars_decode($config_html); ?></p>
 </div>
-			  	<a href="javascript:void(0)" class="totop">
-		<i class="icon iconfont icon-xiangshangjiantouquan" style="font-size:40px"></i>
-	</a>
+ 	<a href="javascript:void(0)" class="totop"><i class="icon iconfont icon-xiangshangjiantouquan" style="font-size:40px"></i></a>		
   </div>
 </footer>
 

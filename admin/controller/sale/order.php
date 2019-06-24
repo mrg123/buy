@@ -45,6 +45,27 @@ class ControllerSaleOrder extends Controller {
 			$filter_customer = null;
 		}
 
+		if (isset($this->request->get['filter_customer_email'])) {
+			$filter_customer_email = $this->request->get['filter_customer_email'];
+		} else {
+			$filter_customer_email = null;
+		}
+		if (isset($this->request->get['filter_model'])) {
+			$filter_model = $this->request->get['filter_model'];
+		} else {
+			$filter_model = null;
+		}
+		if (isset($this->request->get['filter_shipping_method'])) {
+			$filter_shipping_method = $this->request->get['filter_shipping_method'];
+		} else {
+			$filter_shipping_method = null;
+		}
+		if (isset($this->request->get['filter_remark'])) {
+			$filter_remark = $this->request->get['filter_remark'];
+		} else {
+			$filter_remark = null;
+		}
+
 		if (isset($this->request->get['filter_order_status'])) {
 			$filter_order_status = $this->request->get['filter_order_status'];
 		} else {
@@ -95,6 +116,19 @@ class ControllerSaleOrder extends Controller {
 
 		if (isset($this->request->get['filter_customer'])) {
 			$url .= '&filter_customer=' . urlencode(html_entity_decode($this->request->get['filter_customer'], ENT_QUOTES, 'UTF-8'));
+		}
+
+		if (isset($this->request->get['filter_customer_email'])) {
+			$url .= '&filter_customer_email=' . urlencode(html_entity_decode($this->request->get['filter_customer_email'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_model'])) {
+			$url .= '&filter_model=' . urlencode(html_entity_decode($this->request->get['filter_model'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_shipping_method'])) {
+			$url .= '&filter_shipping_method=' . urlencode(html_entity_decode($this->request->get['filter_shipping_method'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_remark'])) {
+			$url .= '&filter_remark=' . urlencode(html_entity_decode($this->request->get['filter_remark'], ENT_QUOTES, 'UTF-8'));
 		}
 
 		if (isset($this->request->get['filter_order_status'])) {
@@ -152,9 +186,60 @@ class ControllerSaleOrder extends Controller {
 
 		$data['orders'] = array();
 
+		$models = [];
+		if(!empty($filter_model)){
+			$order_id_arr = $this->model_sale_order->getOrderProductOrderIdByModel($filter_model);
+			$order_product = $this->model_sale_order->getOrderProductModel($order_id_arr);
+			
+			if(!empty($order_product)){
+				foreach($order_product as $key => $arr){
+                    if (!isset($models[$arr['order_id']])) {
+                        $models[$arr['order_id']] = $arr['model'];
+                    }else{
+						$models[$arr['order_id']] .= "," .$arr['model'];	
+					}
+				}
+			}
+			$data['models'] = $models;
+
+			if(empty($order_id_arr)){
+				$order_id_arr = [0];	
+			}
+		}else{
+			$order_id_arr = [];
+		}
+
+        if (!empty($filter_remark)) {
+            $order_id_arr2 = [];
+            if ($filter_remark==2) {
+                $remark_arr = $this->model_sale_order->getResolvedOrderId(2);
+                if (!empty($remark_arr)) {
+                    $order_id_arr2 = array_column($remark_arr, 'order_id');
+                }
+            } elseif ($filter_remark ==1) {
+                $remark_arr = $this->model_sale_order->getResolvedOrderId(1);
+                if (!empty($remark_arr)) {
+                    $order_id_arr2 = array_column($remark_arr, 'order_id');
+                }
+            }
+            if (!empty($order_id_arr2)) {
+                if (empty($order_id_arr)) {
+                    $order_id_arr = $order_id_arr2;
+                } else {
+                    $order_id_arr = array_intersect($order_id_arr, $order_id_arr2);
+                }
+            }else{
+				$order_id_arr = [0];	
+			}
+        }
+		
+
 		$filter_data = array(
 			'filter_order_id'      => $filter_order_id,
 			'filter_customer'	   => $filter_customer,
+			'filter_customer_email'	   => $filter_customer_email,
+			'filter_shipping_method'	   => $filter_shipping_method,
+			'filter_order_id_arr'	   => $order_id_arr,
 			'filter_order_status'  => $filter_order_status,
 			'filter_total'         => $filter_total,
 			'filter_date_added'    => $filter_date_added,
@@ -171,6 +256,13 @@ class ControllerSaleOrder extends Controller {
 
 		foreach ($results as $result) {
 			$img_count = $this->model_tool_order_img->count($result['order_id']);	
+			$customer_order_count = $this->model_sale_order->customerOrderCount($result['customer_id']);	
+			$resolved_count = $this->model_sale_order->resolvedCount($result['order_id']);	
+			if($customer_order_count > 1){
+				$coc = $customer_order_count;
+			}else{
+				$coc = 0;		
+			}
 			if($img_count){
 				$done = 1;
 			}else{
@@ -181,15 +273,34 @@ class ControllerSaleOrder extends Controller {
 				'customer'      => $result['customer'],
 				'status'        => $result['status'],
 				'total'         => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
-				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'date_modified' => date($this->language->get('date_format_short'), strtotime($result['date_modified'])),
+				'date_added'    => $result['date_added'],
+				'date_modified' => $result['date_modified'],
 				'shipping_code' => $result['shipping_code'],
 				'view'          => $this->url->link('sale/order/info', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, 'SSL'),
 				'edit'          => $this->url->link('sale/order/edit', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, 'SSL'),
 				'img_count' => $img_count,
 				'done' => $done,	
-
+				'email' => $result['email'],
+				'shipping_method' => $result['shipping_method'],
+				'coc' => $coc,
+				'resolved_count' => $resolved_count
 			);
+		}
+
+	
+		if(empty($filter_model)){
+			$new_order_id_arr = array_column($results,'order_id');
+			$order_product = $this->model_sale_order->getOrderProductModel($new_order_id_arr);
+			if(!empty($order_product)){
+				foreach($order_product as $key => $arr){
+                    if (!isset($models[$arr['order_id']])) {
+                        $models[$arr['order_id']] = $arr['model'];
+                    }else{
+						$models[$arr['order_id']] .=  "," . $arr['model'] ;	
+					}
+				}
+			}
+			$data['models'] = $models;
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -225,6 +336,14 @@ class ControllerSaleOrder extends Controller {
 		$data['button_view'] = $this->language->get('button_view');
 		$data['button_ip_add'] = $this->language->get('button_ip_add');
 
+
+		$data['entry_customer_email'] = $this->language->get('entry_customer_email');
+		$data['entry_model'] = $this->language->get('entry_model');
+		$data['entry_shipping_method'] = $this->language->get('entry_shipping_method');
+
+		
+
+
 		$data['token'] = $this->session->data['token'];
 
 		if (isset($this->request->post['selected'])) {
@@ -241,6 +360,19 @@ class ControllerSaleOrder extends Controller {
 
 		if (isset($this->request->get['filter_customer'])) {
 			$url .= '&filter_customer=' . urlencode(html_entity_decode($this->request->get['filter_customer'], ENT_QUOTES, 'UTF-8'));
+		}
+
+		if (isset($this->request->get['filter_customer_email'])) {
+			$url .= '&filter_customer_email=' . urlencode(html_entity_decode($this->request->get['filter_customer_email'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_model'])) {
+			$url .= '&filter_model=' . urlencode(html_entity_decode($this->request->get['filter_model'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_shipping_method'])) {
+			$url .= '&filter_shipping_method=' . urlencode(html_entity_decode($this->request->get['filter_shipping_method'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_remark'])) {
+			$url .= '&filter_remark=' . urlencode(html_entity_decode($this->request->get['filter_remark'], ENT_QUOTES, 'UTF-8'));
 		}
 
 		if (isset($this->request->get['filter_order_status'])) {
@@ -286,6 +418,19 @@ class ControllerSaleOrder extends Controller {
 			$url .= '&filter_customer=' . urlencode(html_entity_decode($this->request->get['filter_customer'], ENT_QUOTES, 'UTF-8'));
 		}
 
+		if (isset($this->request->get['filter_customer_email'])) {
+			$url .= '&filter_customer_email=' . urlencode(html_entity_decode($this->request->get['filter_customer_email'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_model'])) {
+			$url .= '&filter_model=' . urlencode(html_entity_decode($this->request->get['filter_model'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_shipping_method'])) {
+			$url .= '&filter_shipping_method=' . urlencode(html_entity_decode($this->request->get['filter_shipping_method'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_remark'])) {
+			$url .= '&filter_remark=' . urlencode(html_entity_decode($this->request->get['filter_remark'], ENT_QUOTES, 'UTF-8'));
+		}
+
 		if (isset($this->request->get['filter_order_status'])) {
 			$url .= '&filter_order_status=' . $this->request->get['filter_order_status'];
 		}
@@ -327,6 +472,24 @@ class ControllerSaleOrder extends Controller {
 		$data['filter_date_added'] = $filter_date_added;
 		$data['filter_date_modified'] = $filter_date_modified;
 
+		$data['filter_customer_email'] = $filter_customer_email;
+		$data['filter_model'] = $filter_model;
+		$data['filter_shipping_method'] = $filter_shipping_method;
+		$data['filter_remark'] = $filter_remark;
+
+		$data['shipping_method'] = $this->getShippingMethods();
+		$data['remarks'] = [
+			0 => [
+				'val' => 1,
+				'name' => 'Not Resolved'
+			],
+			1 => [
+				'val' => 2,
+				'name' => 'Resolved'
+			]
+		];
+	
+
 		$this->load->model('localisation/order_status');
 
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
@@ -357,6 +520,31 @@ class ControllerSaleOrder extends Controller {
 
 		$this->response->setOutput($this->load->view('sale/order_list.tpl', $data));
 	}
+
+	public function getShippingMethods() {
+        if(VERSION >= '2.3.0.0'){
+            $shipping_methods = glob(DIR_APPLICATION . 'controller/extension/shipping/*.php');
+        } else {
+            $shipping_methods = glob(DIR_APPLICATION . 'controller/shipping/*.php');
+        }
+        $result = array();
+        foreach ($shipping_methods as $shipping){
+            $shipping = basename($shipping, '.php');
+            if(VERSION >= '2.3.0.0'){
+                $this->load->language('extension/shipping/' . $shipping);
+            } else {
+                $this->load->language('shipping/' . $shipping);
+            }
+            $shipping_status = $this->config->get($shipping.'_status');
+            if(isset($shipping_status)){
+                $result[] = array(
+                    'code' => $shipping,
+                    'name' => strip_tags($this->language->get('heading_title'))
+                );
+            }
+        }
+        return $result;
+    }
 
 	public function getForm() {
 		$this->load->model('customer/customer');
@@ -807,6 +995,8 @@ class ControllerSaleOrder extends Controller {
 
 			$data['tab_history'] = $this->language->get('tab_history');
 			$data['tab_additional'] = $this->language->get('tab_additional');
+
+			$data['remarks'] = $this->model_sale_order->getRemark($order_id);
 
 			$data['token'] = $this->session->data['token'];
 
@@ -1489,6 +1679,86 @@ class ControllerSaleOrder extends Controller {
 			}
 
 			$json['success'] = $this->language->get('text_commission_removed');
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function remark(){
+		$this->load->language('sale/order');
+
+		$json = [
+			'state' => 0
+		];
+
+		if (!$this->user->hasPermission('modify', 'sale/order')) {
+			$json['error'] = $this->language->get('error_permission');
+		} else {
+			if (isset($this->request->get['order_id'])) {
+				$order_id = $this->request->get['order_id'];
+			} else {
+				$order_id = 0;
+			}
+
+			$this->load->model('sale/order');
+
+			$order_info = $this->model_sale_order->getOrder($order_id);
+			$remark = $this->request->post['remark'];
+
+			$add = [
+				'order_id' => $order_id,
+				'remark' => $remark,
+				'add_time' => date('Y-m-d H:i:s')
+			];
+
+			if ($order_info) {
+				$remark_id = $this->model_sale_order->addRemark($add);	
+			}
+			$json['state'] = 1;
+			$json['remark'] = $remark;
+			$json['remark_id'] = $remark_id;
+			$json['add_time'] = $add['add_time'];
+			$json['success'] = $this->language->get('text_success_add_remark');
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function remarkResolved(){
+		$this->load->language('sale/order');
+
+		$json = [
+			'state' => 0
+		];
+
+		if (!$this->user->hasPermission('modify', 'sale/order')) {
+			$json['error'] = $this->language->get('error_permission');
+		} else {
+			if (isset($this->request->get['order_id'])) {
+				$order_id = $this->request->get['order_id'];
+			} else {
+				$order_id = 0;
+			}
+
+			$this->load->model('sale/order');
+
+			$order_info = $this->model_sale_order->getOrder($order_id);
+			$resolved = $this->request->post['resolved'];
+			$remark_id = $this->request->post['remark_id'];
+
+			$update = [
+				'remark_id' => $remark_id,
+				'resolved' => $resolved,
+				'update_time' => date('Y-m-d H:i:s')
+			];
+
+			if ($order_info) {
+				$this->model_sale_order->updateRemark($update);	
+			}
+			$json['state'] = 1;
+			$json['success'] = $this->language->get('text_success_add_remark');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

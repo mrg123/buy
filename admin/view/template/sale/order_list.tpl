@@ -31,6 +31,10 @@
                 <label class="control-label" for="input-customer"><?php echo $entry_customer; ?></label>
                 <input type="text" name="filter_customer" value="<?php echo $filter_customer; ?>" placeholder="<?php echo $entry_customer; ?>" id="input-customer" class="form-control" />
               </div>
+              <div class="form-group">
+                <label class="control-label" for="input-customer_email"><?php echo $entry_customer_email; ?></label>
+                <input type="text" name="filter_customer_email" value="<?php echo $filter_customer_email; ?>" placeholder="<?php echo $entry_customer_email; ?>" id="input-customer_email" class="form-control" />
+              </div>
             </div>
             <div class="col-sm-4">
               <div class="form-group">
@@ -55,6 +59,10 @@
                 <label class="control-label" for="input-total"><?php echo $entry_total; ?></label>
                 <input type="text" name="filter_total" value="<?php echo $filter_total; ?>" placeholder="<?php echo $entry_total; ?>" id="input-total" class="form-control" />
               </div>
+              <div class="form-group">
+                <label class="control-label" for="input-model"><?php echo $entry_model; ?></label>
+                <input type="text" name="filter_model" value="<?php echo $filter_model; ?>" placeholder="<?php echo $entry_model; ?>" id="input-model" class="form-control" />
+              </div>
             </div>
             <div class="col-sm-4">
               <div class="form-group">
@@ -73,6 +81,27 @@
                   <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
                   </span></div>
               </div>
+              <div class="form-group">
+                <label class="control-label" for="input-shipping_method"><?php echo $entry_shipping_method; ?></label>
+
+                <input type="text" name="filter_shipping_method" value="<?php echo $filter_shipping_method; ?>"  id="input-shipping_method" class="form-control" />
+              </div>
+
+              <div class="form-group">
+                <label class="control-label" for="input-shipping_method"> Admin Remarks </label>
+
+                <select name="filter_remark" class="form-control">
+                <option value="">All</option>
+                  <?php foreach($remarks as $key => $arr) { ?>
+                    <?php if($arr['val'] == $filter_remark) { ?>
+                    <option value="<?php echo $arr['val']; ?>" selected><?php echo $arr['name']; ?></option>
+                    <?php }else{ ?>
+                    <option value="<?php echo $arr['val']; ?>"><?php echo $arr['name']; ?></option>
+                    <?php } ?>
+                  <?php } ?>
+                </select>
+              </div>
+
               <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> <?php echo $button_filter; ?></button>
             </div>
           </div>
@@ -88,11 +117,17 @@
                     <?php } else { ?>
                     <a href="<?php echo $sort_order; ?>"><?php echo $column_order_id; ?></a>
                     <?php } ?></td>
+                     <td class="text-right"><?php echo $column_action; ?></td>
                   <td class="text-left"><?php if ($sort == 'customer') { ?>
                     <a href="<?php echo $sort_customer; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_customer; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_customer; ?>"><?php echo $column_customer; ?></a>
                     <?php } ?></td>
+
+                  <td class="text-left"><?php echo $entry_customer_email; ?></td>
+                  <td class="text-left"><?php echo $entry_model; ?></td>
+                  <td class="text-left"><?php echo $entry_shipping_method; ?></td>
+
                   <td class="text-left"><?php if ($sort == 'status') { ?>
                     <a href="<?php echo $sort_status; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_status; ?></a>
                     <?php } else { ?>
@@ -113,7 +148,7 @@
                     <?php } else { ?>
                     <a href="<?php echo $sort_date_modified; ?>"><?php echo $column_date_modified; ?></a>
                     <?php } ?></td>
-                  <td class="text-right"><?php echo $column_action; ?></td>
+
                 </tr>
               </thead>
               <tbody>
@@ -126,13 +161,19 @@
                     <input type="checkbox" name="selected[]" value="<?php echo $order['order_id']; ?>" />
                     <?php } ?>
                     <input type="hidden" name="shipping_code[]" value="<?php echo $order['shipping_code']; ?>" /></td>
-                  <td class="text-right"><?php echo $order['order_id']; ?></td>
-                  <td class="text-left"><?php echo $order['customer']; ?></td>
-                  <td class="text-left"><?php echo $order['status']; ?></td>
-                  <td class="text-right"><?php echo $order['total']; ?></td>
-                  <td class="text-left"><?php echo $order['date_added']; ?></td>
-                  <td class="text-left"><?php echo $order['date_modified']; ?></td>
-                  <td class="text-right">
+                    <td class="text-right"><?php echo $order['order_id']; ?></td>
+                    <td class="text-right">
+
+                  <?php if($order['resolved_count']==2) { ?>
+ <i class="fa fa-check" style="color:green;font-size:20px"></i> &nbsp;&nbsp;                  
+                  <?php }else if($order['resolved_count']==1){ ?>
+<i class="fa fa-exclamation-circle" style="color:#f24545;font-size:20px"></i> &nbsp;&nbsp;
+                  <?php } ?>  
+
+
+                  <?php if($order['coc']) { ?>
+                   <i class="fa fa-shopping-cart"></i> * <?php echo $order['coc']; ?> &nbsp;
+                  <?php } ?>  
                   
                   <?php if($order['img_count']) { ?>
                   <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $preview_url; ?>&order_id=<?php echo $order['order_id']; ?>" target="_blank" >
@@ -146,6 +187,21 @@
 
                   <a href="<?php echo $order['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info"><i class="fa fa-eye"></i></a> <a href="<?php echo $order['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                     <button type="button" value="<?php echo $order['order_id']; ?>" id="button-delete<?php echo $order['order_id']; ?>" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></button></td>
+                  
+                  <td class="text-left"><?php echo $order['customer']; ?></td>
+
+                  <td class="text-left"><?php echo $order['email']; ?></td>
+                  <td class="text-left">
+                    <?php if(isset($models[$order['order_id']])) { echo $models[$order['order_id']]; } ?>
+                  </td>
+                  <td class="text-left"><?php echo $order['shipping_method']; ?></td>
+
+
+                  <td class="text-left"><?php echo $order['status']; ?></td>
+                  <td class="text-right"><?php echo $order['total']; ?></td>
+                  <td class="text-left"><?php echo $order['date_added']; ?></td>
+                  <td class="text-left"><?php echo $order['date_modified']; ?></td>
+                  
                 </tr>
                 <?php } ?>
                 <?php } else { ?>
@@ -178,6 +234,23 @@ $('#button-filter').on('click', function() {
 
 	if (filter_customer) {
 		url += '&filter_customer=' + encodeURIComponent(filter_customer);
+	}
+
+  var filter_customer_email = $('input[name=\'filter_customer_email\']').val();
+	if (filter_customer_email) {
+		url += '&filter_customer_email=' + encodeURIComponent(filter_customer_email);
+	}
+  var filter_model = $('input[name=\'filter_model\']').val();
+	if (filter_model) {
+		url += '&filter_model=' + encodeURIComponent(filter_model);
+	}
+  var filter_shipping_method = $('input[name=\'filter_shipping_method\']').val();
+	if (filter_shipping_method) {
+		url += '&filter_shipping_method=' + encodeURIComponent(filter_shipping_method);
+	}
+   var filter_remark = $('select[name=\'filter_remark\']').val();
+	if (filter_remark) {
+		url += '&filter_remark=' + encodeURIComponent(filter_remark);
 	}
 
 	var filter_order_status = $('select[name=\'filter_order_status\']').val();

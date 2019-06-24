@@ -129,3 +129,8 @@ $_['error_warning']              = 'Warning: Please check the form carefully for
 $_['error_permission']           = 'Warning: You do not have permission to modify orders!';
 $_['error_action']               = 'Warning: Could not complete this action!';
 $_['error_filetype']			 = 'Invalid file type!';
+
+$_['entry_customer_email']			 = 'Customer Email';
+$_['entry_model']			 = 'Product Model';
+$_['entry_shipping_method']			 = 'Shipping Method';
+$_['text_success_add_remark']			 = 'Add Remark Succesed';

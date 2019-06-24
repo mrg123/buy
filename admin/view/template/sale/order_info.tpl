@@ -248,6 +248,8 @@
                   <label class="col-sm-2 control-label" for="input-notify"><?php echo $entry_notify; ?></label>
                   <div class="col-sm-10">
                     <input type="checkbox" name="notify" value="1" id="input-notify" />
+
+                     <div class="pull-right"><a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -261,6 +263,48 @@
             <div class="text-right">
               <button id="button-history" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?php echo $button_history_add; ?></button>
             </div>
+
+        <form class="form-horizontal">
+        <style type="text/css">
+#comment_box p{
+  margin-bottom:20px;
+  border-bottom:1px solid #ddd;
+  padding:6px;
+}
+</style>
+        <br/>
+        <div class="form-group" style="border-top: 1px solid #ededed;">
+          <label class="col-sm-2 control-label" for="input-admin_comment">Adamin Remarks</label>
+          <div class="col-sm-10" id="comment_box">
+            <?php if($remarks) {  foreach($remarks as $key=>$arr){?>
+            <?php if($arr['resolved']==1) { ?>
+            <p style="background-color:#ddd">
+            <?php }else{ ?>
+<p>
+            <?php } ?>
+            <?php echo $arr['remark']; ?> &nbsp;&nbsp; <?php echo $arr['add_time'];?> &nbsp;&nbsp;
+             <span>
+             <?php if($arr['resolved']==1) { ?>
+            <input type="checkbox" name="remark[<?php echo $arr['remark_id']; ?>]" remark_id="<?php echo $arr['remark_id']; ?>" checked />
+            <?php }else{ ?>
+            <input type="checkbox" name="remark[<?php echo $arr['remark_id']; ?>]" remark_id="<?php echo $arr['remark_id']; ?>"/>
+            <?php } ?>
+            </span>
+            </p>
+            <?php }} ?>
+          </div>
+        </div>
+            <div class="form-group" style="border-top: 1px solid #ededed;" >
+                  <label class="col-sm-2 control-label" for="input-admin_comment"> &nbsp; </label>
+                  <div class="col-sm-5">
+                    <textarea name="admin_comment" rows="8" id="input-admin_comment" class="form-control"></textarea>
+                  </div>
+                 <div class="col-sm-5" >
+              <input type="button" id="admin_comment" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary" value="Add Adamin Remarks"> 
+            </div>
+            </div>
+          </form>   
+             
           </div>
           <div class="tab-pane" id="tab-additional">
             <?php if ($account_custom_fields) { ?>
@@ -609,6 +653,87 @@ $('#button-history').on('click', function() {
 		}
 	});
 });
+
+$('#admin_comment').on('click',function(){
+
+var admin_comment = $.trim($('textarea[name=\'admin_comment\']').val());
+if(admin_comment == ''){
+  alert("Remark can't null!");
+}else{
+
+$.ajax({
+		url: 'index.php?route=sale/order/remark&token=<?php echo $token; ?>&order_id=<?php echo $order_id; ?>',
+		type: 'post',
+		dataType: 'json',
+		data: 'remark=' + encodeURIComponent($('textarea[name=\'admin_comment\']').val()),
+		beforeSend: function() {
+			$('#button-admin_comment').button('loading');
+		},
+		complete: function() {
+			$('#button-admin_comment').button('reset');
+		},
+		success: function(json) {
+
+			if (json['state']==1) {
+        
+$('textarea[name=\'admin_comment\']').val('');
+        var _html = '<p>' +json['remark'] +'<span> &nbsp;&nbsp; '+json['add_time']+' &nbsp;&nbsp; <input type="checkbox" name="remark['+json['remark_id']+']" remark_id="'+json['remark_id']+'"/></span></p>';
+        $('#comment_box').append(_html);
+
+			}else{
+        alert('Try Again!');
+      }
+
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+  
+}
+
+});
+
+$('body').on('click','#comment_box input',function(){
+  var check = $(this).is(':checked');
+  var remark_id = $(this).attr('remark_id');
+  var resolved = 0;
+  var that = $(this);
+  if(check== true){
+    resolved = 1;
+  }
+
+  $.ajax({
+		url: 'index.php?route=sale/order/remarkResolved&token=<?php echo $token; ?>&order_id=<?php echo $order_id; ?>',
+		type: 'post',
+		dataType: 'json',
+		data: 'resolved=' + resolved + '&remark_id=' + remark_id,
+		success: function(json) {
+
+			if (json['state']==1) {
+        if(resolved){
+      that.parent().parent().css({
+        'background-color':'#ddd'
+      });  
+        }else{
+          that.parent().parent().css({
+        'background-color':'#fff'
+      }); 
+        }
+			}else{
+        alert('Try Again!');
+      }
+
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+
+});
+
 
 function changeStatus(){
 	var status_id = $('select[name="order_status_id"]').val();

@@ -157,7 +157,7 @@ class ModelSaleOrder extends Model {
 	}
 
 	public function getOrders($data = array()) {
-		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified FROM `" . DB_PREFIX . "order` o";
+		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified,o.email,o.shipping_method,o.customer_id FROM `" . DB_PREFIX . "order` o";
 
 		if (isset($data['filter_order_status'])) {
 			$implode = array();
@@ -181,6 +181,16 @@ class ModelSaleOrder extends Model {
 
 		if (!empty($data['filter_customer'])) {
 			$sql .= " AND CONCAT(o.firstname, ' ', o.lastname) LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
+		}
+
+		if (!empty($data['filter_order_id_arr']) && is_array($data['filter_order_id_arr'])) {
+			$sql .= " AND order_id IN (" . implode(',', $data['filter_order_id_arr']) . ")";
+		}
+		if (!empty($data['filter_customer_email'])) {
+			$sql .= " AND email LIKE '%" . $this->db->escape($data['filter_customer_email']) . "%'";
+		}
+		if (!empty($data['filter_shipping_method'])) {
+			$sql .= " AND shipping_method LIKE '%" . $this->db->escape($data['filter_shipping_method']) . "%'";
 		}
 
 		if (!empty($data['filter_date_added'])) {
@@ -263,6 +273,100 @@ class ModelSaleOrder extends Model {
 		return $query->rows;
 	}
 
+	public function customerOrderCount($customer_id) {
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order WHERE customer_id = '" . (int)$customer_id . "' AND order_status_id > 0");
+
+		return $query->row['total'];
+	}
+
+	public function resolvedCount($order_id) {
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order_remark WHERE order_id = '" . (int)$order_id . "' AND resolved = 0");
+		$query1 = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order_remark WHERE order_id = '" . (int)$order_id . "' AND resolved = 1");
+
+		$resolved = $query->row['total'];
+		$resolved1 = $query1->row['total'];
+		if($resolved1 ==0){
+			if($resolved == 0){
+				$result = 0;
+			}else{
+				$result = 1;
+			}
+		}else{
+			if($resolved == 0){
+				$result = 2;
+			}else{
+				$result = 1;
+			}
+		}
+		
+		return $result;
+	}
+
+	public function getResolvedOrderId($resolved) {
+        if ($resolved==2) {
+			$sql = "select DISTINCT(order_id) from " . DB_PREFIX . "order_remark where resolved = 0";
+			$query = $this->db->query($sql);
+			$order_id = $query->rows;
+			if(empty($order_id)){
+				$sql = "select DISTINCT(order_id) from " . DB_PREFIX . "order_remark where resolved = 1";
+			}else{
+				$order_id = array_column($order_id,'order_id');
+				$sql = "select DISTINCT(order_id) from " . DB_PREFIX . "order_remark where resolved = 1";
+				$sql .= " AND order_id NOT IN (" . implode(',', $order_id) . ")";
+				
+			}
+			$query = $this->db->query($sql);
+			return $query->rows;
+
+      
+        }else{
+			$sql = "select DISTINCT(order_id) from " . DB_PREFIX . "order_remark where resolved = 0";
+			$query = $this->db->query($sql);
+			return $query->rows;
+		}
+		
+	}
+
+	public function addRemark($data) {
+		$query = $this->db->query("INSERT INTO " . DB_PREFIX . "order_remark(order_id, remark, add_time) VALUES (".(int)$data['order_id'].",'".$this->db->escape($data['remark'])."','".$this->db->escape($data['add_time']) ."')");
+
+		return $this->db->getLastId();
+	}
+
+	public function updateRemark($data) {
+		$query = $this->db->query("UPDATE " . DB_PREFIX . "order_remark SET resolved = ".(int)$data['resolved'].",update_time = '".$this->db->escape($data['update_time']) ."' WHERE remark_id = ".$data['remark_id']);
+
+		return $query;
+	}
+
+	public function getRemark($order_id) {
+		$query = $this->db->query("select * from " . DB_PREFIX . "order_remark where order_id = ".(int)$order_id);
+
+		return $query->rows;
+	}
+
+	public function getOrderProductOrderIdByModel($model){
+		$sql = "select DISTINCT(order_id) from `" . DB_PREFIX . "order_product` where model LIKE '%" . $this->db->escape($model) . "%'";
+		$query = $this->db->query($sql);
+		$result = $query->rows;
+		if(!empty($result)){
+			$result = array_column($result,'order_id');	
+		}
+		return $result;
+	}
+
+	public function getOrderProductModel($order_id_arr){
+		$sql = "select order_id,model from `" . DB_PREFIX . "order_product`";
+
+		$result = [];
+		if (!empty($order_id_arr) && is_array($order_id_arr)) {
+			$sql .= " WHERE order_id IN (" . implode(',', $order_id_arr) . ")";
+			$query = $this->db->query($sql);
+			$result = $query->rows;
+		}
+		return $result;
+	}
+
 	public function getTotalOrders($data = array()) {
 		$sql = "SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order`";
 
@@ -288,6 +392,16 @@ class ModelSaleOrder extends Model {
 
 		if (!empty($data['filter_customer'])) {
 			$sql .= " AND CONCAT(firstname, ' ', lastname) LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
+		}
+
+		if (!empty($data['filter_order_id_arr']) && is_array($data['filter_order_id_arr'])) {
+			$sql .= " AND order_id IN (" . implode(',', $data['filter_order_id_arr']) . ")";
+		}
+		if (!empty($data['filter_customer_email'])) {
+			$sql .= " AND email LIKE '%" . $this->db->escape($data['filter_customer_email']) . "%'";
+		}
+		if (!empty($data['filter_shipping_method'])) {
+			$sql .= " AND shipping_method LIKE '%" . $this->db->escape($data['filter_shipping_method']) . "%'";
 		}
 
 		if (!empty($data['filter_date_added'])) {

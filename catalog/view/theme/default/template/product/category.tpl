@@ -14,7 +14,7 @@
     <?php $class = 'col-sm-12'; ?>
     <?php } ?>
     <div id="content" class="<?php echo $class; ?>"><?php echo $content_top; ?>
-      <h2 style="text-align:center"><?php echo $heading_title; ?> <span style="color:#b0b0b0"><?php echo $heading_title_tip; ?></span></h2>
+      <h2 style="text-align:center"><?php echo $heading_title; ?> <span style="color:#b0b0b0"></span></h2>
       <?php if ($thumb || $description) { ?>
       <div class="row">
         <?php if ($thumb) { ?>

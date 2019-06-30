@@ -112,32 +112,33 @@
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                  <td class="text-right" width="320"><?php echo $column_action; ?></td>
                   <td class="text-right"><?php if ($sort == 'o.order_id') { ?>
                     <a href="<?php echo $sort_order; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_order_id; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_order; ?>"><?php echo $column_order_id; ?></a>
                     <?php } ?></td>
-                     <td class="text-right"><?php echo $column_action; ?></td>
-                  <td class="text-left"><?php if ($sort == 'customer') { ?>
-                    <a href="<?php echo $sort_customer; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_customer; ?></a>
-                    <?php } else { ?>
-                    <a href="<?php echo $sort_customer; ?>"><?php echo $column_customer; ?></a>
-                    <?php } ?></td>
-
-                  <td class="text-left"><?php echo $entry_customer_email; ?></td>
-                  <td class="text-left"><?php echo $entry_model; ?></td>
-                  <td class="text-left"><?php echo $entry_shipping_method; ?></td>
-
                   <td class="text-left"><?php if ($sort == 'status') { ?>
                     <a href="<?php echo $sort_status; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_status; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_status; ?>"><?php echo $column_status; ?></a>
                     <?php } ?></td>
-                  <td class="text-right"><?php if ($sort == 'o.total') { ?>
+                    <td class="text-right"><?php if ($sort == 'o.total') { ?>
                     <a href="<?php echo $sort_total; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_total; ?></a>
                     <?php } else { ?>
                     <a href="<?php echo $sort_total; ?>"><?php echo $column_total; ?></a>
                     <?php } ?></td>
+                     <td class="text-left"><?php echo $entry_shipping_method; ?></td>
+                      
+                  <td class="text-left"><?php if ($sort == 'customer') { ?>
+                    <a href="<?php echo $sort_customer; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_customer; ?></a>
+                    <?php } else { ?>
+                    <a href="<?php echo $sort_customer; ?>"><?php echo $column_customer; ?></a>
+                    <?php } ?></td>
+                  <td class="text-left"><?php echo $entry_model; ?></td>
+                  <td class="text-left"><?php echo $entry_customer_email; ?></td>
+                  
+
                   <td class="text-left"><?php if ($sort == 'o.date_added') { ?>
                     <a href="<?php echo $sort_date_added; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_date_added; ?></a>
                     <?php } else { ?>
@@ -161,7 +162,7 @@
                     <input type="checkbox" name="selected[]" value="<?php echo $order['order_id']; ?>" />
                     <?php } ?>
                     <input type="hidden" name="shipping_code[]" value="<?php echo $order['shipping_code']; ?>" /></td>
-                    <td class="text-right"><?php echo $order['order_id']; ?></td>
+                    
                     <td class="text-right">
 
                   <?php if($order['resolved_count']==2) { ?>
@@ -183,22 +184,23 @@
                   <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $preview_url; ?>&order_id=<?php echo $order['order_id']; ?>" target="_blank"></span>
                   <?php } ?>
 
-                  <a target="_blank" data-toggle="tooltip" title="upload image" class="btn btn-info layui-btn" data-method="setTop" order-id="<?php echo $order['order_id']; ?>" done="<?php echo $order['done']; ?>" id="btn_<?php echo $order['order_id']; ?>" ><i class="fa fa-upload"></i></a>
+                  <button type="button" value="<?php echo $order['order_id']; ?>" id="button-delete<?php echo $order['order_id']; ?>" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
 
-                  <a href="<?php echo $order['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info"><i class="fa fa-eye"></i></a> <a href="<?php echo $order['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
-                    <button type="button" value="<?php echo $order['order_id']; ?>" id="button-delete<?php echo $order['order_id']; ?>" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></button></td>
-                  
+                  <a href="<?php echo $order['edit']; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+
+                  <a href="<?php echo $order['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info"><i class="fa fa-eye"></i></a> 
+
+                  <a target="_blank" data-toggle="tooltip" title="upload image" class="btn btn-info layui-btn" data-method="setTop" order-id="<?php echo $order['order_id']; ?>" done="<?php echo $order['done']; ?>" id="btn_<?php echo $order['order_id']; ?>" ><i class="fa fa-upload"></i></a>    
+                    </td>
+                  <td class="text-right"><?php echo $order['order_id']; ?></td>
+                  <td class="text-left"><?php echo $order['status']; ?></td>
+                  <td class="text-right"><?php echo $order['total']; ?></td>
+                  <td class="text-left"><?php echo $order['shipping_method']; ?></td>
                   <td class="text-left"><?php echo $order['customer']; ?></td>
-
-                  <td class="text-left"><?php echo $order['email']; ?></td>
                   <td class="text-left">
                     <?php if(isset($models[$order['order_id']])) { echo $models[$order['order_id']]; } ?>
                   </td>
-                  <td class="text-left"><?php echo $order['shipping_method']; ?></td>
-
-
-                  <td class="text-left"><?php echo $order['status']; ?></td>
-                  <td class="text-right"><?php echo $order['total']; ?></td>
+                  <td class="text-left"><?php echo $order['email']; ?></td>
                   <td class="text-left"><?php echo $order['date_added']; ?></td>
                   <td class="text-left"><?php echo $order['date_modified']; ?></td>
                   

@@ -274,7 +274,7 @@
 </style>
         <br/>
         <div class="form-group" style="border-top: 1px solid #ededed;">
-          <label class="col-sm-2 control-label" for="input-admin_comment">Adamin Remarks</label>
+          <label class="col-sm-2 control-label" for="input-admin_comment">Admin Remarks</label>
           <div class="col-sm-10" id="comment_box">
             <?php if($remarks) {  foreach($remarks as $key=>$arr){?>
             <?php if($arr['resolved']==1) { ?>
@@ -300,7 +300,7 @@
                     <textarea name="admin_comment" rows="8" id="input-admin_comment" class="form-control"></textarea>
                   </div>
                  <div class="col-sm-5" >
-              <input type="button" id="admin_comment" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary" value="Add Adamin Remarks"> 
+              <input type="button" id="admin_comment" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary" value="Add Admin Remarks"> 
             </div>
             </div>
           </form>   

@@ -334,6 +334,22 @@
                           </select>
                         </div>
                       </div>
+
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-ban">Black List</label>
+                        <div class="col-sm-10">
+                          <select name="ban" id="input-ban" class="form-control">
+                            <?php if ($ban) { ?>
+                            <option value="1" selected="selected"><?php echo $text_yes; ?></option>
+                            <option value="0"><?php echo $text_no; ?></option>
+                            <?php } else { ?>
+                            <option value="1"><?php echo $text_yes; ?></option>
+                            <option value="0" selected="selected"><?php echo $text_no; ?></option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                      </div>
+
                     </div>
                     <?php $address_row = 1; ?>
                     <?php foreach ($addresses as $address) { ?>

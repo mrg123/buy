@@ -16,6 +16,10 @@ class ModelCustomerCustomer extends Model {
 				}
 			}
 		}
+
+		if(isset($data['ban']) && $data['ban']==1){
+			$this->db->query("INSERT INTO " . DB_PREFIX . "customer_ban SET customer_id = '" . $customer_id . "'");
+		}
 	}
 
 	public function editCustomer($customer_id, $data) {
@@ -46,6 +50,15 @@ class ModelCustomerCustomer extends Model {
 				}
 			}
 		}
+
+		if(isset($data['ban']) && $data['ban']==1){
+			$result = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer_ban WHERE customer_id = '" . (int)$customer_id . "'");
+            if (empty($result->row)) {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "customer_ban SET customer_id = '" . $customer_id . "'");
+            }
+		}else{
+			$this->db->query("DELETE FROM " . DB_PREFIX . "customer_ban WHERE customer_id = '" . (int)$customer_id . "'");
+		}
 	}
 
 	public function editToken($customer_id, $token) {
@@ -58,6 +71,7 @@ class ModelCustomerCustomer extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "customer_transaction WHERE customer_id = '" . (int)$customer_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "customer_ip WHERE customer_id = '" . (int)$customer_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
+		$this->db->query("DELETE FROM " . DB_PREFIX . "customer_ban WHERE customer_id = '" . (int)$customer_id . "'");
 	}
 
 	public function getCustomer($customer_id) {

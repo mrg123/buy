@@ -254,6 +254,8 @@ class ControllerSaleOrder extends Controller {
 
 		$results = $this->model_sale_order->getOrders($filter_data);
 
+		$this->load->model('customer/customer_ban');
+	
 		foreach ($results as $result) {
 			$img_count = $this->model_tool_order_img->count($result['order_id']);	
 			$customer_order_count = $this->model_sale_order->customerOrderCount($result['customer_id']);	
@@ -268,6 +270,8 @@ class ControllerSaleOrder extends Controller {
 			}else{
 				$done = 0;
 			}	
+			$ban = $this->model_customer_customer_ban->get($result['customer_id']);
+			
 			$data['orders'][] = array(
 				'order_id'      => $result['order_id'],
 				'customer'      => $result['customer'],
@@ -283,7 +287,8 @@ class ControllerSaleOrder extends Controller {
 				'email' => $result['email'],
 				'shipping_method' => $result['shipping_method'],
 				'coc' => $coc,
-				'resolved_count' => $resolved_count
+				'resolved_count' => $resolved_count,
+				'ban' => empty($ban)? 0:1
 			);
 		}
 

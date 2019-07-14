@@ -112,7 +112,7 @@
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
-                  <td class="text-right" width="320"><?php echo $column_action; ?></td>
+                  <td class="text-right" width="350"><?php echo $column_action; ?></td>
                   <td class="text-right"><?php if ($sort == 'o.order_id') { ?>
                     <a href="<?php echo $sort_order; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_order_id; ?></a>
                     <?php } else { ?>
@@ -164,6 +164,11 @@
                     <input type="hidden" name="shipping_code[]" value="<?php echo $order['shipping_code']; ?>" /></td>
                     
                     <td class="text-right">
+
+                    <?php if($order['ban']==1) { ?>
+ <img src="view/image/shantou.png" style="vertical-align: initial;"> &nbsp;&nbsp;                  
+                  <?php } ?>
+                  
 
                   <?php if($order['resolved_count']==2) { ?>
  <i class="fa fa-check" style="color:green;font-size:20px"></i> &nbsp;&nbsp;                  

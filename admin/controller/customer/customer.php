@@ -966,6 +966,18 @@ class ControllerCustomerCustomer extends Controller {
 			$data['safe'] = 0;
 		}
 
+        if (!empty($customer_info)) {
+            $this->load->model('customer/customer_ban');
+            $customer_ban = $this->model_customer_customer_ban->get($customer_info['customer_id']);
+        }
+		if (isset($this->request->post['ban'])) {
+			$data['ban'] = $this->request->post['ban'];
+		} elseif (!empty($customer_ban)) {
+			$data['ban'] = 1;
+		} else {
+			$data['ban'] = 0;
+		}
+
 		if (isset($this->request->post['password'])) {
 			$data['password'] = $this->request->post['password'];
 		} else {

@@ -247,9 +247,11 @@
                 <div class="form-group">
                   <label class="col-sm-2 control-label" for="input-notify"><?php echo $entry_notify; ?></label>
                   <div class="col-sm-10">
-                    <input type="checkbox" name="notify" value="1" id="input-notify" />
+                    
 
-                     <div class="pull-right"><a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+                     <div class="pull-left">
+                     <input type="checkbox" name="notify" value="1" id="input-notify" style="margin-right:20px"/>
+                     <a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -260,8 +262,11 @@
                 </div>
               </form>
             </fieldset>
-            <div class="text-right">
+            <div class="form-group row">
+              <div class="col-sm-2">&nbsp;</div>
+              <div class="col-sm-10">
               <button id="button-history" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?php echo $button_history_add; ?></button>
+              </div>
             </div>
 
         <form class="form-horizontal">

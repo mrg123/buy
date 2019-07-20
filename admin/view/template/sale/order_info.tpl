@@ -241,7 +241,13 @@
                 <div class="form-group">
                   <label class="col-sm-2 control-label" for="input-override"><span data-toggle="tooltip" title="<?php echo $help_override; ?>"><?php echo $entry_override; ?></span></label>
                   <div class="col-sm-10">
-                    <input type="checkbox" name="override" value="1" id="input-override" />
+                   
+
+                     <div class="pull-left">
+                      <input type="checkbox" name="override" value="1" id="input-override" style="margin-right:20px"/>
+                     
+                     <a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
+                     </div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -251,7 +257,8 @@
 
                      <div class="pull-left">
                      <input type="checkbox" name="notify" value="1" id="input-notify" style="margin-right:20px"/>
-                     <a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+                     
+                     </div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -301,10 +308,12 @@
         </div>
             <div class="form-group" style="border-top: 1px solid #ededed;" >
                   <label class="col-sm-2 control-label" for="input-admin_comment"> &nbsp; </label>
-                  <div class="col-sm-5">
+                  <div class="col-sm-10">
                     <textarea name="admin_comment" rows="8" id="input-admin_comment" class="form-control"></textarea>
                   </div>
-                 <div class="col-sm-5" >
+                  <div class="col-sm-2"> &nbsp; </div>
+                 <div class="col-sm-10" >
+                 <br/>
               <input type="button" id="admin_comment" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary" value="Add Admin Remarks"> 
             </div>
             </div>

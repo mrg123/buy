@@ -64,6 +64,13 @@ class ControllerModuleOrderAd extends Controller {
 		} else {
 			$data['order_ad_status'] = $this->config->get('order_ad_status');
 		}
+
+		if (isset($this->request->post['order_ad_status2'])) {
+			$data['order_ad_status2'] = $this->request->post['order_ad_status2'];
+		} else {
+			$data['order_ad_status2'] = $this->config->get('order_ad_status2');
+		}
+
 		if (isset($this->request->post['order_ad_description'])) {
 			$data['order_ad_description'] = $this->request->post['order_ad_description'];
 		} else {

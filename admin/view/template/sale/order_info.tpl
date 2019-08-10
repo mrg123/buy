@@ -238,15 +238,15 @@
                     </select>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label class="col-sm-2 control-label" for="input-override"><span data-toggle="tooltip" title="<?php echo $help_override; ?>"><?php echo $entry_override; ?></span></label>
+                <div class="form-group" style="display:none">
+                  <label class="col-sm-2 control-label" for="input-override"><span data-toggle="tooltip" title="<?php echo $help_override; ?>" style="display:none"><?php echo $entry_override; ?></span></label>
                   <div class="col-sm-10">
                    
 
                      <div class="pull-left">
-                      <input type="checkbox" name="override" value="1" id="input-override" style="margin-right:20px"/>
+                      <input type="checkbox" name="override" value="1" id="input-override" style="margin-right:20px;display:none"/>
                      
-                     <a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
+                   
                      </div>
                   </div>
                 </div>
@@ -256,8 +256,10 @@
                     
 
                      <div class="pull-left">
-                     <input type="checkbox" name="notify" value="1" id="input-notify" style="margin-right:20px"/>
-                     
+                     <input type="checkbox" name="notify" value="1" id="input-notify" style="margin-right:20px" checked/>
+                     <button id="button-history" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?php echo $button_history_add; ?></button>
+
+  <a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
                      </div>
                   </div>
                 </div>
@@ -272,29 +274,22 @@
             <div class="form-group row">
               <div class="col-sm-2">&nbsp;</div>
               <div class="col-sm-10">
-              <button id="button-history" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?php echo $button_history_add; ?></button>
+              
               </div>
             </div>
 
         <form class="form-horizontal">
-        <style type="text/css">
-#comment_box p{
-  margin-bottom:20px;
-  border-bottom:1px solid #ddd;
-  padding:6px;
-}
-</style>
         <br/>
         <div class="form-group" style="border-top: 1px solid #ededed;">
           <label class="col-sm-2 control-label" for="input-admin_comment">Admin Remarks</label>
           <div class="col-sm-10" id="comment_box">
             <?php if($remarks) {  foreach($remarks as $key=>$arr){?>
             <?php if($arr['resolved']==1) { ?>
-            <p style="background-color:#ddd">
+            <div style="background-color:#ddd;">
             <?php }else{ ?>
-<p>
+<div>
             <?php } ?>
-            <?php echo $arr['remark']; ?> &nbsp;&nbsp; <?php echo $arr['add_time'];?> &nbsp;&nbsp;
+            <?php echo $arr['add_time'];?> &nbsp;&nbsp;
              <span>
              <?php if($arr['resolved']==1) { ?>
             <input type="checkbox" name="remark[<?php echo $arr['remark_id']; ?>]" remark_id="<?php echo $arr['remark_id']; ?>" checked />
@@ -302,14 +297,16 @@
             <input type="checkbox" name="remark[<?php echo $arr['remark_id']; ?>]" remark_id="<?php echo $arr['remark_id']; ?>"/>
             <?php } ?>
             </span>
-            </p>
+
+            <?php echo html_entity_decode($arr['remark']); ?> 
+            </div>
             <?php }} ?>
           </div>
         </div>
             <div class="form-group" style="border-top: 1px solid #ededed;" >
                   <label class="col-sm-2 control-label" for="input-admin_comment"> &nbsp; </label>
                   <div class="col-sm-10">
-                    <textarea name="admin_comment" rows="8" id="input-admin_comment" class="form-control"></textarea>
+                    <textarea name="admin_comment" id="input-admin_comment" class="form-control"></textarea>
                   </div>
                   <div class="col-sm-2"> &nbsp; </div>
                  <div class="col-sm-10" >
@@ -670,8 +667,8 @@ $('#button-history').on('click', function() {
 
 $('#admin_comment').on('click',function(){
 
-var admin_comment = $.trim($('textarea[name=\'admin_comment\']').val());
-if(admin_comment == ''){
+var admin_comment = $.trim($('textarea[name=\'admin_comment\']').code());
+if($.trim(admin_comment) == ''){
   alert("Remark can't null!");
 }else{
 
@@ -679,7 +676,7 @@ $.ajax({
 		url: 'index.php?route=sale/order/remark&token=<?php echo $token; ?>&order_id=<?php echo $order_id; ?>',
 		type: 'post',
 		dataType: 'json',
-		data: 'remark=' + encodeURIComponent($('textarea[name=\'admin_comment\']').val()),
+		data: 'remark=' + encodeURIComponent($('textarea[name=\'admin_comment\']').code()),
 		beforeSend: function() {
 			$('#button-admin_comment').button('loading');
 		},
@@ -690,9 +687,10 @@ $.ajax({
 
 			if (json['state']==1) {
         
-$('textarea[name=\'admin_comment\']').val('');
-        var _html = '<p>' +json['remark'] +'<span> &nbsp;&nbsp; '+json['add_time']+' &nbsp;&nbsp; <input type="checkbox" name="remark['+json['remark_id']+']" remark_id="'+json['remark_id']+'"/></span></p>';
-        $('#comment_box').append(_html);
+$('textarea[name=\'admin_comment\']').code('');
+        var _html = '<div><span>'+json['add_time']+' &nbsp;&nbsp; <input type="checkbox" name="remark['+json['remark_id']+']" remark_id="'+json['remark_id']+'"/></span>';
+
+        $('#comment_box').append(_html + unescape(json['remark']) + '</div>');
 
 			}else{
         alert('Try Again!');
@@ -708,6 +706,12 @@ $('textarea[name=\'admin_comment\']').val('');
 }
 
 });
+
+function unescape(str) {
+    var elem = document.createElement('div')
+    elem.innerHTML = str
+    return elem.innerText || elem.textContent
+}
 
 $('body').on('click','#comment_box input',function(){
   var check = $(this).is(':checked');
@@ -781,6 +785,10 @@ $(document).ready(function() {
 $('select[name="order_status_id"]').change(function(){
 	changeStatus();
 });
+
+
+$('#input-admin_comment').summernote({height: 300});
+
 //--></script>
 </div>
 <?php echo $footer; ?>

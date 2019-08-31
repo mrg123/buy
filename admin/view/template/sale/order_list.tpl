@@ -101,8 +101,16 @@
                   <?php } ?>
                 </select>
               </div>
+        <div class="form-group">
+          
 
-              <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> <?php echo $button_filter; ?></button>
+          <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> <?php echo $button_filter; ?></button>
+
+         
+          <span class="pull-right" style="display: inline-block;line-height: 35px;margin-right: 5px;"><?php echo $results; ?></span>
+           <span class="pull-right" style="display: inline-block;line-height: 35px;margin-right: 5px;"><?php echo $pagination; ?></span>
+        </div>
+              
             </div>
           </div>
         </div>
@@ -178,15 +186,18 @@
 
 
                   <?php if($order['coc']) { ?>
-                   <i class="fa fa-shopping-cart"></i> * <?php echo $order['coc']; ?> &nbsp;
+                  <a href="<?php echo $order['coc_href']; ?>" target="_blank">
+                   <i class="fa fa-shopping-cart"></i> 
+                   </a>
+                   * <?php echo $order['coc']; ?> &nbsp;
                   <?php } ?>  
                   
                   <?php if($order['img_count']) { ?>
-                  <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $preview_url; ?>&order_id=<?php echo $order['order_id']; ?>" target="_blank" >
+                  <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $order['num_url']; ?>&order_id=<?php echo $order['order_id']; ?>" target="_blank" >
                   <i class="fa fa-image"></i> * <?php echo $order['img_count']; ?> &nbsp;
                   </a>
                   <?php }else{ ?>
-                  <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $preview_url; ?>&order_id=<?php echo $order['order_id']; ?>" target="_blank"></span>
+                  <a id="img_<?php echo $order['order_id']; ?>" class="order_img_preview" href="<?php echo $order['num_url']; ?>" target="_blank"></span>
                   <?php } ?>
 
                   <button type="button" value="<?php echo $order['order_id']; ?>" id="button-delete<?php echo $order['order_id']; ?>" data-loading-text="<?php echo $text_loading; ?>" data-toggle="tooltip" title="<?php echo $button_delete; ?>" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>
@@ -196,6 +207,13 @@
                   <a href="<?php echo $order['view']; ?>" data-toggle="tooltip" title="<?php echo $button_view; ?>" class="btn btn-info"><i class="fa fa-eye"></i></a> 
 
                   <a target="_blank" data-toggle="tooltip" title="upload image" class="btn btn-info layui-btn" data-method="setTop" order-id="<?php echo $order['order_id']; ?>" done="<?php echo $order['done']; ?>" id="btn_<?php echo $order['order_id']; ?>" ><i class="fa fa-upload"></i></a>    
+
+                  <?php if($order['done']) { ?>
+                  <a target="_blank" data-toggle="tooltip" title="delete image" class="btn btn-danger clear-image" data-method="setTop" order-id="<?php echo $order['order_id']; ?>" done="<?php echo $order['done']; ?>" id="btn_<?php echo $order['order_id']; ?>">
+<i class="fa fa-power-off"></i>
+                  </a>
+                  <?php } ?>
+
                     </td>
                   <td class="text-right"><?php echo $order['order_id']; ?></td>
                   <td class="text-left"><?php echo $order['status']; ?></td>
@@ -471,8 +489,21 @@ $('.date').datetimepicker({
           var order_id = $(this).attr('order-id');
           var othis = $(this), method = othis.data('method');
          
+
+          active[method] ? active[method].call(this, othis) : '';
+          move += 30;
+          
+
+        
+        });
+
+        $('.clear-image').on('click', function(){
+          var done = $(this).attr('done');
+          var order_id = $(this).attr('order-id');
+          var othis = $(this), method = othis.data('method');
+         
           if(done=='1'){
-              layer.confirm('重新上传图片?',{
+              layer.confirm('清空图片?',{
                 btn:['确定','取消']
               },function(index){
                 layer.close(index);
@@ -486,10 +517,10 @@ $('.date').datetimepicker({
                                     success:function(data){
                 othis.attr('done',0);
                 $('#img_'+order_id).html('');
-                open(order_id);
+                layer.alert('操作成功图片已清空');
                                     },
                                     error:function(){
-                                        alert('操作失败,请重试!');
+                                        layer.alert('操作失败,请重试!');
                                     }
                                 });
 
@@ -501,9 +532,8 @@ $('.date').datetimepicker({
               });
 
           }else{
-          
-          active[method] ? active[method].call(this, othis) : '';
-          move += 30;
+            layer.alert('无图片');
+         
           }
 
         

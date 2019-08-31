@@ -70,4 +70,10 @@ class File {
 			}
 		}
 	}
+
+	public function reset(){
+        $files = glob(DIR_CACHE . 'cache.*');
+
+		array_map('unlink',  $files);
+    }
 }

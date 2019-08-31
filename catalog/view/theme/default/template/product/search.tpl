@@ -46,7 +46,7 @@
             <?php } ?>
           </select>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-3" style="display:none;">
           <label class="checkbox-inline">
             <?php if ($sub_category) { ?>
             <input type="checkbox" name="sub_category" value="1" checked="checked" />

@@ -77,6 +77,7 @@ class ModelCatalogProduct extends Model {
 			foreach ($data['product_category'] as $category_id) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category SET product_id = '" . (int)$product_id . "', category_id = '" . (int)$category_id . "'");
 			}
+			$this->cache->reset();
 		}
 
 		if (isset($data['product_filter'])) {
@@ -219,6 +220,7 @@ class ModelCatalogProduct extends Model {
 			foreach ($data['product_category'] as $category_id) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category SET product_id = '" . (int)$product_id . "', category_id = '" . (int)$category_id . "'");
 			}
+			$this->cache->reset();
 		}
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_filter WHERE product_id = '" . (int)$product_id . "'");
@@ -333,6 +335,7 @@ class ModelCatalogProduct extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "url_alias WHERE query = 'product_id=" . (int)$product_id . "'");
 
 		$this->cache->delete('product');
+		$this->cache->reset();
 
 		$this->event->trigger('post.admin.product.delete', $product_id);
 	}

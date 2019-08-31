@@ -151,7 +151,7 @@
             swf: '../../dist/Uploader.swf',
             chunked: false,
             chunkSize: 512 * 1024,
-            server: fileupload,
+            server: fileupload + '&num='+num,
             // runtimeOrder: 'flash',
 
             // accept: {
@@ -481,9 +481,11 @@
                         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                         parent.layer.close(index); //再执行关闭   
                         parent.$('#img_'+order_id).html('<i class="fa fa-image"></i> * ' + stats.successNum + ' &nbsp; ');
+                        _href = catalog_preview + '&num=' + num +'&order_id='+order_id;
+                        parent.$('#img_'+order_id).attr('href',_href);
                         parent.$('#btn_'+order_id).attr('done',1);
-
-                        changeOrder(order_id);
+                        changeOrder(order_id,num);
+                        num++;
                     } else {
                         // 没有成功的图片，重设
                         state = 'done';

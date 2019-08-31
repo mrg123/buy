@@ -258,7 +258,13 @@ class ControllerSaleOrder extends Controller {
 	
 		foreach ($results as $result) {
 			$img_count = $this->model_tool_order_img->count($result['order_id']);	
-			$customer_order_count = $this->model_sale_order->customerOrderCount($result['customer_id']);	
+			$num = $this->model_tool_order_img->lastNum($result['order_id']);	
+			if($num == -1){
+				$num_url = HTTPS_CATALOG . 'index.php?route=information/qc_photo&sign='.$sign.'&order_id='.$result['order_id'];
+			}else{
+				$num_url = HTTPS_CATALOG . 'index.php?route=information/qc_photo&sign='.$sign.'&order_id='.$result['order_id'].'&num='.$num;	
+			}
+			$customer_order_count = $this->model_sale_order->customerOrderCount($result['email']);	
 			$resolved_count = $this->model_sale_order->resolvedCount($result['order_id']);	
 			if($customer_order_count > 1){
 				$coc = $customer_order_count;
@@ -287,8 +293,10 @@ class ControllerSaleOrder extends Controller {
 				'email' => $result['email'],
 				'shipping_method' => $result['shipping_method'],
 				'coc' => $coc,
+				'coc_href' => $this->url->link('sale/order','token=' . $this->session->data['token'] .'&filter_customer_email=' . $result['email'],'SSL'),
 				'resolved_count' => $resolved_count,
-				'ban' => empty($ban)? 0:1
+				'ban' => empty($ban)? 0:1,
+				'num_url' => $num_url
 			);
 		}
 
@@ -1001,7 +1009,30 @@ class ControllerSaleOrder extends Controller {
 			$data['tab_history'] = $this->language->get('tab_history');
 			$data['tab_additional'] = $this->language->get('tab_additional');
 
+			$this->load->model('customer/customer_ban');
+			$this->load->model('tool/order_img');
+
 			$data['remarks'] = $this->model_sale_order->getRemark($order_id);
+
+			$img_count = $this->model_tool_order_img->count($order_id);	
+			$customer_order_count = $this->model_sale_order->customerOrderCount($order_info['email']);	
+			if($customer_order_count > 1){
+				$coc = $customer_order_count;
+			}else{
+				$coc = 0;		
+			}	
+			$resolved_count = $this->model_sale_order->resolvedCount($order_id);
+			$data['resolved_count'] = $resolved_count;
+			
+			$ban = $this->model_customer_customer_ban->get($order_info['customer_id']);
+			$data['coc'] = $coc;
+			$data['coc_href'] = $this->url->link('sale/order','token=' . $this->session->data['token'] .'&filter_customer_email=' . $order_info['email'],'SSL');
+			$data['ban'] = empty($ban)? 0:1;
+			$sign = md5(md5('9876'));
+			$data['preview_url'] = HTTPS_CATALOG . 'index.php?route=information/qc_photo&sign='.$sign;
+			$data['img_count'] = $img_count;
+			
+
 
 			$data['token'] = $this->session->data['token'];
 

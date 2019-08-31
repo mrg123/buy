@@ -35,7 +35,10 @@ class ControllerToolWebupload extends Controller {
 
 		$order_id = $this->request->get['order_id'];
 
+		$this->load->model('tool/order_img');
+		$num = $this->model_tool_order_img->nowNum($order_id);
 		$data['order_id'] = $order_id;
+		$data['num'] = $num;
 		$data['token'] = $this->session->data['token'];
 		$data['catalog_url'] = HTTPS_CATALOG;
 		$data['upload_status_id'] = $this->config->get('qc_photo_upload_status_id');
@@ -43,6 +46,8 @@ class ControllerToolWebupload extends Controller {
 		$sign = md5(md5('9876'));
 		$preview_url = HTTPS_CATALOG . 'index.php?route=information/qc_photo&sign='.$sign;
 		$data['message'] = "Please click this link to view your QC photo " . $preview_url;
+		$data['catalog_preview_url'] = $preview_url;	
+		
 		
 		// API login
 		$this->session->data['api_id'] = 1;
@@ -52,6 +57,7 @@ class ControllerToolWebupload extends Controller {
 
 	public function upload(){
 		$order_id = $this->request->get['order_id'];	
+		$num = $this->request->get['num'];	
 
 		$this->init();
 
@@ -148,7 +154,7 @@ class ControllerToolWebupload extends Controller {
 
 		// 图片上传成功,写入到订单图片表中
 		$this->load->model('tool/order_img');
-		$this->model_tool_order_img->add($order_id,$img_url);	
+		$this->model_tool_order_img->add($order_id,$img_url,$num);	
 
 		// Return Success JSON-RPC response
 		die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');

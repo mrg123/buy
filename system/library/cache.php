@@ -2,7 +2,7 @@
 class Cache {
 	private $cache;
 
-	public function __construct($driver, $expire = 3600) {
+	public function __construct($driver, $expire = 2592000) {
 		$class = 'Cache\\' . $driver;
 
 		if (class_exists($class)) {
@@ -23,4 +23,8 @@ class Cache {
 	public function delete($key) {
 		return $this->cache->delete($key);
 	}
+
+    public function reset() {
+        return $this->cache->reset();
+    }
 }

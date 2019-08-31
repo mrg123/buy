@@ -273,8 +273,8 @@ class ModelSaleOrder extends Model {
 		return $query->rows;
 	}
 
-	public function customerOrderCount($customer_id) {
-		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order WHERE customer_id = '" . (int)$customer_id . "' AND order_status_id > 0");
+	public function customerOrderCount($eamil) {
+		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "order WHERE email = '" . $eamil . "' AND order_status_id > 0");
 
 		return $query->row['total'];
 	}

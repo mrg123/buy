@@ -21,8 +21,13 @@ class ModelToolOrderImg extends Model {
 		return $query->row['total'];
     }
     
-    public function getImg($order_id){
-        $query = $this->db->query("SELECT * FROM  `" . DB_PREFIX . "order_img` WHERE `order_id` = '" . $order_id . "'");
+    public function getImg($order_id,$num=''){
+		if($num===''){
+			$query = $this->db->query("SELECT * FROM  `" . DB_PREFIX . "order_img` WHERE `order_id` = '" . $order_id . "'");
+		}else{
+			$query = $this->db->query("SELECT * FROM  `" . DB_PREFIX . "order_img` WHERE `order_id` = '" . $order_id . "' AND `num` = '" .(int)$num."' ");
+		}
+       
 
 		return $query->rows;   
     }

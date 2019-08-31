@@ -18,6 +18,12 @@ class ControllerInformationQcPhoto extends Controller {
 			$sign = '';
 		}
 
+		if (isset($this->request->get['num'])) {
+			$num = $this->request->get['num'];
+		} else {
+			$num = '';
+		}
+
 		$check_sign = md5(md5('9876'));
 		if($check_sign != $sign){
 			$order_id = 0;
@@ -28,7 +34,12 @@ class ControllerInformationQcPhoto extends Controller {
 
 		$data['welcome'] = $this->config->get('qc_photo_welcome');
 
-		$information_info = $this->model_tool_order_img->getImg($order_id);
+		if($num===''){
+			$information_info = $this->model_tool_order_img->getImg($order_id);
+		}else{
+			$information_info = $this->model_tool_order_img->getImg($order_id,$num);
+		}
+		
 
 		if ($information_info) {
 

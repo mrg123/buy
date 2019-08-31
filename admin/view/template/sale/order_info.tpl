@@ -13,65 +13,94 @@
   </div>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-4">
+      <div class="col-md-12">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-shopping-cart"></i> <?php echo $text_order_detail; ?></h3>
           </div>
           <table class="table">
             <tbody>
-              <tr>
-                <td style="width: 1%;"><button data-toggle="tooltip" title="<?php echo $text_store; ?>" class="btn btn-info btn-xs"><i class="fa fa-shopping-cart fa-fw"></i></button></td>
-                <td><a href="<?php echo $store_url; ?>" target="_blank"><?php echo $store_name; ?></a></td>
-              </tr>
-              <tr>
-                <td><button data-toggle="tooltip" title="<?php echo $text_date_added; ?>" class="btn btn-info btn-xs"><i class="fa fa-calendar fa-fw"></i></button></td>
-                <td><?php echo $date_added; ?></td>
-              </tr>
-              <tr>
-                <td><button data-toggle="tooltip" title="<?php echo $text_payment_method; ?>" class="btn btn-info btn-xs"><i class="fa fa-credit-card fa-fw"></i></button></td>
-                <td><?php echo $payment_method; ?></td>
-              </tr>
-              <?php if ($shipping_method) { ?>
-              <tr>
-                <td><button data-toggle="tooltip" title="<?php echo $text_shipping_method; ?>" class="btn btn-info btn-xs"><i class="fa fa-truck fa-fw"></i></button></td>
-                <td><?php echo $shipping_method; ?></td>
-              </tr>
-              <?php } ?>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title"><i class="fa fa-user"></i> <?php echo $text_customer_detail; ?></h3>
-          </div>
-          <table class="table">
             <tr>
               <td style="width: 1%;"><button data-toggle="tooltip" title="<?php echo $text_customer; ?>" class="btn btn-info btn-xs"><i class="fa fa-user fa-fw"></i></button></td>
               <td><?php if ($customer) { ?>
                 <a href="<?php echo $customer; ?>" target="_blank"><?php echo $firstname; ?> <?php echo $lastname; ?></a>
                 <?php } else { ?>
                 <?php echo $firstname; ?> <?php echo $lastname; ?>
-                <?php } ?></td>
+                <?php } ?>
+                
+                &nbsp;&nbsp;
+                <?php if($coc) { ?>
+                  <a href="<?php echo $coc_href; ?>" target="_blank">
+                   <i class="fa fa-shopping-cart"></i> 
+                   </a>
+                   * <?php echo $coc; ?> &nbsp;
+                  <?php } ?>  
+                  
+                  <?php if($img_count) { ?>
+                  <a id="img_<?php echo $order_id; ?>" class="order_img_preview" href="<?php echo $preview_url; ?>&order_id=<?php echo $order_id; ?>" target="_blank" >
+                  <i class="fa fa-image"></i> * <?php echo $img_count; ?> &nbsp;
+                  </a>
+                  <?php }else{ ?>
+                  
+                  <?php } ?>
+
+                   <?php if($ban==1) { ?>
+ <img src="view/image/shantou.png" style="vertical-align: initial;"> &nbsp;&nbsp;
+                  <?php } ?>
+
+                  <?php if($resolved_count==2) { ?>
+ <i class="fa fa-check" style="color:green;font-size:20px"></i> &nbsp;&nbsp;                  
+                  <?php }else if($resolved_count==1){ ?>
+<i class="fa fa-exclamation-circle" style="color:#f24545;font-size:20px"></i> &nbsp;&nbsp;
+                  <?php } ?>  
+                
+                </td>
+
+                <td style="width: 1%;"><button data-toggle="tooltip" title="<?php echo $text_store; ?>" class="btn btn-info btn-xs"><i class="fa fa-shopping-cart fa-fw"></i></button></td>
+                <td><a href="<?php echo $store_url; ?>" target="_blank"><?php echo $store_name; ?></a></td>
             </tr>
-            <tr>
-              <td><button data-toggle="tooltip" title="<?php echo $text_customer_group; ?>" class="btn btn-info btn-xs"><i class="fa fa-group fa-fw"></i></button></td>
+             <tr>
+                <td><button data-toggle="tooltip" title="<?php echo $text_date_added; ?>" class="btn btn-info btn-xs"><i class="fa fa-calendar fa-fw"></i></button></td>
+                <td><?php echo $date_added; ?></td>
+
+                 <td><button data-toggle="tooltip" title="<?php echo $text_customer_group; ?>" class="btn btn-info btn-xs"><i class="fa fa-group fa-fw"></i></button></td>
               <td><?php echo $customer_group; ?></td>
-            </tr>
-            <tr>
+
+              </tr>
+              
+              <tr>
+                <td>
+                <?php if ($shipping_method) { ?>
+                <button data-toggle="tooltip" title="<?php echo $text_shipping_method; ?>" class="btn btn-info btn-xs"><i class="fa fa-truck fa-fw"></i></button></td>
+                <td><?php echo $shipping_method; ?>
+                <?php } ?>
+                </td>
+
+                 <td><button data-toggle="tooltip" title="<?php echo $text_payment_method; ?>" class="btn btn-info btn-xs"><i class="fa fa-credit-card fa-fw"></i></button></td>
+                <td><?php echo $payment_method; ?></td>
+              </tr>
+              
+
+              <tr>
               <td><button data-toggle="tooltip" title="<?php echo $text_email; ?>" class="btn btn-info btn-xs"><i class="fa fa-envelope-o fa-fw"></i></button></td>
               <td><a href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a></td>
-            </tr>
-            <tr>
-              <td><button data-toggle="tooltip" title="<?php echo $text_telephone; ?>" class="btn btn-info btn-xs"><i class="fa fa-phone fa-fw"></i></button></td>
+
+               <td><button data-toggle="tooltip" title="<?php echo $text_telephone; ?>" class="btn btn-info btn-xs"><i class="fa fa-phone fa-fw"></i></button></td>
               <td><?php echo $telephone; ?></td>
             </tr>
+
+             
+             
+              <tr>
+               
+              </tr>
+             
+            </tbody>
           </table>
         </div>
       </div>
-      <div class="col-md-4">
+     
+      <div class="col-md-4" style="display:none;">
         <div class="panel panel-default">
           <div class="panel-heading">
             <h3 class="panel-title"><i class="fa fa-cog"></i> <?php echo $text_option; ?></h3>
@@ -120,6 +149,24 @@
           </table>
         </div>
       </div>
+
+      
+       <?php if ($comment) { ?>
+       <div class="col-md-12">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <td><?php echo $text_comment; ?></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><?php echo $comment; ?></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <?php } ?>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -129,10 +176,12 @@
         <table class="table table-bordered">
           <thead>
             <tr>
-              <td style="width: 50%;" class="text-left"><?php echo $text_payment_address; ?></td>
-              <?php if ($shipping_method) { ?>
+            <?php if ($shipping_method) { ?>
               <td style="width: 50%;" class="text-left"><?php echo $text_shipping_address; ?>
                 <?php } ?></td>
+
+              <td style="width: 50%;" class="text-left"><?php echo $text_payment_address; ?></td>
+              
             </tr>
           </thead>
           <tbody>
@@ -189,20 +238,7 @@
             <?php } ?>
           </tbody>
         </table>
-        <?php if ($comment) { ?>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <td><?php echo $text_comment; ?></td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><?php echo $comment; ?></td>
-            </tr>
-          </tbody>
-        </table>
-        <?php } ?>
+       
       </div>
     </div>
     <div class="panel panel-default">
@@ -256,8 +292,8 @@
                     
 
                      <div class="pull-left">
-                     <input type="checkbox" name="notify" value="1" id="input-notify" style="margin-right:20px" checked/>
-                     <button id="button-history" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?php echo $button_history_add; ?></button>
+                     <input type="checkbox" name="notify" value="1" id="input-notify" style="margin-right:30px" checked/>
+                    <a id="button-history" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?php echo $button_history_add; ?></a>
 
   <a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
                      </div>
@@ -274,7 +310,6 @@
             <div class="form-group row">
               <div class="col-sm-2">&nbsp;</div>
               <div class="col-sm-10">
-              
               </div>
             </div>
 

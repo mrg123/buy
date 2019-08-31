@@ -33,17 +33,24 @@
 
     <script type="text/javascript">
       var order_id = <?php echo $order_id; ?>;
+      var num = <?php echo $num; ?>;
       var fileupload = 'index.php?route=tool/webupload/upload&order_id=<?php echo $order_id; ?>&token=<?php echo $token; ?>';
       var preview = 'index.php?route=tool/webupload/preview&order_id=<?php echo $order_id; ?>&token=<?php echo $token; ?>';
+      var catalog_preview = '<?php echo $catalog_preview_url; ?>';
 
-       function changeOrder(order_id){
+       function changeOrder(order_id,$num){
            $.ajax({
 		url: '<?php echo $catalog_url; ?>index.php?route=api/order/history&token=<?php echo $token; ?>&order_id=<?php echo $order_id; ?>',
 		type: 'post',
+        async: true,
 		dataType: 'json',
-		data: 'order_status_id=' + encodeURIComponent("<?php echo $upload_status_id; ?>") + '&notify=1&override=0&append=0' + '&comment=' + encodeURIComponent("<?php echo $message; ?>" + "&order_id="+order_id ) + "&order_id="+order_id +"&qc_photo=1",
+		data: 'order_status_id=' + encodeURIComponent("<?php echo $upload_status_id; ?>") + '&notify=1&override=0&append=0' + '&comment=' + encodeURIComponent("<?php echo $message; ?>" + "&order_id="+order_id + "&num="+num ) + "&order_id="+order_id +"&qc_photo=1",
 		success: function(json) {
+         
 		},
+        complete: function(json){
+           
+        },
 		error: function(xhr, ajaxOptions, thrownError) {
 			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
 		}

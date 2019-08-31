@@ -400,6 +400,11 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getTotalProducts($data = array()) {
+
+		if (!empty($data['filter_sub_category'])) {
+            return $this->getCacheTotalProducts($data);
+		}
+		
 		$sql = "SELECT COUNT(DISTINCT p.product_id) AS total";
 
 		if (!empty($data['filter_category_id'])) {
@@ -654,5 +659,31 @@ class ModelCatalogProduct extends Model {
 		}
 
 		return $product_data;
+	}
+
+
+	public function getCacheTotalProducts($data = array()) {
+
+		$category_id = (int)$data['filter_category_id'];
+
+		$total = $this->cache->get('cache.category.total.' . $category_id);
+        
+        if ($total===false) {
+            $sql = "SELECT COUNT(DISTINCT p.product_id) AS total";
+            $sql .= " FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (cp.category_id = p2c.category_id)";
+            $sql .= " LEFT JOIN " . DB_PREFIX . "product p ON (p2c.product_id = p.product_id)";
+            $sql .= " WHERE p.status = '1' AND p.date_available <= NOW()";
+            $sql .= " AND cp.path_id = '" . $category_id. "'";
+            
+			$query = $this->db->query($sql);
+			if(empty($query)){
+				$total = 0;
+			}else{
+                $total =  $query->row['total'];
+            }
+			$this->cache->set('cache.category.total.' . $category_id,$total);
+        }
+		
+		return $total;
 	}
 }

@@ -253,7 +253,7 @@ class ModelCheckoutOrder extends Model {
 		}
 	}
 
-	public function addOrderHistory($order_id, $order_status_id, $comment = '', $notify = false, $override = false) {
+	public function addOrderHistory($order_id, $order_status_id, $comment = '', $notify = false, $override = false,$sender = false) {
 		$event_data = array(
 			'order_id'		  => $order_id,
 			'order_status_id' => $order_status_id,
@@ -821,6 +821,26 @@ class ModelCheckoutOrder extends Model {
 
 				$message .= $language->get('text_update_footer');
 
+				if(!empty($sender)){
+					$choose_email = $this->config->get($sender);
+
+				$mail = new Mail();
+				$mail->protocol = $this->config->get('config_mail_protocol');
+				$mail->parameter = $this->config->get('config_mail_parameter');
+				$mail->smtp_hostname = $choose_email['config_mail_smtp_hostname'];
+				$mail->smtp_username = $choose_email['config_mail_smtp_username'];
+				$mail->smtp_password = html_entity_decode($choose_email['config_mail_smtp_password'], ENT_QUOTES, 'UTF-8');
+				$mail->smtp_port = $choose_email['config_mail_smtp_port'];
+				$mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+
+				$mail->setTo($order_info['email']);
+				$mail->setFrom($choose_email['config_mail_smtp_username']);
+				$mail->setSender(html_entity_decode($order_info['store_name'], ENT_QUOTES, 'UTF-8'));
+				$mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
+				$mail->setText($message);
+				$mail->send();
+
+				}else{
 				$mail = new Mail();
 				$mail->protocol = $this->config->get('config_mail_protocol');
 				$mail->parameter = $this->config->get('config_mail_parameter');
@@ -836,6 +856,7 @@ class ModelCheckoutOrder extends Model {
 				$mail->setSubject(html_entity_decode($subject, ENT_QUOTES, 'UTF-8'));
 				$mail->setText($message);
 				$mail->send();
+				}
 			}
 		}
 

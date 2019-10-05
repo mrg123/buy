@@ -742,6 +742,12 @@ class ControllerApiOrder extends Controller {
 			$qc_photo = 0;
 		}
 
+		if(!empty($this->request->post['choose_email']) && $this->config->get('sender_status')){
+			$sender = $this->request->post['choose_email'];
+		}else{
+			$sender = false;
+		}
+
 		if (!isset($this->session->data['api_id']) && ($qc_photo==0)) {
 			$json['error'] = $this->language->get('error_permission');
 		} else {
@@ -770,7 +776,7 @@ class ControllerApiOrder extends Controller {
 			$order_info = $this->model_checkout_order->getOrder($order_id);
 
 			if ($order_info) {
-				$this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify'], $this->request->post['override']);
+				$this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify'], $this->request->post['override'],$sender);
 
 				$json['success'] = $this->language->get('text_success');
 			} else {

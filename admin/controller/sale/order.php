@@ -1032,6 +1032,16 @@ class ControllerSaleOrder extends Controller {
 			$data['preview_url'] = HTTPS_CATALOG . 'index.php?route=information/qc_photo&sign='.$sign;
 			$data['img_count'] = $img_count;
 			
+			$sender_status = $this->config->get('sender_status');
+			if($sender_status){
+			$data['choose_email'] = [
+				'sender_email1' => $this->config->get('sender_email1'),
+				'sender_email2' => $this->config->get('sender_email2'),
+				'sender_email3' => $this->config->get('sender_email3'),
+			];
+			}else{
+				$data['choose_email'] = [];
+			}
 
 
 			$data['token'] = $this->session->data['token'];

@@ -296,6 +296,17 @@
                     <a id="button-history" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary"><i class="fa fa-plus-circle"></i> <?php echo $button_history_add; ?></a>
 
   <a href="<?php echo $invoice; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_invoice_print; ?>" class="btn btn-info"><i class="fa fa-print"></i></a> <a href="<?php echo $shipping; ?>" target="_blank" data-toggle="tooltip" title="<?php echo $button_shipping_print; ?>" class="btn btn-info"><i class="fa fa-truck"></i></a> <a href="<?php echo $edit; ?>" data-toggle="tooltip" title="<?php echo $button_edit; ?>" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a href="<?php echo $cancel; ?>" data-toggle="tooltip" title="<?php echo $button_cancel; ?>" class="btn btn-default"><i class="fa fa-reply"></i></a>
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+<?php if(!empty($choose_email)) { ?>
+<?php foreach($choose_email as $key => $arr) { ?>
+<?php if($arr['config_mail_smtp_username']){ ?>
+                    <input type="radio" name="choose_email" value="<?php echo $key;?>" id="email_<?php echo $key;?>" <?php if($arr['default']){ echo 'checked';}?>/>
+                    <label for="email_<?php echo $key;?>"><?php echo $arr['config_mail_smtp_username'];?></label>
+                    &nbsp;&nbsp;
+          <?php }}}else{ ?>          
+<input type="hidden" name="choose_email" value="" checked />
+          <?php } ?>
                      </div>
                   </div>
                 </div>
@@ -672,7 +683,7 @@ $('#button-history').on('click', function() {
 		url: '<?php echo $store_url; ?>index.php?route=api/order/history&token=' + token + '&order_id=<?php echo $order_id; ?>',
 		type: 'post',
 		dataType: 'json',
-		data: 'order_status_id=' + encodeURIComponent($('select[name=\'order_status_id\']').val()) + '&notify=' + ($('input[name=\'notify\']').prop('checked') ? 1 : 0) + '&override=' + ($('input[name=\'override\']').prop('checked') ? 1 : 0) + '&append=' + ($('input[name=\'append\']').prop('checked') ? 1 : 0) + '&comment=' + encodeURIComponent($('textarea[name=\'comment\']').val()),
+		data: 'order_status_id=' + encodeURIComponent($('select[name=\'order_status_id\']').val()) + '&notify=' + ($('input[name=\'notify\']').prop('checked') ? 1 : 0) + '&override=' + ($('input[name=\'override\']').prop('checked') ? 1 : 0) + '&append=' + ($('input[name=\'append\']').prop('checked') ? 1 : 0) + '&comment=' + encodeURIComponent($('textarea[name=\'comment\']').val()) + '&choose_email=' + encodeURIComponent($('input[name=\'choose_email\']:checked').val()),
 		beforeSend: function() {
 			$('#button-history').button('loading');
 		},

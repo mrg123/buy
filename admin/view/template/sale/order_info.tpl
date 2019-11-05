@@ -216,7 +216,13 @@
                 <?php } ?>
                 <?php } ?></td>
               <td class="text-left"><?php echo $product['model']; ?></td>
-              <td class="text-right"><?php echo $product['quantity']; ?></td>
+              <td class="text-right">
+              <?php if($product['quantity'] > 1) { ?>
+              <span style="color:red;font-size:25px;font-weight:700"><?php echo $product['quantity']; ?></span>
+              <?php }else { ?>
+              <?php echo $product['quantity']; ?>
+              <?php } ?>
+              </td>
               <td class="text-right"><?php echo $product['price']; ?></td>
               <td class="text-right"><?php echo $product['total']; ?></td>
             </tr>

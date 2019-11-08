@@ -1,9 +1,9 @@
 <?php
 // Text
 $_['text_new_subject']          = '%s - Order %s';
-$_['text_new_greeting']         = 'Thank you for your interest in %s products. Your order has been received and will be processed once payment has been confirmed.';
+$_['text_new_greeting']         = 'Thank you for your interest in %s . Your submission has been confirmed and you will receive an e-mail regarding of payment method from another email sender later on.';
 $_['text_new_received']         = 'You have received an order.';
-$_['text_new_link']             = 'To view your order click on the link below:';
+$_['text_new_link']             = 'Follow the below step to view process of your current submission: 1, Login to your account with the email address which you used to register on this site and with your password you set previously for sure. 2, Under " My Orders" there is a link named " View your order history" then click that link. 3, Then you will be directed to "Order History" page and on this page and you will see a red icon with an eye in it , click that icon then you will find out the latest status of your current order. The time of waiting for reply from instant on line service such as WeChat, WhatsApp or email will be unpredictable so please use this self service as much as you can.';
 $_['text_new_order_detail']     = 'Order Details';
 $_['text_new_instruction']      = 'Instructions';
 $_['text_new_order_id']         = 'Order ID:';
@@ -31,5 +31,5 @@ $_['text_update_order']         = 'Order ID:';
 $_['text_update_date_added']    = 'Date Ordered:';
 $_['text_update_order_status']  = 'Your order has been updated to the following status:';
 $_['text_update_comment']       = 'The comments for your order are:';
-$_['text_update_link']          = 'To view your order click on the link below:';
+$_['text_update_link']          = 'Please login your account to view more.';
 $_['text_update_footer']        = 'Please reply to this email if you have any questions.';

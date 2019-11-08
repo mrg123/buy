@@ -70,7 +70,10 @@
 			$server = $this->config->get('config_url');
 		}
 		}
+			/*
 			$data['link'] = $server . 'index.php?route=account/order/info&order_id=' . $order_id;
+			*/
+			$data['link'] = '';
 			
 			]]></add>
 		
@@ -93,8 +96,9 @@
 			$server = $this->config->get('config_url');
 		}
 		}
+		/*
 			$text .= $server . 'index.php?route=account/order/info&order_id=' . $order_id . "\n\n";
-			
+			*/
 			]]></add>
 		
 		</operation>

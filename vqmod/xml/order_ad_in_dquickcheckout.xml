@@ -37,7 +37,7 @@
 			
 			</div>
 	<div id="modal-order_ad" class="modal" style="z-index:1050">
-		<div class="modal-dialog" style="width:200px">
+		<div class="modal-dialog" style="width:600px">
 		<div class="modal-content">	
 			<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -90,7 +90,7 @@ $('#modal-order_ad .modal-dialog').css({'margin': 200 + 'px auto'});
 			
 			</div>
 	<div id="modal-order_ad" class="modal" style="z-index:1050">
-		<div class="modal-dialog" style="width:200px">
+		<div class="modal-dialog" style="width:600px">
 		<div class="modal-content">	
 			<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

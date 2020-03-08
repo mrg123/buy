@@ -65,6 +65,11 @@ class ControllerSaleOrder extends Controller {
 		} else {
 			$filter_remark = null;
 		}
+		if (isset($this->request->get['filter_black'])) {
+			$filter_black = $this->request->get['filter_black'];
+		} else {
+			$filter_black = 0;
+		}
 
 		if (isset($this->request->get['filter_order_status'])) {
 			$filter_order_status = $this->request->get['filter_order_status'];
@@ -129,6 +134,10 @@ class ControllerSaleOrder extends Controller {
 		}
 		if (isset($this->request->get['filter_remark'])) {
 			$url .= '&filter_remark=' . urlencode(html_entity_decode($this->request->get['filter_remark'], ENT_QUOTES, 'UTF-8'));
+		}
+
+		if (isset($this->request->get['filter_black'])) {
+			$url .= '&filter_black=' . urlencode(html_entity_decode($this->request->get['filter_black'], ENT_QUOTES, 'UTF-8'));
 		}
 
 		if (isset($this->request->get['filter_order_status'])) {
@@ -231,7 +240,18 @@ class ControllerSaleOrder extends Controller {
             }else{
 				$order_id_arr = [0];	
 			}
-        }
+		}
+		$this->load->model('customer/customer_ban');
+		$bans = $this->model_customer_customer_ban->getAll();
+		$filter_no_ban = [];
+		$filter_ban = [];
+		if(!empty($bans)){
+			$filter_no_ban = array_column($bans,'customer_id');
+			if($filter_black == 1){
+				$filter_ban = $filter_no_ban;	
+			}
+		}
+		
 		
 
 		$filter_data = array(
@@ -250,11 +270,17 @@ class ControllerSaleOrder extends Controller {
 			'limit'                => $this->config->get('config_limit_admin')
 		);
 
+		if(!empty($filter_ban)){
+			$filter_data['filter_customer_id_in'] = $filter_ban;
+		}else{
+			$filter_data['filter_customer_id_no_in'] = $filter_no_ban;
+		}
+
 		$order_total = $this->model_sale_order->getTotalOrders($filter_data);
 
 		$results = $this->model_sale_order->getOrders($filter_data);
 
-		$this->load->model('customer/customer_ban');
+		
 	
 		foreach ($results as $result) {
 			$img_count = $this->model_tool_order_img->count($result['order_id']);	
@@ -296,7 +322,8 @@ class ControllerSaleOrder extends Controller {
 				'coc_href' => $this->url->link('sale/order','token=' . $this->session->data['token'] .'&filter_customer_email=' . $result['email'],'SSL'),
 				'resolved_count' => $resolved_count,
 				'ban' => empty($ban)? 0:1,
-				'num_url' => $num_url
+				'num_url' => $num_url,
+				'country' => $result['country']
 			);
 		}
 
@@ -353,8 +380,18 @@ class ControllerSaleOrder extends Controller {
 		$data['entry_customer_email'] = $this->language->get('entry_customer_email');
 		$data['entry_model'] = $this->language->get('entry_model');
 		$data['entry_shipping_method'] = $this->language->get('entry_shipping_method');
+		$data['column_country'] = $this->language->get('column_country');
 
-		
+		$sender_status = $this->config->get('sender_status');
+		if($sender_status){
+			$data['choose_email'] = [
+				'sender_email1' => $this->config->get('sender_email1'),
+				'sender_email2' => $this->config->get('sender_email2'),
+				'sender_email3' => $this->config->get('sender_email3'),
+			];
+		}else{
+			$data['choose_email'] = [];
+		}
 
 
 		$data['token'] = $this->session->data['token'];
@@ -386,6 +423,9 @@ class ControllerSaleOrder extends Controller {
 		}
 		if (isset($this->request->get['filter_remark'])) {
 			$url .= '&filter_remark=' . urlencode(html_entity_decode($this->request->get['filter_remark'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_black'])) {
+			$url .= '&filter_black=' . urlencode(html_entity_decode($this->request->get['filter_black'], ENT_QUOTES, 'UTF-8'));
 		}
 
 		if (isset($this->request->get['filter_order_status'])) {
@@ -420,6 +460,7 @@ class ControllerSaleOrder extends Controller {
 		$data['sort_total'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&sort=o.total' . $url, 'SSL');
 		$data['sort_date_added'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&sort=o.date_added' . $url, 'SSL');
 		$data['sort_date_modified'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&sort=o.date_modified' . $url, 'SSL');
+		$data['sort_country'] = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&sort=country' . $url, 'SSL');
 
 		$url = '';
 
@@ -442,6 +483,9 @@ class ControllerSaleOrder extends Controller {
 		}
 		if (isset($this->request->get['filter_remark'])) {
 			$url .= '&filter_remark=' . urlencode(html_entity_decode($this->request->get['filter_remark'], ENT_QUOTES, 'UTF-8'));
+		}
+		if (isset($this->request->get['filter_black'])) {
+			$url .= '&filter_black=' . urlencode(html_entity_decode($this->request->get['filter_black'], ENT_QUOTES, 'UTF-8'));
 		}
 
 		if (isset($this->request->get['filter_order_status'])) {
@@ -489,6 +533,7 @@ class ControllerSaleOrder extends Controller {
 		$data['filter_model'] = $filter_model;
 		$data['filter_shipping_method'] = $filter_shipping_method;
 		$data['filter_remark'] = $filter_remark;
+		$data['filter_black'] = $filter_black;
 
 		$data['shipping_method'] = $this->getShippingMethods();
 		$data['remarks'] = [
@@ -501,7 +546,16 @@ class ControllerSaleOrder extends Controller {
 				'name' => 'Resolved'
 			]
 		];
-	
+		$data['blacks'] = [
+			0 => [
+				'val' => 0,
+				'name' => 'NO'
+			],
+			1 => [
+				'val' => 1,
+				'name' => 'YES'
+			]
+		];
 
 		$this->load->model('localisation/order_status');
 
@@ -2292,4 +2346,282 @@ class ControllerSaleOrder extends Controller {
 
 		$this->response->setOutput($this->load->view('sale/order_shipping.tpl', $data));
 	}
+
+	/* 删除订单管理员备注 */
+	public function deleteRemark(){
+		$this->load->language('sale/order');
+
+		$json = [
+			'state' => 0,
+			'error' => ''
+		];
+
+		if (!$this->user->hasPermission('modify', 'sale/order')) {
+			$json['error'] = $this->language->get('error_permission');
+		} else {
+
+			$this->load->model('sale/order');
+			$remark_id = $this->request->post['remark_id'];
+			$this->model_sale_order->deleteRemark($remark_id);	
+			
+			$json['state'] = 1;
+			$json['success'] = $this->language->get('text_success_delete_remark');
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	/* 订单邮件发送列表 */
+	public function send(){
+		$this->load->language('sale/order_send');
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$data['heading_title'] = $this->language->get('heading_title');
+		$data['text_list'] = $this->language->get('text_list');
+		$data['button_filter'] = $this->language->get('button_filter');
+		$data['text_no_results'] = $this->language->get('text_no_results');
+		$data['token']=$this->session->data['token'];
+
+		$url ='';
+
+		if (isset($this->request->get['page'])) {
+			$page = $this->request->get['page'];
+		} else {
+			$page = 1;
+		}
+		
+		if (isset($this->request->get['page'])) {
+			$url .= '&page=' . $this->request->get['page'];
+		}
+		
+		$data['breadcrumbs'] = array();
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_home'),
+			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], 'SSL')
+		);
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('heading_title'),
+			'href' => $this->url->link('sale/order/send', 'token=' . $this->session->data['token'] . $url, 'SSL')
+		);
+		
+
+		
+		$results = [];
+
+		$start=($page - 1) * $this->config->get('config_limit_admin');
+		$limit= $this->config->get('config_limit_admin');
+	
+
+		$sql_total = 'select count(*) from '.DB_PREFIX.'order_send where is_send = 2;';
+		$order_total = $this->db->query($sql_total)->row['count(*)'];
+		
+		if($order_total){
+			$sql = 'select * from '.DB_PREFIX.'order_send where is_send = 2;';
+			$results = $this->db->query($sql)->rows;
+		}
+		
+		$data['orders'] = $results;
+
+		$pagination = new Pagination();
+		$pagination->total = $order_total;
+		$pagination->page = $page;
+		$pagination->limit = $this->config->get('config_limit_admin');
+		$pagination->url = $this->url->link('sale/order', 'token=' . $this->session->data['token'] . '&page={page}', 'SSL');
+
+		$data['pagination'] = $pagination->render();
+
+		$data['results'] = sprintf($this->language->get('text_pagination'), ($order_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($order_total - $this->config->get('config_limit_admin'))) ? $order_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $order_total, ceil($order_total / $this->config->get('config_limit_admin')));
+
+		$data['header'] = $this->load->controller('common/header');
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['footer'] = $this->load->controller('common/footer');
+
+		$this->response->setOutput($this->load->view('sale/order_send.tpl', $data));
+	}
+	
+	/* 重新发送邮件 */
+	public function sendAgain(){
+		$json = [
+			'state' => 0,
+			'message' => 'Try Again'
+		];
+		$script = DIR_APPLICATION . 'send.php';
+		self::syncCommand($script);
+		$json['state']=1;
+		$json['message']='Success!';
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+	
+	/**
+	 * 写入需要批量处理的订单
+	 */
+	public function batchOrder(){
+		$json = [
+			'state' => 0,
+			'message' => 'Try Again'
+		];
+		$order_id_arr = $this->request->post['batch-order-id'];
+		$batch_status = (int)$this->request->post['batch-status'];
+		$batch_comment = $this->request->post['batch-comment'];
+		$batch_notify = (int)$this->request->post['batch-notify'];
+		$choose_email = $this->request->post['choose_email'];
+		$batch_frequency = (int)$this->request->post['batch-frequency'];
+
+		$order_id_arr = str_replace("\r\n",',',$order_id_arr);
+		$order_id_arr = explode(',',$order_id_arr);
+		$new_order_id_arr = [];
+		foreach($order_id_arr as $order_id){
+			if(trim($order_id)!= ''){
+				$new_order_id_arr[] = (int)trim($order_id);
+			}
+		}
+		$new_order_id_arr = array_unique($new_order_id_arr);
+
+
+		$json['request'] = [
+			'order_id_arr' => $new_order_id_arr,
+			'batch_status' => $batch_status,
+			'batch_comment' => $batch_comment,
+			'batch_notify'=>$batch_notify,
+			'choose_email'=>$choose_email,
+			'batch_frequency'=>$batch_frequency,
+		];
+
+
+		/* 批量写入数据 */
+		$sql = '';
+		foreach($new_order_id_arr as $order_id){
+			$sql .= "('".$order_id."','".$batch_status."','".$this->db->escape($batch_comment)."','".$batch_notify."','".$this->db->escape($choose_email)."','".$batch_frequency."'),";//循环拼接添加数据
+		}
+		$sql = rtrim($sql,',');
+		$sql = "INSERT INTO `" . DB_PREFIX . "order_send`(`order_id`, `batch_status`, `batch_comment`, `batch_notify`, `choose_email`, `batch_frequency`) VALUES " . $sql .";";
+		$query = $this->db->query($sql);
+
+		$json['result'] = $query;
+		if($query){
+			$json['state']=1;
+		}
+
+		$script = DIR_APPLICATION . 'send.php';
+		self::syncCommand($script);
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	/**
+	 * 生成进程运行脚本
+	 */
+	public static function syncCommand($script){
+        $exePath = isset($_SERVER['_']) ? $_SERVER['_'] : '';
+        $is_unix = true;
+        if(empty($exePath) || !is_file($exePath)){
+            if (substr(strtolower(PHP_OS), 0, 3) == 'win') {
+                $is_unix = false;
+                $ini = ini_get_all();
+                $path = $ini['extension_dir']['local_value'];
+                $php_path = str_replace('\\', '/', $path);
+                $php_path = str_replace(array('/ext/', '/ext'), array('/', '/'), $php_path);
+                $exePath = $php_path . 'php.exe';
+            } else {
+                $exePath = PHP_BINDIR;
+            }
+            if(empty($exePath)){
+                $exePath = 'php';
+            }else{
+                if(is_dir($exePath)){
+                    $exePath = rtrim($exePath,DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'php';
+                }
+            }
+        }
+
+        if($is_unix) {
+            /* 生成环境,linux 输出到日志
+            pclose(popen($exePath . " " . $script . " >> " . APPLICATION_PATH . '/../data/log/run_command_'.$id.'.txt 2>&1 &', 'r'));
+            */
+            pclose(popen($exePath . " " . $script . ' &', 'r'));
+            return true;
+        } else {
+            // 本地开发,windows
+            $bat_dir = realpath(DIR_APPLICATION) . '/log/win_bat';
+            self::mkdirs($bat_dir);
+            if (is_dir($bat_dir) && $dir = opendir($bat_dir)) {
+                while (($file = readdir($dir)) !== false) {
+                    if($file != '.' && $file != '..'){
+                        $tmpfilePath = $bat_dir . DIRECTORY_SEPARATOR . $file;
+                        if(time() - filemtime($tmpfilePath) > 900){
+                            @unlink($tmpfilePath);
+                        }
+                    }
+                }
+            }
+            $bat_filename = realpath(DIR_APPLICATION . '/log') . "/win_bat/" . self::getGuidv4() . ".bat";
+            $bat_log_filename = realpath(DIR_APPLICATION . '/log')  . '/run_command.log';
+            $bat_file = fopen($bat_filename, "w");
+            if($bat_file) {
+                fwrite($bat_file, "@echo off"."\n");
+                fwrite($bat_file, "$exePath  $script >> ".$bat_log_filename."\n");
+                fwrite($bat_file, "EXIT"."\n");
+                fclose($bat_file);
+            } else {
+                return false;
+            }
+            $exe = "start /b " . $bat_filename;
+            if( pclose(popen($exe, 'r')) !== false ) {
+                return true;
+            }
+        }
+
+        return false;
+	}
+	
+	/* 生产目录 */
+	public static function  mkdirs($path){
+		if (!file_exists($path)) {
+			self::mkdirs(dirname($path));
+			mkdir($path, 0777);
+			chmod($path, 0777);
+		}
+	}
+
+	/* 生成唯一id */
+	public static function getGuidv4($trim = true)
+    {
+        // Windows
+        if (function_exists('com_create_guid') === true) {
+            if ($trim === true)
+                return strtoupper(trim(com_create_guid(), '{}'));
+            else
+                return strtoupper(com_create_guid());
+        }
+
+        // OSX/Linux
+        if (function_exists('openssl_random_pseudo_bytes') === true) {
+            $data = openssl_random_pseudo_bytes(16);
+            $data[6] = chr(ord($data[6]) & 0x0f | 0x40);    // set version to 0100
+            $data[8] = chr(ord($data[8]) & 0x3f | 0x80);    // set bits 6-7 to 10
+            return strtoupper(vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4)));
+        }
+
+        // Fallback (PHP 4.2+)
+        mt_srand((double)microtime() * 10000);
+        $charid = strtolower(md5(uniqid(rand(), true)));
+        $hyphen = chr(45);                  // "-"
+        $lbrace = $trim ? "" : chr(123);    // "{"
+        $rbrace = $trim ? "" : chr(125);    // "}"
+        $guidv4 = $lbrace.
+            substr($charid,  0,  8).$hyphen.
+            substr($charid,  8,  4).$hyphen.
+            substr($charid, 12,  4).$hyphen.
+            substr($charid, 16,  4).$hyphen.
+            substr($charid, 20, 12).
+            $rbrace;
+        return strtoupper($guidv4);
+    }
 }

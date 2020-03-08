@@ -157,7 +157,7 @@ class ModelSaleOrder extends Model {
 	}
 
 	public function getOrders($data = array()) {
-		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified,o.email,o.shipping_method,o.customer_id FROM `" . DB_PREFIX . "order` o";
+		$sql = "SELECT o.order_id, CONCAT(o.firstname, ' ', o.lastname) AS customer, (SELECT os.name FROM " . DB_PREFIX . "order_status os WHERE os.order_status_id = o.order_status_id AND os.language_id = '" . (int)$this->config->get('config_language_id') . "') AS status, o.shipping_code, o.total, o.currency_code, o.currency_value, o.date_added, o.date_modified,o.email,o.shipping_method,o.customer_id,o.shipping_country as country FROM `" . DB_PREFIX . "order` o";
 
 		if (isset($data['filter_order_status'])) {
 			$implode = array();
@@ -205,13 +205,22 @@ class ModelSaleOrder extends Model {
 			$sql .= " AND o.total = '" . (float)$data['filter_total'] . "'";
 		}
 
+		if (!empty($data['filter_customer_id_in'])) {
+			$sql .= " AND customer_id IN (" . implode(',',$data['filter_customer_id_in']) . ")";
+		}
+
+		if (!empty($data['filter_customer_id_no_in'])) {
+			$sql .= " AND customer_id NOT IN (" . implode(',',$data['filter_customer_id_no_in']) . ")";
+		}
+
 		$sort_data = array(
 			'o.order_id',
 			'customer',
 			'status',
 			'o.date_added',
 			'o.date_modified',
-			'o.total'
+			'o.total',
+			'country'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
@@ -339,6 +348,12 @@ class ModelSaleOrder extends Model {
 		return $query;
 	}
 
+	public function deleteRemark($remark_id) {
+		$query = $this->db->query("DELETE FROM " . DB_PREFIX . "order_remark WHERE remark_id = ".$remark_id);
+
+		return $query;
+	}
+
 	public function getRemark($order_id) {
 		$query = $this->db->query("select * from " . DB_PREFIX . "order_remark where order_id = ".(int)$order_id);
 
@@ -388,6 +403,14 @@ class ModelSaleOrder extends Model {
 
 		if (!empty($data['filter_order_id'])) {
 			$sql .= " AND order_id = '" . (int)$data['filter_order_id'] . "'";
+		}
+
+		if (!empty($data['filter_customer_id_in'])) {
+			$sql .= " AND customer_id IN (" . implode(',',$data['filter_customer_id_in']) . ")";
+		}
+
+		if (!empty($data['filter_customer_id_no_in'])) {
+			$sql .= " AND customer_id NOT IN (" . implode(',',$data['filter_customer_id_no_in']) . ")";
 		}
 
 		if (!empty($data['filter_customer'])) {

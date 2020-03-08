@@ -177,6 +177,7 @@ class ControllerAccountOrder extends Controller {
 			$data['column_date_added'] = $this->language->get('column_date_added');
 			$data['column_status'] = $this->language->get('column_status');
 			$data['column_comment'] = $this->language->get('column_comment');
+			$data['column_image'] = $this->language->get('column_image');
 
 			$data['button_reorder'] = $this->language->get('button_reorder');
 			$data['button_return'] = $this->language->get('button_return');
@@ -281,6 +282,7 @@ class ControllerAccountOrder extends Controller {
 
 			$this->load->model('catalog/product');
 			$this->load->model('tool/upload');
+			$this->load->model('tool/image');
 
 			// Products
 			$data['products'] = array();
@@ -319,8 +321,16 @@ class ControllerAccountOrder extends Controller {
 					$reorder = '';
 				}
 
+				if (!empty($product_info) && is_file(DIR_IMAGE . $product_info['image'])) {
+					$image= $this->model_tool_image->resize($product_info['image'], 100, 100);
+				} else {
+					$image = $this->model_tool_image->resize('no_image.png', 40, 40);
+				}
+
 				$data['products'][] = array(
 					'name'     => $product['name'],
+					'image'    => $image,
+					'href'     => $this->url->link('product/product', 'product_id=' . $product['product_id'] , 'SSL'),
 					'model'    => $product['model'],
 					'option'   => $option_data,
 					'quantity' => $product['quantity'],

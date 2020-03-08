@@ -349,6 +349,9 @@
             <input type="checkbox" name="remark[<?php echo $arr['remark_id']; ?>]" remark_id="<?php echo $arr['remark_id']; ?>"/>
             <?php } ?>
             </span>
+            <span>
+<button type="button" data-toggle="tooltip" title="Delete" class="btn btn-danger" onclick="deleteRemark(this)" data-original-title="Delete" remark-id="<?php echo $arr['remark_id']; ?>" style="margin-top: 10px;margin-left: 10px;"><i class="fa fa-trash-o"></i></button>
+            </span>
 
             <?php echo html_entity_decode($arr['remark']); ?> 
             </div>
@@ -689,7 +692,7 @@ $('#button-history').on('click', function() {
 		url: '<?php echo $store_url; ?>index.php?route=api/order/history&token=' + token + '&order_id=<?php echo $order_id; ?>',
 		type: 'post',
 		dataType: 'json',
-		data: 'order_status_id=' + encodeURIComponent($('select[name=\'order_status_id\']').val()) + '&notify=' + ($('input[name=\'notify\']').prop('checked') ? 1 : 0) + '&override=' + ($('input[name=\'override\']').prop('checked') ? 1 : 0) + '&append=' + ($('input[name=\'append\']').prop('checked') ? 1 : 0) + '&comment=' + encodeURIComponent($('textarea[name=\'comment\']').val()) + '&choose_email=' + encodeURIComponent($('input[name=\'choose_email\']:checked').val()),
+		data: 'qc_photo=1&order_status_id=' + encodeURIComponent($('select[name=\'order_status_id\']').val()) + '&notify=' + ($('input[name=\'notify\']').prop('checked') ? 1 : 0) + '&override=' + ($('input[name=\'override\']').prop('checked') ? 1 : 0) + '&append=' + ($('input[name=\'append\']').prop('checked') ? 1 : 0) + '&comment=' + encodeURIComponent($('textarea[name=\'comment\']').val()) + '&choose_email=' + encodeURIComponent($('input[name=\'choose_email\']:checked').val()),
 		beforeSend: function() {
 			$('#button-history').button('loading');
 		},
@@ -741,6 +744,7 @@ $.ajax({
         
 $('textarea[name=\'admin_comment\']').code('');
         var _html = '<div><span>'+json['add_time']+' &nbsp;&nbsp; <input type="checkbox" name="remark['+json['remark_id']+']" remark_id="'+json['remark_id']+'"/></span>';
+         _html += '<span><button type="button" data-toggle="tooltip" title="Delete" class="btn btn-danger" onclick="deleteRemark(this)" remark-id="'+json['remark_id']+'" data-original-title="Delete" style="margin-top: 10px;margin-left: 10px;"><i class="fa fa-trash-o"></i></button></span>';
 
         $('#comment_box').append(_html + unescape(json['remark']) + '</div>');
 
@@ -840,6 +844,29 @@ $('select[name="order_status_id"]').change(function(){
 
 
 $('#input-admin_comment').summernote({height: 300});
+
+function deleteRemark(e){
+  var remark_id = $(e).attr('remark-id');
+  $(e).parent().parent().hide();
+  $.ajax({
+		url: 'index.php?route=sale/order/deleteRemark&token=<?php echo $token; ?>&order_id=<?php echo $order_id; ?>',
+		type: 'post',
+		dataType: 'json',
+		data: 'remark_id=' + remark_id,
+		success: function(json) {
+
+			if (json['state']==1) {
+$(e).parent().parent().remove();
+			}else{
+        alert(json['error']);
+      }
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
 
 //--></script>
 </div>

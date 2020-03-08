@@ -35,6 +35,10 @@
                 <label class="control-label" for="input-customer_email"><?php echo $entry_customer_email; ?></label>
                 <input type="text" name="filter_customer_email" value="<?php echo $filter_customer_email; ?>" placeholder="<?php echo $entry_customer_email; ?>" id="input-customer_email" class="form-control" />
               </div>
+
+              <div class="form-group">
+ <button type="button" class="btn btn-primary" id="batchOrder">Order Status Bulk Update</button>
+              </div>
             </div>
             <div class="col-sm-4">
               <div class="form-group">
@@ -62,6 +66,20 @@
               <div class="form-group">
                 <label class="control-label" for="input-model"><?php echo $entry_model; ?></label>
                 <input type="text" name="filter_model" value="<?php echo $filter_model; ?>" placeholder="<?php echo $entry_model; ?>" id="input-model" class="form-control" />
+              </div>
+
+              <div class="form-group">
+                <label class="control-label" for="input-black"> Black List </label>
+
+                <select name="filter_black" class="form-control">
+                  <?php foreach($blacks as $key => $arr) { ?>
+                    <?php if($arr['val'] == $filter_black) { ?>
+                    <option value="<?php echo $arr['val']; ?>" selected><?php echo $arr['name']; ?></option>
+                    <?php }else{ ?>
+                    <option value="<?php echo $arr['val']; ?>"><?php echo $arr['name']; ?></option>
+                    <?php } ?>
+                  <?php } ?>
+                </select>
               </div>
             </div>
             <div class="col-sm-4">
@@ -121,6 +139,13 @@
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
                   <td class="text-right" width="350"><?php echo $column_action; ?></td>
+                  <td class="text-left">
+                  <?php if($sort=='country'){ ?>
+                  <a href="<?php echo $sort_country; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_country; ?></a>
+                  <?php } else{ ?>
+                  <a href="<?php echo $sort_country; ?>"><?php echo $column_country; ?></a>
+                  <?php } ?>
+                  </td>
                   <td class="text-right"><?php if ($sort == 'o.order_id') { ?>
                     <a href="<?php echo $sort_order; ?>" class="<?php echo strtolower($order); ?>"><?php echo $column_order_id; ?></a>
                     <?php } else { ?>
@@ -215,6 +240,7 @@
                   <?php } ?>
 
                     </td>
+                  <td class="text-right"><?php echo $order['country']; ?></td>
                   <td class="text-right"><?php echo $order['order_id']; ?></td>
                   <td class="text-left"><?php echo $order['status']; ?></td>
                   <td class="text-right"><?php echo $order['total']; ?></td>
@@ -244,6 +270,65 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 批量处理订单弹窗 -->
+  <div class="" id="batch-window">
+  <div class="container-fluid">
+     <form role="form" id="batch-order">
+     <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <textarea class="form-control" rows="30" name="batch-order-id" id="batch-order-id"></textarea>
+        </div>
+      </div>
+      <div class="col-md-8">
+      <div style="position:absolute;right:-2px;top:-2px;">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="font-size:30px">×</button>
+			</div>
+        <div class="form-group">
+          <label class="control-label" for="batch-status">Order Status</label>
+           <select name="batch-status" id="batch-status" class="form-control">
+                  <option value=""></option>
+                  <?php foreach ($order_statuses as $order_status) { ?>
+                  <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+                  <?php } ?>
+                </select>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="batch-comment">Comment</label>
+          <textarea name="batch-comment" class="form-control" id="batch-comment" rows="5"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="batch-notify">Notify Customer</label>
+          <input type="checkbox" value="1" name="batch-notify" id="batch-notify" style="vertical-align: top;margin-left:10px;" checked>
+        </div>
+        <div class="form-group">
+          <?php if(!empty($choose_email)) { ?>
+<?php foreach($choose_email as $key => $arr) { ?>
+<?php if($arr['config_mail_smtp_username']){ ?>
+                    <input type="radio" name="choose_email" value="<?php echo $key;?>" id="email_<?php echo $key;?>" <?php if($arr['default']){ echo 'checked';}?>/>
+                    <label for="email_<?php echo $key;?>"><?php echo $arr['config_mail_smtp_username'];?></label>
+                    &nbsp;&nbsp;
+          <?php }}}else{ ?>          
+<input type="hidden" name="choose_email" value="" checked />
+          <?php } ?>
+        </div>
+        <div class="form-group">
+          <label class="control-label" for="batch-frequency">Email Sending Frequency</label>
+          <input type="text" value="10" name="batch-frequency" class="form-control" id="batch-frequency">
+        </div>
+
+         <div class="form-group">
+         <div id="batch-success" style="text-align: right;color: green;display:none"><i class="fa fa-check-circle"></i> Success !</div>
+          <button type="button" class="btn btn-primary pull-right" id="batch-order-check">
+          Order Status Bulk Update
+          </button>
+        </div>
+      </div>
+     </div>
+     </form>
+  </div>
   </div>
   <script type="text/javascript"><!--
 $('#button-filter').on('click', function() {
@@ -276,6 +361,10 @@ $('#button-filter').on('click', function() {
    var filter_remark = $('select[name=\'filter_remark\']').val();
 	if (filter_remark) {
 		url += '&filter_remark=' + encodeURIComponent(filter_remark);
+	}
+     var filter_black = $('select[name=\'filter_black\']').val();
+	if (filter_black) {
+		url += '&filter_black=' + encodeURIComponent(filter_black);
 	}
 
 	var filter_order_status = $('select[name=\'filter_order_status\']').val();
@@ -545,10 +634,108 @@ $('.date').datetimepicker({
           move += 30; 
         }
 
-       
+      $('#batchOrder').click(function(){
+        $('#batch-window').addClass('upBg show');
+      });
+      $('.close').click(function(){
+         $('#batch-window').removeClass('upBg show');   
+      });
+      var validate = 1;
+      $('#batch-order-check').click(function(){
+          var order_id = $.trim($('#batch-order-id').val());
+          var order_status = $('#batch-status').val();
+          var order_comment = $('#batch-comment').val();
+          var order_frequency = $('#batch-frequency').val();
+          if(order_id ==''){
+            alert('order id not empty');
+            return;
+          }
+          if(order_frequency <0 || order_frequency >600){
+            alert('Frequency have to big 0 less 600');
+            return;
+          }
+          if(order_status == ''){
+            alert('order status have to choose');
+            return;
+          }
+          var form = $('#batch-order').serialize();
+          
+if(validate) {
+            $.ajax({
+                type: 'post',
+                url: 'index.php?route=sale/order/batchOrder&token=<?php echo $token; ?>',
+                data: form,
+                dataType: 'json',
+                beforeSend:function(){
+                  validate = 0;
+                  $('#batch-order-check').attr("disabled",true);
+                  $('#batch-order-check').text("Sending");
+                },
+                success: function (json) {
+                  if(json['state']){
+                    successRest();
+                  }else{
+                    alert(json['message']);
+                  }
+                 
+
+                },
+                complete:function(){
+                  errorReset();
+                },
+                error:function(){
+                 errorReset();
+                }
+            });
+        }
+
+
+      });   
+      function successRest(){
+        validate = 1;
+        $('#batch-order-id').val('');
+        $('#batch-status').val('');
+        $('#batch-comment').val('');
+        $('#batch-order-check').attr("disabled",false);
+        $('#batch-order-check').text("Order Status Bulk Update");
+         $('#batch-success').show().delay(2000).fadeOut();
+      }
+      function errorReset(){
+        validate = 1;
+        $('#batch-order-check').attr("disabled",false);
+        $('#batch-order-check').text("Order Status Bulk Update");
+      }
 
         
      
       </script>
+
+      <style type="text/css">
+      #batch-window{
+        display:none;
+      }
+.upBg{
+transform: translateX(-50%) scale(0.8,0.8);
+left: 50%;
+top: 20%;
+border-radius: 3px;
+position: fixed;
+width: 70%;
+height: 600px;
+overflow-y: auto;
+z-index: 1111;
+transition: all .3s;
+visibility: hidden;
+background: #f2f2f2;
+opacity: 0;
+padding:10px;
+}
+.show{
+transform: translateX(-50%) scale(1,1);
+visibility: visible;
+opacity: 1;
+box-shadow: 1px 1px 20px 2px #888;
+}
+</style>
 
 <?php echo $footer; ?>

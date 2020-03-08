@@ -749,40 +749,40 @@ class ControllerApiOrder extends Controller {
 		}
 
 		if (!isset($this->session->data['api_id']) && ($qc_photo==0)) {
-			$json['error'] = $this->language->get('error_permission');
+			$json['error'] = $this->language->get('error_permission') . ' Your IP:'.$this->request->server['REMOTE_ADDR'];
 		} else {
-			// Add keys for missing post vars
-			$keys = array(
-				'order_status_id',
-				'notify',
-				'append',
-				'comment'
-			);
+            // Add keys for missing post vars
+            $keys = array(
+                'order_status_id',
+                'notify',
+                'append',
+                'comment'
+            );
 
-			foreach ($keys as $key) {
-				if (!isset($this->request->post[$key])) {
-					$this->request->post[$key] = '';
-				}
-			}
+            foreach ($keys as $key) {
+                if (!isset($this->request->post[$key])) {
+                    $this->request->post[$key] = '';
+                }
+            }
 
-			$this->load->model('checkout/order');
+            $this->load->model('checkout/order');
 
-			if (isset($this->request->get['order_id'])) {
-				$order_id = $this->request->get['order_id'];
-			} else {
-				$order_id = 0;
-			}
+            if (isset($this->request->get['order_id'])) {
+                $order_id = $this->request->get['order_id'];
+            } else {
+                $order_id = 0;
+            }
 
-			$order_info = $this->model_checkout_order->getOrder($order_id);
+            $order_info = $this->model_checkout_order->getOrder($order_id);
 
-			if ($order_info) {
-				$this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify'], $this->request->post['override'],$sender);
+            if ($order_info) {
+                $this->model_checkout_order->addOrderHistory($order_id, $this->request->post['order_status_id'], $this->request->post['comment'], $this->request->post['notify'], $this->request->post['override'], $sender);
 
-				$json['success'] = $this->language->get('text_success');
-			} else {
-				$json['error'] = $this->language->get('error_not_found');
-			}
-		}
+                $json['success'] = $this->language->get('text_success');
+            } else {
+                $json['error'] = $this->language->get('error_not_found');
+            }
+        }
 
 		if (isset($this->request->server['HTTP_ORIGIN'])) {
 			$this->response->addHeader('Access-Control-Allow-Origin: ' . $this->request->server['HTTP_ORIGIN']);

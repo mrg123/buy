@@ -16,4 +16,9 @@ class ModelCustomerCustomerBan extends Model {
 		$result = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer_ban WHERE customer_id = '" . (int)$customer_id . "'");
 		return $result->row;
 	}
+
+	public function getAll() {
+		$result = $this->db->query("SELECT customer_id FROM " . DB_PREFIX . "customer_ban");
+		return $result->rows;
+	}
 }

@@ -134,3 +134,5 @@ $_['entry_customer_email']			 = 'Customer Email';
 $_['entry_model']			 = 'Product Model';
 $_['entry_shipping_method']			 = 'Shipping Method';
 $_['text_success_add_remark']			 = 'Add Remark Succesed';
+$_['text_success_delete_remark']			 = 'delete Remark Succesed';
+$_['column_country']			 = 'Country';

@@ -65,6 +65,9 @@
 .cart-checkout{background-color:#ffeded;border: 1px solid #F14E04;color: #ed145b;padding:6px 24px;border-radius: 3px;vertical-align: middle;font-size:14px;margin-bottom:10px;}
 .cart-checkout:hover{color:#ed145b;}
 .cart-continue{font-size:12px;}
+.list-unstyled li{font-size:13px;}
+.nav-tabs a{font-size:13px;}
+#tab-description p{font-size:13px;}
 			</style>
 			]]></add>
 		</operation>

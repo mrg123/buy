@@ -270,11 +270,7 @@ class ControllerSaleOrder extends Controller {
 			'limit'                => $this->config->get('config_limit_admin')
 		);
 
-		if(!empty($filter_ban)){
-			$filter_data['filter_customer_id_in'] = $filter_ban;
-		}else{
-			$filter_data['filter_customer_id_no_in'] = $filter_no_ban;
-		}
+	
 
 		$order_total = $this->model_sale_order->getTotalOrders($filter_data);
 

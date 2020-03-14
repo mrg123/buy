@@ -68,19 +68,7 @@
                 <input type="text" name="filter_model" value="<?php echo $filter_model; ?>" placeholder="<?php echo $entry_model; ?>" id="input-model" class="form-control" />
               </div>
 
-              <div class="form-group">
-                <label class="control-label" for="input-black"> Black List </label>
 
-                <select name="filter_black" class="form-control">
-                  <?php foreach($blacks as $key => $arr) { ?>
-                    <?php if($arr['val'] == $filter_black) { ?>
-                    <option value="<?php echo $arr['val']; ?>" selected><?php echo $arr['name']; ?></option>
-                    <?php }else{ ?>
-                    <option value="<?php echo $arr['val']; ?>"><?php echo $arr['name']; ?></option>
-                    <?php } ?>
-                  <?php } ?>
-                </select>
-              </div>
             </div>
             <div class="col-sm-4">
               <div class="form-group">
@@ -663,7 +651,7 @@ $('.date').datetimepicker({
 if(validate) {
             $.ajax({
                 type: 'post',
-                url: 'index.php?route=sale/order/batchOrder&token=<?php echo $token; ?>',
+                url: 'index.php?route=sale/order/batchorder&token=<?php echo $token; ?>',
                 data: form,
                 dataType: 'json',
                 beforeSend:function(){

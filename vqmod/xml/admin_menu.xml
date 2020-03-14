@@ -10,6 +10,7 @@
 			<search position="after"><![CDATA[<li><a href="<?php echo $order; ?>"><?php echo $text_order; ?></a></li>]]></search>
 			<add trim="true"><![CDATA[
 <li><a href="<?php echo $order_send; ?>">Order Send</a></li>
+<li><a href="<?php echo $support; ?>">Customer Ticket</a></li>
 			]]></add>
 		</operation>
     </file>
@@ -19,8 +20,30 @@
 			<search position="before"><![CDATA[return $this->load->view('common/menu.tpl', $data);]]></search>
 			<add trim="true"><![CDATA[
 $data['order_send'] = $this->url->link('sale/order/send', 'token=' . $this->session->data['token'], 'SSL');
+$data['support'] = $this->url->link('sale/support', 'token=' . $this->session->data['token'] . '', 'SSL');
 			]]></add>
 		</operation>
     </file>
+
+	<file path="admin/view/template/common/header.tpl">
+		<operation>
+			<search position="replace"><![CDATA[<li class="dropdown-header"><?php echo $text_affiliate; ?></li>]]></search>
+			<add trim="true"><![CDATA[
+<li class="dropdown-header">Customer Support Center</li>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<li><a href="<?php echo $affiliate_approval; ?>"><span class="label label-danger pull-right"><?php echo $affiliate_total; ?></span><?php echo $text_approval; ?></a></li>]]></search>
+			<add trim="true"><![CDATA[
+<li><a href="<?php echo $support; ?>"><span class="label label-danger pull-right"><?php echo $support_total; ?></span>View Customer Tickets</a></li>
+			]]></add>
+		</operation>
+		<operation>
+			<search position="replace"><![CDATA[<li><a href="<?php echo $review; ?>"><span class="label label-danger pull-right"><?php echo $review_total; ?></span><?php echo $text_review; ?></a></li>]]></search>
+			<add trim="true"><![CDATA[
+
+			]]></add>
+		</operation>
+	</file>
 
 </modification>

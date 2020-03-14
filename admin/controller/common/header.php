@@ -109,6 +109,15 @@ class ControllerCommonHeader extends Controller {
 			$affiliate_total = $this->model_marketing_affiliate->getTotalAffiliates(array('filter_approved' => false));
 
 			$data['affiliate_total'] = $affiliate_total;
+            $sql = "select count(*) from " . DB_PREFIX . "support where status = 0";
+            $count = $this->db->query($sql)->row;
+            if(!empty($count)){
+                $count = $count['count(*)'];
+            }else{
+                $count = 0;
+            }
+			$data['support_total'] = $count;
+			$data['support'] = $this->url->link('sale/support', 'token=' . $this->session->data['token'] . '', 'SSL');
 			$data['affiliate_approval'] = $this->url->link('marketing/affiliate', 'token=' . $this->session->data['token'] . '&filter_approved=1', 'SSL');
 
 			$data['alerts'] = $customer_total + $product_total + $review_total + $return_total + $affiliate_total;

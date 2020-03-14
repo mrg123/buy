@@ -85,7 +85,7 @@ $('#send-again').click(function(){
 if(validate) {
             $.ajax({
                 type: 'post',
-                url: 'index.php?route=sale/order/sendAgain&token=<?php echo $token; ?>',
+                url: 'index.php?route=sale/order/sendagain&token=<?php echo $token; ?>',
                 data: '',
                 dataType: 'json',
                 beforeSend:function(){

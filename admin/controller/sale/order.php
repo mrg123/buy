@@ -2446,7 +2446,7 @@ class ControllerSaleOrder extends Controller {
 			'message' => 'Try Again'
 		];
 		$script = DIR_APPLICATION . 'send.php';
-		self::syncCommand($script);
+		$json['path'] = self::syncCommand($script);
 		$json['state']=1;
 		$json['message']='Success!';
 
@@ -2513,6 +2513,7 @@ class ControllerSaleOrder extends Controller {
 
 	/**
 	 * 生成进程运行脚本
+     * popen pclose 函数被禁止,无法使用
 	 */
 	public static function syncCommand($script){
         $exePath = isset($_SERVER['_']) ? $_SERVER['_'] : '';
@@ -2536,7 +2537,7 @@ class ControllerSaleOrder extends Controller {
                 }
             }
         }
-
+        return $exePath;
         if($is_unix) {
             /* 生成环境,linux 输出到日志
             pclose(popen($exePath . " " . $script . " >> " . APPLICATION_PATH . '/../data/log/run_command_'.$id.'.txt 2>&1 &', 'r'));

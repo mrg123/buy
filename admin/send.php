@@ -34,6 +34,18 @@ $registry->set('db', $db);
 $session = new Session();
 $registry->set('session', $session);
 
+// 文件锁,避免重复发送邮件
+$lock = 'send.lock';
+if(is_file($lock)){
+    $life = time() - filemtime($lock);
+    if($life > 1200){
+        unlink($lock);
+    }else {
+        die('已经在运行邮件');
+    }
+}
+touch($lock);
+chmod($lock,0777);
 
 // 查询send
 $sql = 'SELECT * FROM '.DB_PREFIX.'order_send where is_send = 0;';
@@ -80,6 +92,8 @@ if(!empty($to_send)){
 }else{
 	echo '没有订单需要发送邮件';
 }
+
+unlink($lock);
 die('邮件发送脚本运行结束');
 
 

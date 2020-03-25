@@ -46,4 +46,13 @@ $data['support'] = $this->url->link('sale/support', 'token=' . $this->session->d
 		</operation>
 	</file>
 
+	<file path="admin/view/template/setting/setting.tpl">
+		<operation>
+			<search position="after"><![CDATA[<select name="config_country_id" id="input-country" class="form-control">]]></search>
+			<add><![CDATA[
+<option value="0"> --- Please Select --- </option>
+      ]]></add>
+		</operation>
+	</file>
+
 </modification>

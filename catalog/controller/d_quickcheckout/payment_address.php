@@ -101,7 +101,7 @@ class ControllerDQuickcheckoutPaymentAddress extends Controller {
             )
         );
         $this->model_module_d_quickcheckout->updateStatistic($statistic);
-        
+        Common::info($json);
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }

@@ -57,6 +57,7 @@ class ControllerDQuickcheckoutConfirm extends Controller {
         );
         $this->model_module_d_quickcheckout->updateStatistic($statistic);
 
+        Common::info($json);
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
@@ -145,7 +146,7 @@ class ControllerDQuickcheckoutConfirm extends Controller {
             )
         );
         $this->model_module_d_quickcheckout->updateStatistic($statistic);
-
+        Common::info($json);
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
     }
@@ -399,6 +400,8 @@ class ControllerDQuickcheckoutConfirm extends Controller {
         }
         $this->load->model('d_quickcheckout/order');
         $this->model_module_d_quickcheckout->logWrite('Controller:: confirm/updateOrder for order ='.$this->session->data['order_id'].' with $order_data =' .json_encode($order_data));
+
+        Common::info($order_data);
         return $this->model_d_quickcheckout_order->updateOrder($this->session->data['order_id'], $order_data);
     }
 }

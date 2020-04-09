@@ -9,6 +9,8 @@ class ControllerSaleOrder extends Controller {
 
 		$this->load->model('sale/order');
 
+		$this->repairOrder();
+
 		$this->getList();
 	}
 
@@ -2620,5 +2622,32 @@ class ControllerSaleOrder extends Controller {
             substr($charid, 20, 12).
             $rbrace;
         return strtoupper($guidv4);
-    }
+	}
+	
+	public function repairOrder(){
+		$this->load->model('localisation/country');
+		$sql = "select payment_country_id,payment_country,order_id,shipping_country_id,shipping_country from ".DB_PREFIX."order where payment_country = '';";
+		$result = $this->db->query($sql)->rows;
+		if(!empty($result)){
+			foreach($result as $item){
+				
+                if ($item['payment_country_id']) {
+					$country = $this->model_localisation_country->getCountry($item['payment_country_id']);
+					$country_name = $country['name'];
+					$update_sql = "UPDATE ".DB_PREFIX."order set payment_country = '".$country_name."' where order_id = ".$item['order_id'];
+					$this->db->query($update_sql);
+				}
+				if ($item['shipping_country_id']) {
+					$country = $this->model_localisation_country->getCountry($item['shipping_country_id']);
+					$country_name = $country['name'];
+					$update_sql = "UPDATE ".DB_PREFIX."order set shipping_country = '".$country_name."' where order_id = ".$item['order_id'];
+					$this->db->query($update_sql);
+				}
+				
+			}
+		}
+
+
+		
+	}
 }

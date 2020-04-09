@@ -60,7 +60,7 @@
                       <?php echo date('l, F, Y (H:m:s)',strtotime($item['add_time']));?>
                     </p>
                     <i class="fa fa-user pull-left" style="font-size:40px"></i>
-                    <?php if(!$item['client']){ ?>
+                    <?php if($item['client']){ ?>
                     <span><?php echo $name; ?></span> <br/>
                     <b>Client</b>
                     <?php }else{ ?>

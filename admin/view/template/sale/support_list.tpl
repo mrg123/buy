@@ -3,7 +3,7 @@
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
-
+          <button type="button" data-toggle="tooltip" title="" class="btn btn-danger" onclick="confirm('Are you sure?') ? deleteSupport() : false;" data-original-title="Delete"><i class="fa fa-trash-o"></i></button>
       </div>
       <h1><?php echo $heading_title; ?></h1>
       <ul class="breadcrumb">
@@ -114,7 +114,7 @@
             <table class="table table-bordered table-hover">
               <thead>
                 <tr>
-                  <td style="width: 1px;display:none;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
+                  <td class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
                   <td class="text-right" ><?php echo $column_action; ?></td>
                   <td class="text-left">Ticket ID</td>
                   <td class="text-right">
@@ -143,6 +143,10 @@
                 <?php if ($support_list) { ?>
                 <?php foreach ($support_list as $support) { ?>
                 <tr>
+                    <td class="text-center">
+                        <input type="checkbox" name="selected[]" value="<?php echo $support['id']; ?>" />
+
+                      </td>
                   <td class="text-right">
                       <a href="<?php echo $support['url'];?>" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit"><i class="fa fa-pencil"></i></a>
                   </td>
@@ -269,7 +273,32 @@ $('input[name^=\'selected\']').on('change', function() {
 
 $('input[name^=\'selected\']:first').trigger('change');
 
+function deleteSupport(){
+    var id = [];
 
+    $('input[name="selected[]"]:checked').each(function(){
+        id.push($(this).val());
+    });
+    console.log(id);
+    if(id.length === 0){
+        return false;
+    }
+
+
+    $.ajax({
+        url: 'index.php?route=sale/support/deletesupport&token=<?php echo $token; ?>',
+        dataType: 'json',
+        data:{'id_arr[]':id},
+        type: 'post',
+        crossDomain: true,
+        success: function(json) {
+           $('#button-filter').trigger('click');
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+}
 
 
 $('button[id^=\'button-delete\']').on('click', function(e) {

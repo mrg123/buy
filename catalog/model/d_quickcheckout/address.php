@@ -169,6 +169,17 @@
                 }
             }
 
+            if($new_address['city']==''){
+                $new_address['city'] = $old_address['city'];
+            }
+            if($new_address['postcode']==''){
+                $new_address['postcode'] = $old_address['postcode'];
+            }
+            if($new_address['zone_id']==0){
+                $new_address['zone_id'] = $old_address['zone_id'];
+            }
+
+
             return $new_address;
         }
 

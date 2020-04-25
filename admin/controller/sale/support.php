@@ -157,6 +157,7 @@ class ControllerSaleSupport extends Controller {
 
         foreach ($results as $result) {
             $data['support_list'][] = [
+                'id' => $result['id'],
                 'ticket_id' => $result['ticket_id'],
                 'order_id' => $result['order_id'],
                 'customer' => $result['lastname'] . ' ' . $result['firstname'],
@@ -621,7 +622,28 @@ class ControllerSaleSupport extends Controller {
         $this->response->setOutput($this->load->view('sale/support_detail.tpl', $data));
 
     }
+    public function deleteSupport() {
+        $json = [
+            'state' => 1,
+            'message' => 'Success'
+        ];
+        try {
+            $id_arr = $this->request->post['id_arr'];
+            $json['request'] = $id_arr;
 
+
+            foreach($id_arr as $id) {
+                $sql = "delete from " . DB_PREFIX . "support where id = {$id}";
+                $this->db->query($sql);
+            }
+
+        }catch (Exception $e){
+            $json['message'] = $e->getMessage();
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }
 
     /**
      * Function 新增工单

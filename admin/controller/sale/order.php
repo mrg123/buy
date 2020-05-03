@@ -2626,23 +2626,39 @@ class ControllerSaleOrder extends Controller {
 	
 	public function repairOrder(){
 		$this->load->model('localisation/country');
-		$sql = "select payment_country_id,payment_country,order_id,shipping_country_id,shipping_country from ".DB_PREFIX."order where payment_country = '';";
+		$this->load->model('localisation/zone');
+		$sql = "select payment_country_id,payment_country,order_id,shipping_country_id,shipping_country,payment_zone_id,payment_zone,shipping_zone_id,shipping_zone from ".DB_PREFIX."order where payment_country = '' OR payment_zone = '';";
 		$result = $this->db->query($sql)->rows;
 		if(!empty($result)){
 			foreach($result as $item){
 				
-                if ($item['payment_country_id']) {
+                if ($item['payment_country_id'] && $item['payment_country'] == '') {
 					$country = $this->model_localisation_country->getCountry($item['payment_country_id']);
 					$country_name = $country['name'];
 					$update_sql = "UPDATE ".DB_PREFIX."order set payment_country = '".$country_name."' where order_id = ".$item['order_id'];
 					$this->db->query($update_sql);
 				}
-				if ($item['shipping_country_id']) {
+				if ($item['shipping_country_id'] && $item['shipping_country'] == '') {
 					$country = $this->model_localisation_country->getCountry($item['shipping_country_id']);
 					$country_name = $country['name'];
 					$update_sql = "UPDATE ".DB_PREFIX."order set shipping_country = '".$country_name."' where order_id = ".$item['order_id'];
 					$this->db->query($update_sql);
 				}
+
+				if ($item['payment_zone_id'] && $item['payment_zone'] == '') {
+					$zone = $this->model_localisation_zone->getZone($item['payment_zone_id']);
+					$zone_name = $zone['name'];
+					$update_sql = "UPDATE ".DB_PREFIX."order set payment_zone = '".$zone_name."' where order_id = ".$item['order_id'];
+					$this->db->query($update_sql);
+				}
+				if ($item['shipping_zone_id'] && $item['shipping_zone'] == '') {
+					$zone = $this->model_localisation_zone->getZone($item['shipping_zone_id']);
+					$zone_name = $zone['name'];
+					$update_sql = "UPDATE ".DB_PREFIX."order set shipping_zone = '".$zone_name."' where order_id = ".$item['order_id'];
+					$this->db->query($update_sql);
+				}
+				
+				
 				
 			}
 		}

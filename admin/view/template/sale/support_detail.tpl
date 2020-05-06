@@ -69,10 +69,10 @@
                     <?php } ?>
 
                   </div>
-                  <div style="padding:10px;font-size:14px;" class="clear">
+                  <div style="padding:10px;font-size:14px;" class="clear parent-img">
                     <pre><?php echo $item['message']; ?></pre>
                     <?php foreach($item['img_url'] as $url){ ?>
-                    <img width="200" src="<?php echo $url; ?>"/>
+                    <a href="<?php echo $url; ?>"><img width="200" src="<?php echo $url; ?>"/></a>
                     <?php } ?>
                   </div>
                 </div>
@@ -150,10 +150,23 @@
       line-height:20px;
       border:0;
     }
+
+
+
+
   </style>
 <script type="text/javascript">
-
-
+$('img').mouseover(function(){
+  $(this).removeAttr('width');
+}).mouseout(function(){
+$(this).attr('width',200);
+});
+$(document).ready(function() {
+	$('.parent-img').magnificPopup({
+		type:'image',
+    delegate:'a'
+	});
+});
   var file_validate = 1;
   $('#add-more').click(function() {
       if(file_validate > 9){

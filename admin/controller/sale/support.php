@@ -540,6 +540,9 @@ class ControllerSaleSupport extends Controller {
 
         $this->load->language('sale/support');
 
+        $this->document->addScript('view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
+        $this->document->addStyle('view/javascript/jquery/magnific/magnific-popup.css');
+
         $this->document->setTitle($ticket_id);
 
 

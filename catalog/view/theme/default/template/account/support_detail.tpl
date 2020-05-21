@@ -52,7 +52,7 @@ pre{
                 <div class="form-group" id="subject-group" >
                   <p class="p-title">
                     Ticket Submitted <br/>
-                    <?php echo date('l, F, Y (H:m:s)',strtotime($support_main['add_time'])); ?>
+                    <?php echo date('l, d, F, Y (H:m:s)',strtotime($support_main['add_time'])); ?>
                   </p>
                   <p class="p-title">
                     Related Order <br/>
@@ -77,7 +77,7 @@ pre{
                 <div class="form-group clear" style="border:1px solid #ddd;margin-bottom:20px;">
                   <div style="background-color:#ddd;padding:10px;">
                     <p class="pull-right" style="font-size:16px;padding-top:10px">
-                      <?php echo date('l, F, Y (H:m:s)',strtotime($item['add_time']));?>
+                      <?php echo date('l, d, F, Y (H:m:s)',strtotime($item['add_time']));?>
                     </p>
                     <i class="fa fa-user pull-left" style="font-size:40px"></i>
                     <?php if($item['client']){ ?>

@@ -128,7 +128,7 @@ class ControllerAccountSupport extends Controller {
                     'ticket_id' => $item['ticket_id'],
                     'subject' => $item['subject'],
                     'status' => $support_status[$item['status']],
-                    'update_time' => date('l, F, Y (H:m:s)',strtotime($item['update_time'])),
+                    'update_time' => date('l, d, F, Y (H:m:s)',strtotime($item['update_time'])),
                     'url' => $this->url->link('account/support/detail', 'ticket_id='.$item['ticket_id'], 'SSL')
                 ];
             }

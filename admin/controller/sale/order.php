@@ -2663,6 +2663,17 @@ class ControllerSaleOrder extends Controller {
 			}
 		}
 
+		/* 修复国家名称错误的订单 */
+		$sql = "select o.order_id,o.payment_country,c.name from ".DB_PREFIX."order o left join ".DB_PREFIX."country c on (o.payment_country_id = c.country_id) where o.payment_country_id !=0 and o.payment_country != c.name;";
+		$result = $this->db->query($sql)->rows;
+		if(!empty($result)){
+			foreach($result as $item){
+				$update_sql = "UPDATE ".DB_PREFIX."order set payment_country = '".$item['name']."',shipping_country = '".$item['name']."' where order_id = ".$item['order_id'];
+				$this->db->query($update_sql);
+			}
+
+		}
+
 
 		
 	}

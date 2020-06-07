@@ -807,9 +807,9 @@ class ControllerSaleSupport extends Controller {
             $message = '';
             if($notify){
                 $this->sendEmail($support_main);
-                $message = 'Success Send Email!';
+                $message .= 'Success Send Email!';
             }
-            $message .= 'Success Submit! Refresh after 3 seconds.';
+            $message .= 'Success Submit!';
             $this->session->data['success'] = $message;
             $json['message'] = $message;
         }catch (Exception $e){

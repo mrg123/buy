@@ -235,10 +235,10 @@ console.log(up.id);
                       validate = 1;
                       //_html = '<div class="alert alert-success"><i class="fa fa-check-circle"></i> Edit Ticket Success </div>';
                       //$('.breadcrumb').after(_html);
-                      alert(json['message']);
-                      setTimeout(function(){
-                        window.location.reload();
-                      }, 3000);
+                      
+                      
+                      window.location.reload();
+                     
                       
                   } else {
                       alert(json['message']);

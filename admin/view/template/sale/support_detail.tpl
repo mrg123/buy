@@ -235,7 +235,11 @@ console.log(up.id);
                       validate = 1;
                       //_html = '<div class="alert alert-success"><i class="fa fa-check-circle"></i> Edit Ticket Success </div>';
                       //$('.breadcrumb').after(_html);
-                      window.location.reload();
+                      alert(json['message']);
+                      setTimeout(function(){
+                        window.location.reload();
+                      }, 3000);
+                      
                   } else {
                       alert(json['message']);
                       $('#check').attr("disabled", false).text("Submit");

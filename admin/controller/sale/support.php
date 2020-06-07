@@ -752,18 +752,18 @@ class ControllerSaleSupport extends Controller {
             'state' => 1,
             'message' => 'Success'
         ];
+        $status = trim($this->request->post['status']);
+        $notify = trim($this->request->post['notify']);
+        $message = trim($this->request->post['message']);
+        $time = (int)trim($this->request->post['time']) + 1;
+        $client = 0;
+
+        $ticket_id = $this->db->escape($this->request->post['ticket_id']);
+        $date = date('Y-m-d H:i:s', time());
+        $add_time = $date;
+        $update_time = $date;
         try {
-            $status = trim($this->request->post['status']);
-            $notify = trim($this->request->post['notify']);
-            $message = trim($this->request->post['message']);
-            $time = (int)trim($this->request->post['time']) + 1;
-            $client = 0;
-
-            $ticket_id = $this->db->escape($this->request->post['ticket_id']);
-            $date = date('Y-m-d H:i:s', time());
-            $add_time = $date;
-            $update_time = $date;
-
+           
             $sql = "SELECT * FROM `".DB_PREFIX."support` WHERE ticket_id = '{$ticket_id}'";
             $support_main = $this->db->query($sql)->row;
             $customer_id = $support_main['customer_id'];
@@ -804,15 +804,20 @@ class ControllerSaleSupport extends Controller {
 
             $this->db->query($insert_img_sql);
 
+            $message = '';
             if($notify){
-
                 $this->sendEmail($support_main);
+                $message = 'Success Send Email!';
             }
-
-            $this->session->data['success'] = 'Edit Ticket Success';
-
+            $message .= 'Success Submit! Refresh after 3 seconds.';
+            $this->session->data['success'] = $message;
+            $json['message'] = $message;
         }catch (Exception $e){
-            $json['message'] = $e->getMessage();
+            $json['state'] = 0;
+            $json['message'] = 'Submit Failure by ' . $e->getMessage();
+
+            $update_sql = "UPDATE " . DB_PREFIX . "support SET update_time = '{$update_time}',status = 0 WHERE ticket_id = '{$ticket_id}'";
+            $this->db->query($update_sql);
         }
 
 

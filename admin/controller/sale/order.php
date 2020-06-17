@@ -115,6 +115,13 @@ class ControllerSaleOrder extends Controller {
 			$page = 1;
 		}
 
+        if (isset($this->request->get['filter_chose_status'])) {
+            $filter_chose_status = $this->request->get['filter_chose_status'];
+        } else {
+            $filter_chose_status = [];
+        }
+
+
 		$url = '';
 
 		if (isset($this->request->get['filter_order_id'])) {
@@ -158,6 +165,10 @@ class ControllerSaleOrder extends Controller {
 			$url .= '&filter_date_modified=' . $this->request->get['filter_date_modified'];
 		}
 
+        if (isset($this->request->get['filter_chose_status'])) {
+            $url .= '&filter_chose_status=' . $this->request->get['filter_chose_status'];
+        }
+
 		if (isset($this->request->get['sort'])) {
 			$url .= '&sort=' . $this->request->get['sort'];
 		}
@@ -194,6 +205,9 @@ class ControllerSaleOrder extends Controller {
 		$data['invoice'] = $this->url->link('sale/order/invoice', 'token=' . $this->session->data['token'], 'SSL');
 		$data['shipping'] = $this->url->link('sale/order/shipping', 'token=' . $this->session->data['token'], 'SSL');
 		$data['add'] = $this->url->link('sale/order/add', 'token=' . $this->session->data['token'], 'SSL');
+
+        $this->document->addScript('view/javascript/chosen-js/chosen.jquery.min.js');
+        $this->document->addStyle('view/javascript/chosen-js/chosen.min.css');
 
 		$data['orders'] = array();
 
@@ -253,7 +267,7 @@ class ControllerSaleOrder extends Controller {
 				$filter_ban = $filter_no_ban;	
 			}
 		}
-		
+
 		
 
 		$filter_data = array(
@@ -272,6 +286,9 @@ class ControllerSaleOrder extends Controller {
 			'limit'                => $this->config->get('config_limit_admin')
 		);
 
+        if(!empty($filter_chose_status)){
+            $filter_data['filter_order_status'] = implode(',',explode('_',$filter_chose_status));
+        }
 	
 
 		$order_total = $this->model_sale_order->getTotalOrders($filter_data);
@@ -430,6 +447,10 @@ class ControllerSaleOrder extends Controller {
 			$url .= '&filter_order_status=' . $this->request->get['filter_order_status'];
 		}
 
+        if (isset($this->request->get['filter_chose_status'])) {
+            $url .= '&filter_chose_status=' . $this->request->get['filter_chose_status'];
+        }
+
 		if (isset($this->request->get['filter_total'])) {
 			$url .= '&filter_total=' . $this->request->get['filter_total'];
 		}
@@ -490,6 +511,10 @@ class ControllerSaleOrder extends Controller {
 			$url .= '&filter_order_status=' . $this->request->get['filter_order_status'];
 		}
 
+        if (isset($this->request->get['filter_chose_status'])) {
+            $url .= '&filter_chose_status=' . $this->request->get['filter_chose_status'];
+        }
+
 		if (isset($this->request->get['filter_total'])) {
 			$url .= '&filter_total=' . $this->request->get['filter_total'];
 		}
@@ -523,6 +548,7 @@ class ControllerSaleOrder extends Controller {
 		$data['filter_order_id'] = $filter_order_id;
 		$data['filter_customer'] = $filter_customer;
 		$data['filter_order_status'] = $filter_order_status;
+		$data['filter_chose_status'] = explode('_',$filter_chose_status);
 		$data['filter_total'] = $filter_total;
 		$data['filter_date_added'] = $filter_date_added;
 		$data['filter_date_modified'] = $filter_date_modified;

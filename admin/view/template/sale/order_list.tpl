@@ -36,9 +36,31 @@
                 <input type="text" name="filter_customer_email" value="<?php echo $filter_customer_email; ?>" placeholder="<?php echo $entry_customer_email; ?>" id="input-customer_email" class="form-control" />
               </div>
 
-              <div class="form-group">
- <button type="button" class="btn btn-primary" id="batchOrder">Order Status Bulk Update</button>
-              </div>
+                <div class="form-group">
+                    <label class="control-label" for="filter_chose_status">
+                        Multiple Criteria Search
+                    </label>
+                    <select name="filter_chose_status" id="filter_chose_status" class="form-control" multiple >
+                        <option value="*"></option>
+                        <?php foreach ($order_statuses as $order_status) { ?>
+                        <?php if (in_array($order_status['order_status_id'],$filter_chose_status)) { ?>
+                        <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
+                        <?php } else { ?>
+                        <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+                        <?php } ?>
+                        <?php } ?>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <button type="button" id="button-filter" class="btn btn-primary pull-left"><i class="fa fa-search"></i>  Search  </button>
+                    <span class="pull-left" style="display: inline-block;line-height: 35px;margin-left: 5px;"><?php echo $results; ?></span>
+
+                    <div class="pull-left" style="clear:left;display: block;line-height: 35px;margin-top: 15px;"><?php echo $pagination; ?></div>
+                </div>
+
+
             </div>
             <div class="col-sm-4">
               <div class="form-group">
@@ -92,11 +114,9 @@
 
                 <input type="text" name="filter_shipping_method" value="<?php echo $filter_shipping_method; ?>"  id="input-shipping_method" class="form-control" />
               </div>
-
               <div class="form-group">
-                <label class="control-label" for="input-shipping_method"> Admin Remarks </label>
-
-                <select name="filter_remark" class="form-control">
+                <label class="control-label" for="filter_remark"> Admin Remarks </label>
+                <select name="filter_remark" class="form-control" id="filter_remark">
                 <option value="">All</option>
                   <?php foreach($remarks as $key => $arr) { ?>
                     <?php if($arr['val'] == $filter_remark) { ?>
@@ -107,22 +127,16 @@
                   <?php } ?>
                 </select>
               </div>
-        <div class="form-group">
-          
-
-          <button type="button" id="button-filter" class="btn btn-primary pull-right"><i class="fa fa-search"></i> <?php echo $button_filter; ?></button>
-
-         
-          <span class="pull-right" style="display: inline-block;line-height: 35px;margin-right: 5px;"><?php echo $results; ?></span>
-           <span class="pull-right" style="display: inline-block;line-height: 35px;margin-right: 5px;"><?php echo $pagination; ?></span>
-        </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary" id="batchOrder">Order Status Bulk Update</button>
+                </div>
               
             </div>
           </div>
         </div>
-        <form method="post" enctype="multipart/form-data" target="_blank" id="form-order">
           <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+              <table class="table table-bordered table-hover">
+        <form method="post" enctype="multipart/form-data" tar
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
@@ -319,6 +333,7 @@
   </div>
   </div>
   <script type="text/javascript"><!--
+      $("#filter_chose_status").chosen();
 $('#button-filter').on('click', function() {
 	url = 'index.php?route=sale/order&token=<?php echo $token; ?>';
 
@@ -378,6 +393,12 @@ $('#button-filter').on('click', function() {
 	if (filter_date_modified) {
 		url += '&filter_date_modified=' + encodeURIComponent(filter_date_modified);
 	}
+
+
+    var filter_chose_status = $("#filter_chose_status").chosen().val();
+    if (filter_chose_status) {
+        url += '&filter_chose_status=' + encodeURIComponent(filter_chose_status.join('_'));
+    }
 
 	location = url;
 });

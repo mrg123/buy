@@ -28,6 +28,9 @@ class ControllerInformationQcPhoto extends Controller {
 		if($check_sign != $sign){
 			$order_id = 0;
 		}
+        $from_param = 'sign=' . $sign . '&order_id=' .$order_id .'&num=' .$num;
+        $data['from'] = $this->url->link('information/qc_photo',$from_param,'SSL');
+
 
 		$data['action'] = $this->url->link('information/qc_photo/check','','SSL');
 		$data['order_id'] = $order_id;
@@ -53,6 +56,10 @@ class ControllerInformationQcPhoto extends Controller {
 		}
 	}
 
+    /**
+     * Function 确认提交
+     * @date 2020/6/17 23:48
+     */
 	public function check(){
 		
 		$json = [
@@ -65,8 +72,14 @@ class ControllerInformationQcPhoto extends Controller {
 		if($this->request->server['REQUEST_METHOD'] == 'POST'){
 			$order_id = $this->request->post['order_id'];
 			$choose = $this->request->post['choose'];	
-			$message = $this->request->post['message'];	
+			$message = trim($this->request->post['message']);
+			$url = $this->request->post['from'];
 
+            if (!empty($message)) {
+                $message = "<h3 style='color:red;font-weight: bold'>" . 'Your comment on current QC link ' . $url . ' is as below. <br>' . $message . "</h3>";
+            } else {
+                $message = "<h3 style='color:red;font-weight: bold'>" . 'Your comment on current QC link ' . $url . ' is as below. <br>No additional comment was provided by customer on current QC link.' . "</h3>";
+            }
 			
 			$qc_photo_status = $this->config->get('qc_photo_status');
 

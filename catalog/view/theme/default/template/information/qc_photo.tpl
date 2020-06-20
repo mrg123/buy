@@ -85,6 +85,7 @@ height: auto
       </div>
       <input type="hidden" name="choose" value="gl" id="choose"/>
       <input type="hidden" name="from" value="<?php echo $from; ?>" id="from"/>
+      <input type="hidden" name="num" value="<?php echo $num; ?>" id="from"/>
       <input type="hidden" name="order_id" value="<?php echo $order_id; ?>" />
 
       <div class="layui-form-item">

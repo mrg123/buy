@@ -30,6 +30,7 @@ class ControllerInformationQcPhoto extends Controller {
 		}
         $from_param = 'sign=' . $sign . '&order_id=' .$order_id .'&num=' .$num;
         $data['from'] = $this->url->link('information/qc_photo',$from_param,'SSL');
+        $data['num'] = $num;
 
 
 		$data['action'] = $this->url->link('information/qc_photo/check','','SSL');
@@ -74,11 +75,12 @@ class ControllerInformationQcPhoto extends Controller {
 			$choose = $this->request->post['choose'];	
 			$message = trim($this->request->post['message']);
 			$url = $this->request->post['from'];
+			$num = $this->request->post['num'];
 
             if (!empty($message)) {
-                $message = "<h3 style='color:red;font-weight: bold'>" . 'Your comment on current QC link ' . $url . ' is as below. <br>' . $message . "</h3>";
+                $message = 'Your comment on current QC link ******' . $order_id . '&num=' . $num . ' is as below. <br>' . $message;
             } else {
-                $message = "<h3 style='color:red;font-weight: bold'>" . 'Your comment on current QC link ' . $url . ' is as below. <br>No additional comment was provided by customer on current QC link.' . "</h3>";
+                $message = 'Your comment on current QC link ******' . $order_id . '&num=' . $num . ' is as below. <br>No additional comment was provided by customer on current QC link.';
             }
 			
 			$qc_photo_status = $this->config->get('qc_photo_status');

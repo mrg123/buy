@@ -213,6 +213,20 @@ class ModelSaleOrder extends Model {
 			$sql .= " AND customer_id NOT IN (" . implode(',',$data['filter_customer_id_no_in']) . ")";
 		}
 
+        if(isset($data['filter_history_order_status']) && !empty($data['filter_history_order_status'])){
+            $implode = array();
+
+            $order_statuses = explode(',', $data['filter_history_order_status']);
+
+            foreach ($order_statuses as $order_status_id) {
+                $implode[] = "order_status_id = '" . (int)$order_status_id . "'";
+            }
+
+            if ($implode) {
+                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = o.order_id AND (" . implode(" AND ", $implode) . "))";
+            }
+        }
+
 		$sort_data = array(
 			'o.order_id',
 			'customer',
@@ -439,8 +453,21 @@ class ModelSaleOrder extends Model {
 			$sql .= " AND total = '" . (float)$data['filter_total'] . "'";
 		}
 
-		$query = $this->db->query($sql);
+		if(isset($data['filter_history_order_status']) && !empty($data['filter_history_order_status'])){
+            $implode = array();
 
+            $order_statuses = explode(',', $data['filter_history_order_status']);
+
+            foreach ($order_statuses as $order_status_id) {
+                $implode[] = "order_status_id = '" . (int)$order_status_id . "'";
+            }
+
+            if ($implode) {
+                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = `" . DB_PREFIX . "order`.order_id AND (" . implode(" AND ", $implode) . "))";
+            }
+        }
+
+		$query = $this->db->query($sql);
 		return $query->row['total'];
 	}
 

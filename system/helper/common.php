@@ -145,7 +145,20 @@ class Common{
         if (self::$status) {
             self::setOpen();
             try {
-                self::$error_log->error(self::interpolate(json_encode($e)));
+                if(is_object($e)){
+                    $message = [
+                        'message' => $e->getMessage(),
+                        'code' => $e->getCode(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        //'trace' => $e->getTrace(),
+                        //'previous' => $e->getPrevious(),
+                        'trace_as_string' => $e->getTraceAsString(),
+                    ];
+                }else{
+                    $message = (string)$e;
+                }
+                self::$error_log->error(self::interpolate($message));
             } catch (Exception $e) {
 
             }

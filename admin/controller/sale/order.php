@@ -287,7 +287,7 @@ class ControllerSaleOrder extends Controller {
 		);
 
         if(!empty($filter_chose_status)){
-            $filter_data['filter_order_status'] = implode(',',explode('_',$filter_chose_status));
+            $filter_data['filter_history_order_status'] = implode(',',explode('_',$filter_chose_status));
         }
 	
 

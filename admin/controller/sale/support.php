@@ -812,12 +812,14 @@ class ControllerSaleSupport extends Controller {
             $message .= 'Success Submit!';
             $this->session->data['success'] = $message;
             $json['message'] = $message;
+
         }catch (Exception $e){
             $json['state'] = 0;
-            $json['message'] = 'Submit Failure by ' . $e->getMessage();
+            $json['message'] = 'Failure by ' . $e->getMessage();
 
             $update_sql = "UPDATE " . DB_PREFIX . "support SET update_time = '{$update_time}',status = 0 WHERE ticket_id = '{$ticket_id}'";
             $this->db->query($update_sql);
+            Common::exception($e);
         }
 
 
@@ -834,7 +836,7 @@ class ControllerSaleSupport extends Controller {
      * @array $subject = []
      */
 	public function sendEmail($data){
-        set_time_limit(60);
+        set_time_limit(300);
         try{
             $subject = '[Ticket ID:' . $data['ticket_id'] . ' UPDATED'. ']' . $data['subject'];
 

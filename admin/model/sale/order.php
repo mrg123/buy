@@ -219,11 +219,11 @@ class ModelSaleOrder extends Model {
             $order_statuses = explode(',', $data['filter_history_order_status']);
 
             foreach ($order_statuses as $order_status_id) {
-                $implode[] = "order_status_id = '" . (int)$order_status_id . "'";
+                $implode[] = "'" . (int)$order_status_id . "'";
             }
 
             if ($implode) {
-                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = o.order_id AND (" . implode(" AND ", $implode) . "))";
+                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = o.order_id AND order_status_id in (" . implode(",", $implode) . ") group by order_id,order_status_id having count(*) > " . count($implode) . ")";
             }
         }
 
@@ -459,14 +459,14 @@ class ModelSaleOrder extends Model {
             $order_statuses = explode(',', $data['filter_history_order_status']);
 
             foreach ($order_statuses as $order_status_id) {
-                $implode[] = "order_status_id = '" . (int)$order_status_id . "'";
+                $implode[] = "'" . (int)$order_status_id . "'";
             }
 
             if ($implode) {
-                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = `" . DB_PREFIX . "order`.order_id AND (" . implode(" AND ", $implode) . "))";
+                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = oc_order.order_id AND order_status_id in (" . implode(",", $implode) . ") group by order_id,order_status_id having count(*) > " . count($implode) . ")";
             }
         }
-
+      
 		$query = $this->db->query($sql);
 		return $query->row['total'];
 	}

@@ -223,7 +223,8 @@ class ModelSaleOrder extends Model {
             }
 
             if ($implode) {
-                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = o.order_id AND order_status_id in (" . implode(",", $implode) . ") group by order_id,order_status_id having count(*) > " . count($implode) . ")";
+                $count_oh = count($implode) -1 ;
+                $sql .= " AND EXISTS (select order_id from ( select order_id from (select order_id,order_status_id from " . DB_PREFIX . "order_history where order_status_id in (" . implode(",", $implode) . ") GROUP BY order_id, order_status_id ) as oh group by order_id having count(order_id) > " . $count_oh . ") AS new WHERE order_id = o.order_id)";
             }
         }
 
@@ -463,10 +464,10 @@ class ModelSaleOrder extends Model {
             }
 
             if ($implode) {
-                $sql .= " AND EXISTS (select DISTINCT(order_id) from oc_order_history where order_id = oc_order.order_id AND order_status_id in (" . implode(",", $implode) . ") group by order_id,order_status_id having count(*) > " . count($implode) . ")";
+                $count_oh = count($implode) -1 ;
+                $sql .= " AND EXISTS (select order_id from ( select order_id from (select order_id,order_status_id from " . DB_PREFIX . "order_history where order_status_id in (" . implode(",", $implode) . ") GROUP BY order_id, order_status_id ) as oh group by order_id having count(order_id) > " . $count_oh . ") AS new WHERE order_id = " . DB_PREFIX . "order.order_id)";
             }
         }
-      
 		$query = $this->db->query($sql);
 		return $query->row['total'];
 	}

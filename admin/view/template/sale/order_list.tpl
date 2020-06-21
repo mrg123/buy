@@ -134,9 +134,9 @@
             </div>
           </div>
         </div>
+          <form method="post" enctype="multipart/form-data">
           <div class="table-responsive">
-              <table class="table table-bordered table-hover">
-        <form method="post" enctype="multipart/form-data" tar
+              <table class="table table-bordered table-hover" style="word-break: break-all;">
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>
@@ -170,7 +170,7 @@
                     <?php } else { ?>
                     <a href="<?php echo $sort_customer; ?>"><?php echo $column_customer; ?></a>
                     <?php } ?></td>
-                  <td class="text-left"><?php echo $entry_model; ?></td>
+                  <td class="text-left" width="350"><?php echo $entry_model; ?></td>
                   <td class="text-left"><?php echo $entry_customer_email; ?></td>
                   
 

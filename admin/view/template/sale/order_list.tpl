@@ -136,7 +136,7 @@
         </div>
           <form method="post" enctype="multipart/form-data">
           <div class="table-responsive">
-              <table class="table table-bordered table-hover" style="word-break: break-all;">
+              <table class="table table-bordered table-hover">
               <thead>
                 <tr>
                   <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" /></td>

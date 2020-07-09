@@ -68,6 +68,7 @@
 .list-unstyled li{font-size:13px;}
 .nav-tabs a{font-size:13px;}
 #tab-description p{font-size:13px;}
+label.control-label{font-size:13px}
 			</style>
 			]]></add>
 		</operation>

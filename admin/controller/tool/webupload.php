@@ -45,7 +45,7 @@ class ControllerToolWebupload extends Controller {
 
 		$sign = md5(md5('9876'));
 		$preview_url = HTTPS_CATALOG . 'index.php?route=information/qc_photo&sign='.$sign;
-		$data['message'] = "Please click this link to view your QC photo " . $preview_url;
+		$data['message'] = "Please click this link to view your QC photo " . '\r\n' . $preview_url;
 		$data['catalog_preview_url'] = $preview_url;	
 		
 		

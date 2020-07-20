@@ -109,10 +109,7 @@ class ControllerInformationQcPhoto extends Controller {
 						$choose_order_id = $gl_order_id;
 					}
 
-					if($order_info['order_status_id']== $choose_order_id){
-						$json['state'] = 1;
-						$json['message'] = 'Qc Photo Request has been processed';
-					}else{
+					
 						// 修改订单状态,并通知客户
                         try {
                             $this->load->model('checkout/order');
@@ -122,7 +119,7 @@ class ControllerInformationQcPhoto extends Controller {
 							$json['exception'] = $e;
 						}
 
-					}
+					
 
 				}
 				

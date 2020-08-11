@@ -63,11 +63,13 @@ class ControllerAccountOrder extends Controller {
 		$order_total = $this->model_account_order->getTotalOrders();
 
 		$results = $this->model_account_order->getOrders(($page - 1) * 10, 10);
-
+        $customer_id = (int)$this->customer->getId();
 		foreach ($results as $result) {
 			$product_total = $this->model_account_order->getTotalOrderProductsByOrderId($result['order_id']);
 			$voucher_total = $this->model_account_order->getTotalOrderVouchersByOrderId($result['order_id']);
-
+            if($customer_id==0 || $customer_id!= $result['customer_id']) {
+                continue;
+            }
 			$data['orders'][] = array(
 				'order_id'   => $result['order_id'],
 				'name'       => $result['firstname'] . ' ' . $result['lastname'],

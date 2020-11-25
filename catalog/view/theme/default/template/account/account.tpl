@@ -41,7 +41,7 @@
       <h2><?php echo $text_my_newsletter; ?></h2>
       <ul class="list-unstyled">
         <li><a href="<?php echo $newsletter; ?>"><?php echo $text_newsletter; ?></a></li>
-        <li><a href="<?php echo $support_url; ?>">Customer Support Center</a></li>
+        <li style="display:none"><a href="<?php echo $support_url; ?>">Customer Support Center</a></li>
       </ul>
       <?php echo $content_bottom; ?></div>
     <?php echo $column_right; ?></div>

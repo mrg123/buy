@@ -29,13 +29,13 @@ $data['support'] = $this->url->link('sale/support', 'token=' . $this->session->d
 		<operation>
 			<search position="replace"><![CDATA[<li class="dropdown-header"><?php echo $text_affiliate; ?></li>]]></search>
 			<add trim="true"><![CDATA[
-<li class="dropdown-header">Customer Support Center</li>
+<li class="dropdown-header" style="display:none">Customer Support Center</li>
 			]]></add>
 		</operation>
 		<operation>
 			<search position="replace"><![CDATA[<li><a href="<?php echo $affiliate_approval; ?>"><span class="label label-danger pull-right"><?php echo $affiliate_total; ?></span><?php echo $text_approval; ?></a></li>]]></search>
 			<add trim="true"><![CDATA[
-<li><a href="<?php echo $support; ?>"><span class="label label-danger pull-right"><?php echo $support_total; ?></span>View Customer Tickets</a></li>
+<li style="display:none"><a href="<?php echo $support; ?>"><span class="label label-danger pull-right"><?php echo $support_total; ?></span>View Customer Tickets</a></li>
 			]]></add>
 		</operation>
 		<operation>

@@ -198,9 +198,9 @@
             <tr>
               <td class="text-left"><?php echo $column_product; ?></td>
               <td class="text-left"><?php echo $column_model; ?></td>
-              <td class="text-right"><?php echo $column_quantity; ?></td>
-              <td class="text-right"><?php echo $column_price; ?></td>
-              <td class="text-right"><?php echo $column_total; ?></td>
+              <td class="text-left"><?php echo $column_quantity; ?></td>
+              <td class="text-left"><?php echo $column_price; ?></td>
+              <td class="text-left"><?php echo $column_total; ?></td>
             </tr>
           </thead>
           <tbody>
@@ -216,15 +216,15 @@
                 <?php } ?>
                 <?php } ?></td>
               <td class="text-left"><?php echo $product['model']; ?></td>
-              <td class="text-right">
+              <td class="text-left">
               <?php if($product['quantity'] > 1) { ?>
               <span style="color:red;font-size:25px;font-weight:700"><?php echo $product['quantity']; ?></span>
               <?php }else { ?>
               <?php echo $product['quantity']; ?>
               <?php } ?>
               </td>
-              <td class="text-right"><?php echo $product['price']; ?></td>
-              <td class="text-right"><?php echo $product['total']; ?></td>
+              <td class="text-left"><?php echo $product['price']; ?></td>
+              <td class="text-left"><?php echo $product['total']; ?></td>
             </tr>
             <?php } ?>
             <?php foreach ($vouchers as $voucher) { ?>
